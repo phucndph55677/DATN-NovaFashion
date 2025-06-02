@@ -43,7 +43,7 @@
                     </a>
                 </li>
                 <li class=" sidebar-layout ">
-                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/product" class="svg-icon">
+                    <a href="{{ route('admin.categories.index') }}" class="svg-icon">
                         <i class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
