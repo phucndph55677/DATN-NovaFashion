@@ -1,7 +1,8 @@
 <div class="iq-sidebar   sidebar-default">
     <div class="iq-sidebar-logo d-flex align-items-end justify-content-between">
         <a href="https://templates.iqonic.design/datum-dist/laravel/public" class="header-logo">
-            <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/logo.png" class="img-fluid rounded-normal " alt="logo">
+            <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/logo.png"
+                class="img-fluid rounded-normal " alt="logo">
             <span>NovaFashion</span>
         </a>
         <div class="side-menu-bt-sidebar-1">
@@ -93,8 +94,8 @@
                 <li class=" sidebar-layout ">
                     <a href="https://templates.iqonic.design/datum-dist/laravel/public/order" class="svg-icon">
                         <i class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
@@ -122,8 +123,8 @@
                 <li class=" sidebar-layout ">
                     <a href="https://templates.iqonic.design/datum-dist/laravel/public/todo" class="svg-icon">
                         <i class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
@@ -185,7 +186,7 @@
                     </a>
                     <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/logins" class="svg-icon">
+                            <a href="{{ route('admin.accounts.admin-manage.index') }}" class="svg-icon">
                                 <i class=""><svg xmlns="http://www.w3.org/2000/svg" width="18"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -195,7 +196,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/registers" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/registers"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -206,7 +208,8 @@
                             </a>
                         </li>
                         <li class="} sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/recovers" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/recovers"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -235,7 +238,8 @@
                     </a>
                     <ul id="app6" class="submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/error404" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/error404"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -247,7 +251,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/error500" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/error500"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -347,7 +352,8 @@
                     </a>
                     <ul id="app2" class="submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/avatars" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/avatars"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" id="iq-ui-1-0" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -359,7 +365,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/alerts" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/alerts"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-1"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -372,7 +379,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/badges" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/badges"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-2"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -385,7 +393,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/breadcrumb" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/breadcrumb"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-3"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -398,7 +407,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/buttons" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/buttons"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-4"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -411,7 +421,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/buttonsGroup" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/buttonsGroup"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" id="iq-ui-1-5" width="20"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -424,7 +435,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/boxShadow" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/boxShadow"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" id="iq-ui-1-5" width="20"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -437,7 +449,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/color" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/color"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-7"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -450,7 +463,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/cards" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/cards"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-8"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -463,7 +477,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/carousels" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/carousels"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-9"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -476,7 +491,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/grid" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/grid"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-10"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -489,7 +505,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/image" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/image"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-12"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -502,7 +519,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/listGroup" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/listGroup"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -513,7 +531,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/modal" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/modal"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-15"
                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -528,7 +547,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/notification" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/notification"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-16"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -541,7 +561,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/pagination" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/pagination"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" width="18" id="iq-ui-1-17"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -554,7 +575,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/popovers" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/popovers"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -565,7 +587,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/progressbars" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/progressbars"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="18"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -576,7 +599,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/typography" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/typography"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" id="iq-ui-1-20" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" width="18" viewBox="0 0 24 24" stroke="currentColor">
@@ -588,7 +612,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/tabs" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/tabs"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" id="iq-ui-1-21" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" width="18" viewBox="0 0 24 24" stroke="currentColor">
@@ -600,7 +625,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/tooltips" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/tooltips"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="18"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -611,7 +637,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/embedVideo" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/ui/embedVideo"
+                                class="svg-icon">
                                 <i class="">
                                     <svg class="svg-icon" id="iq-ui-1-23" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" width="18" viewBox="0 0 24 24" stroke="currentColor">
@@ -662,7 +689,8 @@
                             </a>
                             <ul id="form1" class="submenu collapse" data-parent="#app3">
                                 <li class=" sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/elements" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/elements"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -674,7 +702,8 @@
                                 </li>
 
                                 <li class=" sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/input" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/input"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -686,7 +715,8 @@
                                     </a>
                                 </li>
                                 <li class=" sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/validation" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/validation"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -697,7 +727,8 @@
                                     </a>
                                 </li>
                                 <li class="} sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/switch" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/switch"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -709,7 +740,8 @@
                                 </li>
 
                                 <li class=" sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/checkbox" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/checkbox"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -720,7 +752,8 @@
                                     </a>
                                 </li>
                                 <li class=" sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/radio" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/radio"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -731,7 +764,8 @@
                                     </a>
                                 </li>
                                 <li class=" sidebar-layout ">
-                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/textarea" class="svg-icon">
+                                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/textarea"
+                                        class="svg-icon">
                                         <i class="">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -762,7 +796,8 @@
                     </a>
                     <ul id="form2" class="submenu collapse" data-parent="#app3">
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/datepicker" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/datepicker"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -773,7 +808,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/select2" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/select2"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -784,7 +820,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/fileuploader" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/fileuploader"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -795,7 +832,8 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/quill" class="svg-icon">
+                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/form/quill"
+                                class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -826,7 +864,8 @@
                 </a>
                 <ul id="app5" class="submenu collapse" data-parent="#iq-sidebar-toggle">
                     <li class=" sidebar-layout ">
-                        <a href="https://templates.iqonic.design/datum-dist/laravel/public/table/basictable" class="svg-icon">
+                        <a href="https://templates.iqonic.design/datum-dist/laravel/public/table/basictable"
+                            class="svg-icon">
                             <i class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -838,7 +877,8 @@
                         </a>
                     </li>
                     <li class=" sidebar-layout ">
-                        <a href="https://templates.iqonic.design/datum-dist/laravel/public/table/datatable" class="svg-icon">
+                        <a href="https://templates.iqonic.design/datum-dist/laravel/public/table/datatable"
+                            class="svg-icon">
                             <i class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -850,7 +890,8 @@
                         </a>
                     </li>
                     <li class=" sidebar-layout ">
-                        <a href="https://templates.iqonic.design/datum-dist/laravel/public/table/edittable" class="svg-icon">
+                        <a href="https://templates.iqonic.design/datum-dist/laravel/public/table/edittable"
+                            class="svg-icon">
                             <i class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
