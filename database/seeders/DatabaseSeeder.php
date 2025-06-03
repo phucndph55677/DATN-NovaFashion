@@ -43,8 +43,8 @@ class DatabaseSeeder extends Seeder
             // InvoiceSeeder::class,
             // NotificationSeeder::class,
             // VoucherSeeder::class,
-            // PointSeeder::class,   
-            // BannerSeeder::class,        
+            // PointSeeder::class,
+            // BannerSeeder::class,
         ]);
     }
 }
