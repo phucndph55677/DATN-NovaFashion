@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\Admin\AdminCategoryController;
@@ -11,6 +12,7 @@ Route::get('/', function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     // Categories
     Route::resource('categories', AdminCategoryController::class);
+    Route::resource('products', AdminProductController::class);
 
     // Products
     // Route::resource('/products', AdminProductController::class);
