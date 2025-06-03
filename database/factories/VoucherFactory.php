@@ -22,8 +22,8 @@ class VoucherFactory extends Factory
 
     public function definition(): array
     {
-        $startDate = $this->faker->dateTimeBetween('-1 month', 'now');
-        $endDate = $this->faker->dateTimeBetween('now', '+2 months');
+        $startDate = $this->faker->dateTimeBetween('-1 week', 'now');
+        $endDate = $this->faker->dateTimeBetween('now', '+1 month');
 
         return [
             'role_id' => Role::inRandomOrder()->first()?->id ?? Role::factory(),
