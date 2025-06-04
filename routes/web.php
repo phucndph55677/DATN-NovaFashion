@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminProductVariantController;
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\AdminBannerController;
+use App\Http\Controllers\BannerController;
 
 Route::get('/', function () {
     return view('layouts.app');
@@ -14,6 +16,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('categories', AdminCategoryController::class);
 
     // Products
+  
     Route::resource('products', AdminProductController::class);
 
     // Product variants
@@ -29,4 +32,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Comments
 
     // Banners
+    Route::resource('banners', AdminBannerController::class);
+
 });
