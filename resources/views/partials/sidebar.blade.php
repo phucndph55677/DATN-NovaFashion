@@ -196,7 +196,7 @@
                             </a>
                         </li>
                         <li class=" sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/registers"
+                            <a href="{{ route('admin.accounts.seller-manage.index') }}"
                                 class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
@@ -208,7 +208,7 @@
                             </a>
                         </li>
                         <li class="} sidebar-layout ">
-                            <a href="https://templates.iqonic.design/datum-dist/laravel/public/recovers"
+                            <a href="{{ route('admin.accounts.client-manage.index') }}"
                                 class="svg-icon">
                                 <i class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"

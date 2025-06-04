@@ -8,28 +8,28 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-class AdminManageController extends Controller
+class SellerManageController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('role_id', 3); // role_id = 3 là admin
+        $query = User::where('role_id', 1); // role_id = 1 là seller
 
         if ($request->has('search') && $request->search != '') {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('fullname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                  ->orWhere('email', 'like', '%' . $searchTerm . '%');
             });
         }
 
-        $admins = $query->latest()->paginate(10);
+        $sellers = $query->latest()->paginate(10);
 
-        return view('admin.accounts.adminManage.index', compact('admins'));
+        return view('admin.accounts.sellerManage.index', compact('sellers'));
     }
 
     public function create()
     {
-        return view('admin.accounts.adminManage.create');
+        return view('admin.accounts.sellerManage.create');
     }
 
     public function store(Request $request)
@@ -63,7 +63,7 @@ class AdminManageController extends Controller
 
         $data = $request->all();
         $data['password'] = Hash::make($request->password);
-        $data['role_id'] = 3; // role_id admin là 3
+        $data['role_id'] = 1; // role_id seller là 1
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('uploads/avatars', 'public');
@@ -74,29 +74,29 @@ class AdminManageController extends Controller
 
         User::create($data);
 
-        return redirect()->route('admin.accounts.admin-manage.index')
-            ->with('success', 'Admin account created successfully.');
+        return redirect()->route('admin.accounts.seller-manage.index')
+            ->with('success', 'Seller account created successfully.');
     }
 
     public function show(User $user)
     {
-        if ($user->role_id != 3) {
+        if ($user->role_id != 1) {
             abort(404);
         }
-        return view('admin.accounts.adminManage.show', compact('user'));
+        return view('admin.accounts.sellerManage.show', compact('user'));
     }
 
     public function edit(User $user)
     {
-        if ($user->role_id != 3) {
+        if ($user->role_id != 1) {
             abort(404);
         }
-        return view('admin.accounts.adminManage.edit', compact('user'));
+        return view('admin.accounts.sellerManage.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
     {
-        if ($user->role_id != 3) {
+        if ($user->role_id != 1) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -146,13 +146,13 @@ class AdminManageController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.accounts.admin-manage.index')
-                         ->with('success', 'Admin account updated successfully.');
+        return redirect()->route('admin.accounts.seller-manage.index')
+                         ->with('success', 'Seller account updated successfully.');
     }
 
     public function destroy(User $user)
     {
-        if ($user->role_id != 3) {
+        if ($user->role_id != 1) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -162,7 +162,7 @@ class AdminManageController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.accounts.admin-manage.index')
-            ->with('success', 'Tài khoản quản trị đã được xóa thành công.');
+        return redirect()->route('admin.accounts.seller-manage.index')
+            ->with('success', 'Tài khoản người bán đã được xóa thành công.');
     }
 }

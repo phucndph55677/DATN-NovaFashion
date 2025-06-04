@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Admin Account')
+@section('title', 'Edit Client Account')
 
 @section('content')
 <div class="container-fluid">
@@ -10,18 +10,18 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
                     <ol class="breadcrumb ps-0 mb-0 pb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.accounts.admin-manage.index') }}">Admin Accounts</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Edit Admin Account</li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.accounts.client-manage.index') }}">Client Accounts</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Client Account</li>
                     </ol>
                 </nav>
-                <a href="{{ route('admin.accounts.admin-manage.index') }}" class="btn btn-primary btn-sm">Back</a>
+                <a href="{{ route('admin.accounts.client-manage.index') }}" class="btn btn-primary btn-sm">Back</a>
             </div>
         </div>
 
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="fw-bold mb-3">Edit Admin Information</h5>
+                    <h5 class="fw-bold mb-3">Edit Client Information</h5>
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -33,7 +33,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.accounts.admin-manage.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.accounts.client-manage.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -146,7 +146,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Update Seller Account</button>
+                            <button type="submit" class="btn btn-primary">Update Client Account</button>
                         </div>
                     </form>
                 </div>

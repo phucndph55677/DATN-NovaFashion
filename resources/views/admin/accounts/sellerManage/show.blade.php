@@ -1,6 +1,6 @@
 @extends('layouts.app') {{-- Hoặc layout admin của bạn, ví dụ: layouts.admin_app --}}
 
-@section('title', 'Admin Account Details')
+@section('title', 'Seller Account Details')
 
 @section('content')
 <div class="container-fluid">
@@ -8,16 +8,16 @@
         <div class="col-lg-12">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                 <div class="d-flex align-items-center">
-                    <h4 class="fw-bold">Admin Account Details: {{ $user->fullname }}</h4>
+                    <h4 class="fw-bold">Seller Account Details: {{ $user->fullname }}</h4>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                    <a href="{{ route('admin.accounts.admin-manage.edit', ['user' => $user->id]) }}" class="btn btn-primary d-flex align-items-center">
+                    <a href="{{ route('admin.accounts.seller-manage.edit', ['user' => $user->id]) }}" class="btn btn-primary d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
-                        Edit Admin
+                        Edit Seller
                     </a>
-                    <a href="{{ route('admin.accounts.admin-manage.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
+                    <a href="{{ route('admin.accounts.seller-manage.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
@@ -46,7 +46,7 @@
                                 src="{{ $imagePath && file_exists(public_path('storage/' . $imagePath))
                                     ? asset('storage/' . $imagePath)
                                     : asset('images/default-avatar.png') }}"
-                                alt="Admin Avatar"
+                                alt="Seller Avatar"
                                 class="img-fluid rounded-circle"
                                 style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #dee2e6;"
                                 onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}';"
@@ -83,10 +83,6 @@
                                 <div class="col-md-12 mb-3">
                                     <strong class="d-block text-muted">Address:</strong>
                                     <span>{{ $user->address ?: 'N/A' }}</span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong class="d-block text-muted">Ranking:</strong>
-                                    <span>{{ $user->ranking_id ?: 'N/A' }}</span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <strong class="d-block text-muted">Account Created:</strong>

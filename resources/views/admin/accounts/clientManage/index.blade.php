@@ -1,6 +1,6 @@
 @extends('layouts.app') {{-- Hoặc layout admin của bạn, ví dụ: layouts.admin_app --}}
 
-@section('title', 'Admin Management')
+@section('title', 'Client Account Management')
 
 @section('content')
     <div class="container-fluid">
@@ -22,16 +22,16 @@
             <div class="col-lg-12">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center">
-                        <h4 class="fw-bold">Admin Account Management</h4>
+                        <h4 class="fw-bold">Client Account Management</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center">
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative" method="GET"
-                                    action="{{ route('admin.accounts.admin-manage.index') }}">
+                                    action="{{ route('admin.accounts.client-manage.index') }}">
                                     <div class="form-group mb-0">
-                                        <input type="text" class="form-control" placeholder="Search Admin (Name, Email)"
-                                            aria-label="Search Admin" name="search" value="{{ request('search') }}">
+                                        <input type="text" class="form-control" placeholder="Search Client (Name, Email)"
+                                            aria-label="Search Client" name="search" value="{{ request('search') }}">
                                         <button type="submit" class="search-link btn btn-link position-absolute"
                                             style="top: 50%; right: 10px; transform: translateY(-50%);">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="none"
@@ -43,14 +43,14 @@
                                     </div>
                                 </form>
 
-                                <a href="{{ route('admin.accounts.admin-manage.create') }}"
+                                <a href="{{ route('admin.accounts.client-manage.create') }}"
                                     class="btn btn-primary d-flex align-items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
-                                    Add New Admin
+                                    Add New Client
                                 </a>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                 <div class="card card-block card-stretch">
                     <div class="card-body p-0">
                         <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                            <h5 class="fw-bold">Admin List</h5>
+                            <h5 class="fw-bold">Client List</h5>
                         </div>
 
                         <div class="table-responsive iq-product-table">
@@ -78,15 +78,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($admins as $admin)
-                                        @if($admin->role_id == 3)
+                                    @forelse ($clients as $client)
                                         <tr>
-                                            <td>{{ $admin->id }}</td>
+                                            <td>{{ $client->id }}</td>
                                             <td>
                                                 @php
                                                     $imagePath = null;
-                                                    if ($admin->image) {
-                                                        $imagePath = preg_replace('#^/?storage/#', '', $admin->image);
+                                                    if ($client->image) {
+                                                        $imagePath = preg_replace('#^/?storage/#', '', $client->image);
                                                     }
                                                 @endphp
                                                 <img
@@ -99,20 +98,20 @@
                                                     onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}';"
                                                 >
                                             </td>
-                                            <td>{{ $admin->fullname }}</td>
-                                            <td>{{ $admin->email }}</td>
-                                            <td>{{ $admin->phone ?: 'N/A' }}</td>
+                                            <td>{{ $client->fullname }}</td>
+                                            <td>{{ $client->email }}</td>
+                                            <td>{{ $client->phone ?: 'N/A' }}</td>
                                             <td>
-                                                @if ($admin->is_verified)
+                                                @if ($client->is_verified)
                                                     <span class="badge bg-success">Verified</span>
                                                 @else
                                                     <span class="badge bg-warning text-dark">Not Verified</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $admin->created_at ? $admin->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
+                                            <td>{{ $client->created_at ? $client->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
                                             <td>
                                                 <div class="d-flex justify-content-center align-items-center gap-2">
-                                                    <a href="{{ route('admin.accounts.admin-manage.show', $admin->id) }}"
+                                                    <a href="{{ route('admin.accounts.client-manage.show', $client->id) }}"
                                                         class="btn btn-sm btn-icon text-info" data-bs-toggle="tooltip"
                                                         title="View Details">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20"
@@ -125,9 +124,9 @@
                                                         </svg>
                                                     </a>
 
-                                                    <a href="{{ route('admin.accounts.admin-manage.edit', $admin->id) }}"
+                                                    <a href="{{ route('admin.accounts.client-manage.edit', $client->id) }}"
                                                         class="btn btn-sm btn-icon text-primary" data-bs-toggle="tooltip"
-                                                        title="Edit Admin">
+                                                        title="Edit Client">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20"
                                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -137,14 +136,14 @@
                                                     </a>
 
                                                     <form
-                                                        action="{{ route('admin.accounts.admin-manage.destroy', $admin->id) }}"
+                                                        action="{{ route('admin.accounts.client-manage.destroy', $client->id) }}"
                                                         method="POST"
-                                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản quản trị này không? Hành động này không thể hoàn tác.');"
+                                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản khách hàng này không? Không thể hoàn tác hành động này.');"
                                                         style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-icon text-danger"
-                                                            data-bs-toggle="tooltip" title="Delete Admin">
+                                                            data-bs-toggle="tooltip" title="Delete Client">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="20"
                                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -156,21 +155,21 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        @endif
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center py-4">No admin accounts found.</td>
+                                            <td colspan="8" class="text-center py-4">No client accounts found.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
                             </table>
                         </div>
-                        {{-- @if ($admins->hasPages())
+
+                        {{-- Pagination --}}
+                        {{-- @if ($clients->hasPages())
                             <div class="d-flex justify-content-center mt-4 px-3">
-                                {{ $admins->links() }}
+                                {{ $clients->links() }}
                             </div>
                         @endif --}}
-
                     </div>
                 </div>
             </div>
