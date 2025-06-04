@@ -104,7 +104,7 @@
                                                 <td>{{ $product->updated_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-start align-items-center gap-2">
-                                                        <a href=""
+                                                        <a href="{{ route('admin.variants.index', $product->id) }}"
                                                             class="btn btn-sm btn-icon text-warning" data-bs-toggle="tooltip"
                                                             title="Xem biến thể">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="none"
