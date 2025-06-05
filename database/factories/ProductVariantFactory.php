@@ -30,6 +30,7 @@ class ProductVariantFactory extends Factory
             'price' => $basePrice,
             'sale' => $discount,
             'quantity' => fake()->numberBetween(0, 100),
+            'is_active' => fake()->boolean(90), // 90% còn bán
         ];
     }
 }
