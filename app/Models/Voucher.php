@@ -23,6 +23,11 @@ class Voucher extends Model
         'end_date',
     ];
 
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
+
     public function role()
     {
         return $this->belongsTo(Role::class);

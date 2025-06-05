@@ -21,8 +21,8 @@ return new class extends Migration
             $table->decimal('sale_price', 10, 2);     // Giá trị giảm giá
             $table->decimal('min_price', 10, 2);      // Giá tối thiểu đơn hàng được áp dụng voucher
             $table->decimal('max_price', 10, 2)->nullable(); // Giá tối đa được giảm (có thể null)
-            $table->date('start_date');      // Ngày bắt đầu áp dụng voucher
-            $table->date('end_date');        // Ngày kết thúc áp dụng voucher
+            $table->dateTime('start_date');      // Ngày bắt đầu áp dụng voucher (có giờ)
+            $table->dateTime('end_date');        // Ngày kết thúc áp dụng voucher (có giờ)
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }

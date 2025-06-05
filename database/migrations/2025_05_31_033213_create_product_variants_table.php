@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);     // Giá sản phẩm, kiểu số thập phân với 2 chữ số thập phân
             $table->decimal('sale', 10, 2)->default(0); // Giá khuyến mãi hoặc giảm giá, mặc định 0
             $table->integer('quantity')->default(0);    // Số lượng tồn kho, mặc định 0
+            $table->boolean('is_active')->default(true); // Trạng thái biến thể sản phẩm: còn bán, dừng bán
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }
