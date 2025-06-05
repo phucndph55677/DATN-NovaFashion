@@ -35,10 +35,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="fw-bold mb-3">Basic Information</h5>
-                        <form class="row g-3" action="{{ route('admin.variants.store') }}" method="post" enctype="multipart/form-data">
+                        <form class="row g-3" action="{{ route('admin.variants.update', $variant->id) }}" method="post" enctype="multipart/form-data">
                             @csrf
-                            {{-- <input type="hidden" name="product_id" value="{{ $product->id }}"> --}}
-
+                            @method('PUT')
                             
                             <div class="col-md-6 mb-3">
                                 <label for="color_id" class="form-alabel fw-bold text-muted text-uppercase">Color</label>

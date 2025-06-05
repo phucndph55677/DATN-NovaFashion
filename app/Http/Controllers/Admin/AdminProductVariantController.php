@@ -8,6 +8,7 @@ use App\Models\Color;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Size;
+use Illuminate\Support\Facades\Storage;
 
 class AdminProductVariantController extends Controller
 {
@@ -76,7 +77,27 @@ class AdminProductVariantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $variant = ProductVariant::find($id);
+
+        $data = $request->except('image');
+
+        if ($request->hasFile('image')) {
+            $path_image = $request->file('image')->store('variants', 'public');
+            $data['image'] = $path_image;
+        }
+
+        // Xoa anh cu
+        if (isset($path_image)) {
+            if ($variant->image != null) {
+                if (Storage::fileExists($variant->image)) {
+                    Storage::delete($variant->image);
+                }
+            }
+        }
+
+        $variant->update($data);
+
+        return redirect()->route('admin.variants.index', $variant->product_id);
     }
 
     /**
@@ -84,6 +105,19 @@ class AdminProductVariantController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $variant = ProductVariant::find($id);
+
+        if (isset($path_image)) {
+            if ($variant->image != null) {
+                if (Storage::fileExists($variant->image)) {
+                    Storage::delete($variant->image);
+                }
+            }
+        }
+
+        $variant->delete();
+
+        return redirect()
+            ->route('admin.variants.index', $variant->product_id);
     }
 }
