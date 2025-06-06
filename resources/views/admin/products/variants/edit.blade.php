@@ -79,6 +79,18 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
+                                <label for="is_active" class="form-label fw-bold text-muted text-uppercase">Is_active</label>
+                                <select id="is_active" name="is_active" class="form-select form-control choicesjs">
+                                    <option value="">Select Active</option>
+                                    @foreach ($is_actives as $is_active)
+                                        <option value="{{ $is_active->id }}"
+                                            @selected($is_active->id == $variant->is_active)>
+                                            {{ $is_active->name }}</option>                        
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <label for="image" class="form-label fw-bold text-muted text-uppercase">Product Image</label>
                                 <input type="file" class="form-control" id="image" name="image">
                                 @if($variant->image)

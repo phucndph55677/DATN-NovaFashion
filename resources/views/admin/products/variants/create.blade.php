@@ -41,7 +41,7 @@
 
                             
                             <div class="col-md-6 mb-3">
-                                <label for="color_id" class="form-alabel fw-bold text-muted text-uppercase">Color</label>
+                                <label for="color_id" class="form-label fw-bold text-muted text-uppercase">Color</label>
                                 <select id="color_id" name="color_id" class="form-select form-control choicesjs">
                                     <option value="">Select Color</option>
                                     @foreach ($colors as $color)
@@ -73,6 +73,16 @@
                             <div class="col-md-6 mb-3">
                                 <label for="quantity" class="form-label fw-bold text-muted text-uppercase">Quantity</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="is_active" class="form-label fw-bold text-muted text-uppercase">Is_active</label>
+                                <select id="is_active" name="is_active" class="form-select form-control choicesjs">
+                                    <option value="">Select Active</option>
+                                    @foreach ($is_actives as $is_active)
+                                        <option value="{{ $is_active->id }}">{{ $is_active->name }}</option>                        
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-md-6 mb-3">

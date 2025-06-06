@@ -30,8 +30,12 @@ class AdminProductVariantController extends Controller
         $product = Product::with(['variants.color', 'variants.size'])->where('id', $id)->first();
         $colors = Color::all();
         $sizes = Size::all();
+        $is_actives = [
+            (object)['id' => 1, 'name' => 'Still selling'],
+            (object)['id' => 0, 'name' => 'Stop selling'],
+        ];
         
-        return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id'));
+        return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id', 'is_actives'));
     }
 
     /**
@@ -48,8 +52,7 @@ class AdminProductVariantController extends Controller
 
         ProductVariant::query()->create($data);
 
-        return redirect()
-            ->route('admin.variants.index', $request->product_id);
+        return redirect()->route('admin.variants.index', $request->product_id);
     }
 
     /**
@@ -68,8 +71,12 @@ class AdminProductVariantController extends Controller
         $variant = ProductVariant::find($id);
         $colors = Color::all();
         $sizes = Size::all();
+        $is_actives = [
+            (object)['id' => 1, 'name' => 'Still selling'],
+            (object)['id' => 0, 'name' => 'Stop selling'],
+        ];
 
-        return view('admin.products.variants.edit', compact('variant', 'colors', 'sizes'));
+        return view('admin.products.variants.edit', compact('variant', 'colors', 'sizes', 'is_actives'));
     }
 
     /**
@@ -80,6 +87,10 @@ class AdminProductVariantController extends Controller
         $variant = ProductVariant::find($id);
 
         $data = $request->except('image');
+
+        // Gán giá trị is_active kiểu boolean vào data
+        $data['is_active'] = $request->boolean('is_active');
+
 
         if ($request->hasFile('image')) {
             $path_image = $request->file('image')->store('variants', 'public');
@@ -117,7 +128,6 @@ class AdminProductVariantController extends Controller
 
         $variant->delete();
 
-        return redirect()
-            ->route('admin.variants.index', $variant->product_id);
+        return redirect()->route('admin.variants.index', $variant->product_id);
     }
 }

@@ -66,7 +66,7 @@
                                                 <th><label class="text-muted m-0">Color</label></th>
                                                 <th><label class="text-muted m-0">Size</label></th>
                                                 <th><label class="text-muted m-0">Quantity</label></th>
-                                                <th><label class="text-muted m-0">Inventory</label></th>
+                                                <th><label class="text-muted m-0">Is_active</label></th>
                                                 <th class="text-start"><span class="text-muted">Action</span></th>
                                             </tr>
                                         </thead>
@@ -87,47 +87,16 @@
                                                     <td>{{ $variant->color->name }}</td>
                                                     <td>{{ $variant->size->name }}</td>
                                                     <td>{{ $variant->quantity }}</td>
+                                                    </td>
                                                     <td>
-                                                        @php
-                                                            $quantity = $variant->quantity;
-                                                        @endphp
-
-                                                        @if ($quantity > 5)
-                                                            <p
-                                                                class="mb-0 text-success fw-bold d-flex justify-content-start align-items-center">
-                                                                <small>
-                                                                    <svg class="me-2" xmlns="http://www.w3.org/2000/svg"
-                                                                        width="18" viewBox="0 0 24 24" fill="none">
-                                                                        <circle cx="12" cy="12" r="8"
-                                                                            fill="#3cb72c"></circle>
-                                                                    </svg>
-                                                                </small>
-                                                                In Stock
-                                                            </p>
-                                                        @elseif ($quantity > 0)
-                                                            <p
-                                                                class="mb-0 text-warning fw-bold d-flex justify-content-start align-items-center">
-                                                                <small>
-                                                                    <svg class="me-2" xmlns="http://www.w3.org/2000/svg"
-                                                                        width="18" viewBox="0 0 24 24" fill="none">
-                                                                        <circle cx="12" cy="12" r="8"
-                                                                            fill="#ffa500"></circle> {{-- cam --}}
-                                                                    </svg>
-                                                                </small>
-                                                                Limited
-                                                            </p>
+                                                        @if ($variant->is_active)
+                                                            <span class="badge rounded-pill bg-success px-3 py-2 shadow-sm" title="Đang bán">
+                                                                <i class="bi bi-check-circle-fill me-1"></i> Still selling
+                                                            </span>
                                                         @else
-                                                            <p
-                                                                class="mb-0 text-danger fw-bold d-flex justify-content-start align-items-center">
-                                                                <small>
-                                                                    <svg class="me-2" xmlns="http://www.w3.org/2000/svg"
-                                                                        width="18" viewBox="0 0 24 24" fill="none">
-                                                                        <circle cx="12" cy="12" r="8"
-                                                                            fill="#ff0000"></circle>
-                                                                    </svg>
-                                                                </small>
-                                                                Out of Stock
-                                                            </p>
+                                                            <span class="badge rounded-pill bg-danger px-3 py-2 shadow-sm" title="Dừng bán">
+                                                                <i class="bi bi-x-circle-fill me-1"></i> Stop selling
+                                                            </span>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -145,7 +114,7 @@
                                                             </a>
                                                             <form action="{{ route('admin.variants.destroy', $variant->id) }}"
                                                                 method="POST"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xoá bien the này không?');"
+                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xoá biến thể này không?');"
                                                                 style="display: inline-block;">
                                                                 @csrf
                                                                 @method('DELETE')
