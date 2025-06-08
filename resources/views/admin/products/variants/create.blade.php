@@ -45,9 +45,12 @@
                                 <select id="color_id" name="color_id" class="form-select form-control choicesjs">
                                     <option value="">Select Color</option>
                                     @foreach ($colors as $color)
-                                        <option value="{{ $color->id }}">{{ $color->name }}</option>                        
+                                        <option value="{{ $color->id }}" {{ old('color_id') == $color->id ? 'selected' : '' }}>{{ $color->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('color_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -55,39 +58,58 @@
                                 <select id="size_id" name="size_id" class="form-select form-control choicesjs">
                                     <option value="">Select Size</option>
                                     @foreach ($sizes as $size)
-                                        <option value="{{ $size->id }}">{{ $size->name }}</option>                        
+                                        <option value="{{ $size->id }}" {{ old('size_id') == $size->id ? 'selected' : '' }}>{{ $size->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('size_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="price" class="form-label fw-bold text-muted text-uppercase">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price">
+                                <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price" value="{{ old('price') }}">
+
+                                @error('price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="sale" class="form-label fw-bold text-muted text-uppercase">Sale</label>
-                                <input type="number" class="form-control" id="sale" name="sale" placeholder="Enter Sale">
+                                <input type="number" class="form-control" id="sale" name="sale" placeholder="Enter Sale" value="{{ old('sale') }}">
+                                @error('sale')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="quantity" class="form-label fw-bold text-muted text-uppercase">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity">
+                                <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="{{ old('quantity') }}">
+                                @error('quantity')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="is_active" class="form-label fw-bold text-muted text-uppercase">Is_active</label>
                                 <select id="is_active" name="is_active" class="form-select form-control choicesjs">
                                     <option value="">Select Active</option>
-                                    @foreach ($is_actives as $is_active)
-                                        <option value="{{ $is_active->id }}">{{ $is_active->name }}</option>                        
-                                    @endforeach
+                                    <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Still Selling</option>
+                                    <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Stop Selling</option>
                                 </select>
+
+                                @error('is_active')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="image" class="form-label fw-bold text-muted text-uppercase">Product Image</label>
                                 <input type="file" class="form-control" id="image" name="image">
+                                @error('image')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="d-flex justify-content-end mt-3">
