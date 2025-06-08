@@ -40,7 +40,7 @@
                             @method('PUT')
                             
                             <div class="col-md-6 mb-3">
-                                <label for="color_id" class="form-alabel fw-bold text-muted text-uppercase">Color</label>
+                                <label for="color_id" class="form-label fw-bold text-muted text-uppercase">Color</label>
                                 <select id="color_id" name="color_id" class="form-select form-control choicesjs">
                                     <option value="">Select Color</option>
                                     @foreach ($colors as $color)
@@ -49,6 +49,9 @@
                                             {{ $color->name }}</option>                
                                     @endforeach
                                 </select>
+                                @error('color_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -61,21 +64,33 @@
                                             {{ $size->name }}</option>                        
                                     @endforeach
                                 </select>
+                                @error('size_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="price" class="form-label fw-bold text-muted text-uppercase">Price</label>
                                 <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price" value="{{ $variant->price }}">
+                                @error('price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="sale" class="form-label fw-bold text-muted text-uppercase">Sale</label>
                                 <input type="number" class="form-control" id="sale" name="sale" placeholder="Enter Sale" value="{{ $variant->sale }}">
+                                @error('sale')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="quantity" class="form-label fw-bold text-muted text-uppercase">Quantity</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="{{ $variant->quantity }}">
+                                @error('quantity')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -88,15 +103,21 @@
                                             {{ $is_active->name }}</option>                        
                                     @endforeach
                                 </select>
+                                @error('is_active')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="image" class="form-label fw-bold text-muted text-uppercase">Product Image</label>
                                 <input type="file" class="form-control" id="image" name="image">
                                 @if($variant->image)
-                                    <img src="{{ asset('storage/' . $variant->image) }}" alt="Product Image"
+                                    <img src="{{ asset('storage/' . $variant->image) }}" alt="Product Variant Image"
                                         style="width: 120px; margin-top: 10px;">
                                 @endif
+                                @error('image')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="d-flex justify-content-end mt-3">

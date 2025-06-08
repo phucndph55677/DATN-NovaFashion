@@ -34,18 +34,48 @@ class AdminProductVariantController extends Controller
             (object)['id' => 1, 'name' => 'Still selling'],
             (object)['id' => 0, 'name' => 'Stop selling'],
         ];
-        
+
         return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id', 'is_actives'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    
+
     public function store(Request $request)
     {
-        $data = $request->all();
+        // 1. Validate cơ bản (Laravel tự trả lỗi nếu có)
+        $data = $request->validate(
+            [
+                'product_id' => 'required|exists:products,id',
+                'color_id' => 'required|exists:colors,id',
+                'size_id' => 'required|exists:sizes,id',
+                'price' => 'required|numeric|min:0',
+                'sale' => 'nullable|numeric|min:0|lt:price',
+                'quantity' => 'required|numeric|min:0',
+                'is_active' => 'required',
+                'image' => 'required|image|max:2048',
+            ],
+            [
+                'color_id.required' => 'Vui lòng chọn màu.',
+                'size_id.required' => 'Vui lòng chọn size.',
+                'price.required' => 'Giá không được để trống.',
+                'price.numeric' => 'Giá phải là số.',
+                'price.min' => 'Giá phải >= 0.',
+                'sale.numeric' => 'Giá khuyến mãi phải là số.',
+                'sale.min' => 'Giá khuyến mãi phải >= 0.',
+                'sale.lt' => 'Giá khuyến mãi phải nhỏ hơn giá gốc.',
+                'quantity.required' => 'Số lượng không được để trống.',
+                'quantity.numeric' => 'Số lượng phải là số.',
+                'quantity.min' => 'Số lượng phải >= 0.',
+                'is_active.required' => 'Vui lòng chọn trạng thái.',
+                'image.required' => 'Hình ảnh không được để trống.',
+                'image.image' => 'Hình ảnh không hợp lệ.',
+                'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+            ]
+        );
 
+        // 2. Xử lý ảnh
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('variants', 'public');
         }
@@ -86,11 +116,33 @@ class AdminProductVariantController extends Controller
     {
         $variant = ProductVariant::find($id);
 
-        $data = $request->except('image');
-
-        // Gán giá trị is_active kiểu boolean vào data
-        $data['is_active'] = $request->boolean('is_active');
-
+        $data = $request->validate(
+            [
+                'color_id' => 'required|exists:colors,id',
+                'size_id' => 'required|exists:sizes,id',
+                'price' => 'required|numeric|min:0',
+                'sale' => 'nullable|numeric|min:0|lt:price',
+                'quantity' => 'required|numeric|min:0',
+                'is_active' => 'required',
+                'image' => 'nullable|image|max:2048',
+            ],
+            [
+                'color_id.required' => 'Vui lòng chọn màu.',
+                'size_id.required' => 'Vui lòng chọn size.',
+                'price.required' => 'Giá không được để trống.',
+                'price.numeric' => 'Giá phải là số.',
+                'price.min' => 'Giá phải >= 0.',
+                'sale.numeric' => 'Giá khuyến mãi phải là số.',
+                'sale.min' => 'Giá khuyến mãi phải >= 0.',
+                'sale.lt' => 'Giá khuyến mãi phải nhỏ hơn giá gốc.',
+                'quantity.required' => 'Số lượng không được để trống.',
+                'quantity.numeric' => 'Số lượng phải là số.',
+                'quantity.min' => 'Số lượng phải >= 0.',
+                'is_active.required' => 'Vui lòng chọn trạng thái.',
+                'image.image' => 'Hình ảnh không hợp lệ.',
+                'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+            ]
+        );
 
         if ($request->hasFile('image')) {
             $path_image = $request->file('image')->store('variants', 'public');
