@@ -5,6 +5,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
+            <!-- Breadcrumb -->
             <div class="col-lg-12 mb-2">
                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="d-flex align-items-center justify-content-between">
@@ -28,9 +29,12 @@
                 </div>
             </div>
             
+            <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
                 <h4 class="fw-bold d-flex align-items-center">New Product Variant</h4>
             </div>
+
+            <!-- Form -->
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
@@ -69,7 +73,6 @@
                             <div class="col-md-6 mb-3">
                                 <label for="price" class="form-label fw-bold text-muted text-uppercase">Price</label>
                                 <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price" value="{{ old('price') }}">
-
                                 @error('price')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -112,6 +115,7 @@
                                 @enderror
                             </div>
 
+                            <!-- Submit -->
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="submit" class="btn btn-primary">Create Product Variant</button>
                             </div>

@@ -5,6 +5,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
+            <!-- Breadcrumb -->
             <div class="col-lg-12 mb-2">
                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="d-flex align-items-center justify-content-between">
@@ -28,9 +29,12 @@
                 </div>
             </div>
             
+            <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
                 <h4 class="fw-bold d-flex align-items-center">Update Product Variant</h4>
             </div>
+
+            <!-- Form -->
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">

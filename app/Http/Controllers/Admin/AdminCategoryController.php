@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Validation\Rule;
 
 class AdminCategoryController extends Controller
 {
@@ -14,17 +14,8 @@ class AdminCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->query('search');
-
-        $query = Category::query();
-
-        if ($search) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        $categories = $query->orderBy('created_at', 'desc')->get();
-
-        return view('admin.categories.index', compact('categories', 'search'));
+        $categories = Category::all();
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -38,13 +29,25 @@ class AdminCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CategoryRequest $request)
+    public function store(Request $request)
     {
-        $validated = $request->validated();
+        $data = $request->validate(
+            [
+                'name' => 'required|string|unique:categories,name',
+                'description' => 'nullable|string|max:255',
+            ],
+            [
+                'name.required' => 'Tên danh mục không được để trống.',
+                'name.string' => 'Tên danh mục phải là chuỗi.',
+                'name.unique' => 'Tên danh mục đã tồn tại.',
+                'description.string' => 'Mô tả phải là chuỗi.',
+                'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
+            ]
+        );
 
-        $category = Category::create($validated);
+        Category::query()->create($data);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Danh mục đã được thêm thành công.');
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -61,20 +64,38 @@ class AdminCategoryController extends Controller
     public function edit(string $id)
     {
         $category = Category::findOrFail($id);
+
         return view('admin.categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategoryRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
         $category = Category::findOrFail($id);
-        $validated = $request->validated();
 
-        $category->update($validated);
+        $data = $request->validate(
+            [
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('categories', 'name')->ignore($category->id),
+                ],
+                'description' => 'nullable|string|max:255',
+            ],
+            [
+                'name.required' => 'Tên danh mục không được để trống.',
+                'name.string' => 'Tên danh mục phải là chuỗi.',
+                'name.unique' => 'Tên danh mục đã tồn tại.',
+                'description.string' => 'Mô tả phải là chuỗi.',
+                'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
+            ]
+        );
 
-        return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công.');
+        $category->update($data);
+
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -84,6 +105,7 @@ class AdminCategoryController extends Controller
     {
         $category = Category::findOrFail($id);
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Xóa danh mục thành công.');
+
+        return redirect()->route('admin.categories.index');
     }
 }

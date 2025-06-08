@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title')
+
+@section('title', 'Category')
 
 @section('content')
     <div class="container-fluid">
@@ -8,12 +9,11 @@
             <div class="col-lg-12 mb-2">
                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="d-flex align-items-center justify-content-between">
-                        <nav style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%278%27 height=%278%27%3E%3Cpath d=%27M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%27 fill=%27currentColor%27/%3E%3C/svg%3E');"
+                        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
                             aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.categories.index') }}">Categories</a>
-                                </li>
-                                <li class="breadcrumb-item active" aria-current="page">Add Category</li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.categories.index') }}">Category</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Edit Category</li>
                             </ol>
                         </nav>
                     </div>
@@ -31,7 +31,7 @@
 
             <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
-                <h4 class="fw-bold d-flex align-items-center">New Category</h4>
+                <h4 class="fw-bold d-flex align-items-center">Update Category</h4>
             </div>
 
             <!-- Form -->
@@ -39,29 +39,25 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="fw-bold mb-3">Basic Information</h5>
-
                         <form class="row g-3" action="{{ route('admin.categories.update', $category->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
                             <!-- Category Name -->
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold text-muted text-uppercase">Category Name</label>
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                    placeholder="Enter Category Name" value="{{ old('name', $category->name) }}">
+                            <div class="col-md-12 mb-3">
+                                <label for="name" class="form-label fw-bold text-muted text-uppercase">Category Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Category Name" value="{{ $category->name }}">
                                 @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Description -->
                             <div class="col-md-12 mb-3">
-                                <label class="form-label fw-bold text-muted text-uppercase">Description</label>
-                                <textarea name="description" class="form-control @error('description') is-invalid @enderror"
-                                    rows="4"
-                                    placeholder="Enter Description">{{ old('description', $category->description) }}</textarea>
+                                <label for="description" class="form-label fw-bold text-muted text-uppercase">Description</label>
+                                <textarea class="form-control" name="description" id="description" rows="4" placeholder="Enter Description">{{ $category->description }}</textarea>
                                 @error('description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
