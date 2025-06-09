@@ -9,7 +9,7 @@
                 <!-- Header -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h4 class="fw-bold">Product Variants</h4>
+                        <h4 class="fw-bold">Product Variant</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -17,8 +17,7 @@
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
-                                        <input type="text" class="form-control" id="exampleInputText"
-                                            placeholder="Search Product Variants">
+                                        <input type="text" class="form-control" id="exampleInputText"placeholder="Search Product Variant">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,7 +72,7 @@
                                                 <th><label class="text-muted m-0">Color</label></th>
                                                 <th><label class="text-muted m-0">Size</label></th>
                                                 <th><label class="text-muted m-0">Quantity</label></th>
-                                                <th><label class="text-muted m-0">Is_active</label></th>
+                                                <th><label class="text-muted m-0">Active</label></th>
                                                 <th class="text-start"><span class="text-muted">Action</span></th>
                                             </tr>
                                         </thead>
