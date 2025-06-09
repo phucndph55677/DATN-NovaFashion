@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminBannerController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
-
+use App\Http\Controllers\Admin\AdminCommentController;
 
 Route::get('/', function () {
     return view('layouts.app');
@@ -50,7 +50,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Ví dụ: admin.accounts.seller-manage.index, admin.accounts.seller-manage.create, ...
     });
     // Comments
-
+    Route::post('/comments/{comment}/toggle-status', [AdminCommentController::class, 'toggleStatus'])
+        ->name('comments.toggle-status');
     // Banners
     Route::resource('banners', AdminBannerController::class);
 
