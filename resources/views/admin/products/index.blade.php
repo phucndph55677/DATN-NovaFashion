@@ -70,7 +70,6 @@
                                                 <th><label class="text-muted m-0">Product Code</label></th>
                                                 <th><label class="text-muted m-0">Product Name</label></th>
                                                 <th><label class="text-muted m-0">Category</label></th>
-                                                {{-- <th><label class="text-muted m-0">Material </label></th> --}}
                                                 <th><label class="text-muted m-0">Onpage</label></th>
                                                 <th class="text-start"><span class="text-muted">Action</span></th>
                                             </tr>

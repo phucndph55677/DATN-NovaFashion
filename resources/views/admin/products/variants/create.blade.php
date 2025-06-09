@@ -98,8 +98,8 @@
                                 <label for="is_active" class="form-label fw-bold text-muted text-uppercase">Is_active</label>
                                 <select id="is_active" name="is_active" class="form-select form-control choicesjs">
                                     <option value="">Select Active</option>
-                                    <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Still Selling</option>
-                                    <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Stop Selling</option>
+                                    <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>On</option>
+                                    <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Off</option>
                                 </select>
                                 @error('is_active')
                                     <div class="text-danger">{{ $message }}</div>

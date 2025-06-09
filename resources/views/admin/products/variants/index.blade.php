@@ -49,7 +49,10 @@
                         <div class="card card-block card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                                    <h5 class="fw-bold">Variant of: {{ $product->name }}</h5>
+                                    <ol class="breadcrumb ps-0 mb-0 pb-0">
+                                        <h5><a href="{{ route('admin.products.index') }}">Product List</a> > </h5>
+                                        <h5 class="fw-bold">Variant of: {{ $product->name }}</h5>
+                                    </ol>
                                     <button class="btn btn-secondary btn-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -93,17 +96,13 @@
                                                     <td>{{ $variant->color->name }}</td>
                                                     <td>{{ $variant->size->name }}</td>
                                                     <td>{{ $variant->quantity }}</td>
-                                                    </td>
                                                     <td>
-                                                        @if ($variant->is_active)
-                                                            <span class="badge rounded-pill bg-success px-3 py-2 shadow-sm" title="Đang bán">
-                                                                <i class="bi bi-check-circle-fill me-1"></i> Still selling
-                                                            </span>
-                                                        @else
-                                                            <span class="badge rounded-pill bg-danger px-3 py-2 shadow-sm" title="Dừng bán">
-                                                                <i class="bi bi-x-circle-fill me-1"></i> Stop selling
-                                                            </span>
-                                                        @endif
+                                                        <div>
+                                                            <input type="checkbox" id="tr_fal_switch_{{ $variant->id }}" class="checkboxs" {{ $variant->is_active ? 'checked' : '' }} disabled />
+                                                            <label for="tr_fal_switch_{{ $variant->id }}" class="toggles text-white bg-success border-success"> 
+                                                                <p class="texts ps-1">On &nbsp;&nbsp;Off</p>
+                                                            </label>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-start align-items-center">
