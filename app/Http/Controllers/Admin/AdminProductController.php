@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AdminProductController extends Controller
 {
@@ -15,14 +16,9 @@ class AdminProductController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->query('search');
-        $query = Product::query();
-        if ($search) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
+        $products = Product::all();
 
-        $products = $query->orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.products.index', compact('products', 'search'));
+        return view('admin.products.index', compact('products'));
     }
 
     /**
@@ -31,6 +27,7 @@ class AdminProductController extends Controller
     public function create()
     {
         $categories = Category::all();
+        
         return view('admin.products.create', compact('categories'));
     }
 
@@ -39,26 +36,43 @@ class AdminProductController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-        'name' => 'required|string|max:255',
-        'category_id' => 'required|exists:categories,id',
-        'material' => 'nullable|string',
-        'description' => 'nullable|string',
-        'product_code' => 'required|string|max:255|unique:products,product_code',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+        $data = $request->validate(
+            [
+                'product_code' => 'required|string|max:10|unique:products,product_code',
+                'name' => 'required|string|unique:products,name',
+                'category_id' => 'required|exists:categories,id',
+                'material' => 'nullable|string',
+                'description' => 'nullable|string|max:255',
+                'onpage' => 'required',
+                'image' => 'required|image|max:2048',
+            ],
+            [
+                'product_code.required' => 'Mã sản phẩm không được để trống.',
+                'product_code.string' => 'Mã sản phẩm phải là chuỗi.',
+                'product_code.max' => 'Mã sản phẩm không được vượt quá 10 ký tự.',
+                'product_code.unique' => 'Mã sản phẩm đã tồn tại.',
+                'name.required' => 'Tên sản phẩm không được để trống.',
+                'name.string' => 'Tên sản phẩm phải là chuỗi.',
+                'name.unique' => 'Tên sản phẩm đã tồn tại.',
+                'category_id.required' => 'Vui lòng chọn danh mục.',
+                'material.string' => 'Chất liệu sản phẩm phải là chuỗi.',
+                'description.string' => 'Mô tả phải là chuỗi.',
+                'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
+                'onpage.required' => 'Vui lòng chọn onpage.',
+                'image.required' => 'Hình ảnh không được để trống.',
+                'image.image' => 'Hình ảnh không hợp lệ.',
+                'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+            ]
+        );          
             
-            
-        $data = $request->only(['name', 'category_id', 'material','product_code', 'description']);
-        $data['role_id'] = 1;
 
-    if ($request->hasFile('image')) {
-        $data['image'] = $request->file('image')->store('products', 'public');
-    }
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
         
-        Product::create($data);
+        Product::query()->create($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
+        return redirect()->route('admin.products.index');
     }
 
     /**
@@ -76,7 +90,11 @@ class AdminProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $categories = Category::all();
-        return view('admin.products.edit', compact('product', 'categories'));
+        $onpages = [
+            (object)['id' => 1, 'name' => 'On'],
+            (object)['id' => 0, 'name' => 'Off'],
+        ];
+        return view('admin.products.edit', compact('product', 'categories', 'onpages'));
     }
 
     /**
@@ -86,16 +104,42 @@ class AdminProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'material' => 'nullable|string',
-            'description' => 'nullable|string',
-            'product_code' => 'required|string|max:255|unique:products,product_code,' . $product->id,
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $data = $request->only(['name', 'category_id', 'material', 'product_code', 'description']);
+        $data = $request->validate(
+            [
+                'product_code' => [
+                    'required',
+                    'string',
+                    'max:10',
+                    Rule::unique('products', 'product_code')->ignore($product->id),
+                ],
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('products', 'name')->ignore($product->id),
+                ],
+                'category_id' => 'required|exists:categories,id',
+                'material' => 'nullable|string',
+                'description' => 'nullable|string|max:255',
+                'onpage' => 'required',
+                'image' => 'nullable|image|max:2048',
+            ],
+            [
+                'product_code.required' => 'Mã sản phẩm không được để trống.',
+                'product_code.string' => 'Mã sản phẩm phải là chuỗi.',
+                'product_code.max' => 'Mã sản phẩm không được vượt quá 10 ký tự.',
+                'product_code.unique' => 'Mã sản phẩm đã tồn tại.',
+                'name.required' => 'Tên sản phẩm không được để trống.',
+                'name.string' => 'Tên sản phẩm phải là chuỗi.',
+                'name.unique' => 'Tên sản phẩm đã tồn tại.',
+                'category_id.required' => 'Vui lòng chọn danh mục.',
+                'material.string' => 'Chất liệu sản phẩm phải là chuỗi.',
+                'description.string' => 'Mô tả phải là chuỗi.',
+                'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
+                'onpage.required' => 'Vui lòng chọn onpage.',
+                'image.image' => 'Hình ảnh không hợp lệ.',
+                'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+            ]
+        );          
 
         if ($request->hasFile('image')) {
             if ($product->image) {
@@ -107,7 +151,7 @@ class AdminProductController extends Controller
         
         $product->update($data);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
+        return redirect()->route('admin.products.index');
     }
 
     /**
@@ -120,6 +164,6 @@ class AdminProductController extends Controller
         }
         $product->delete(); 
 
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+        return redirect()->route('admin.products.index');
     }
 }
