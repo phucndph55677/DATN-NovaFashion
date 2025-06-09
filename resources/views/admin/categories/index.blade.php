@@ -17,8 +17,7 @@
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
-                                        <input type="text" class="form-control" id="exampleInputText"
-                                            placeholder="Search Product Variants">
+                                        <input type="text" class="form-control" id="exampleInputText" placeholder="Search Category">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,7 +104,7 @@
                                                             <!-- Delete -->
                                                             <form action="{{ route('admin.categories.destroy', $category->id) }}"
                                                                 method="POST"
-                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xoá không?');"
+                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xoá danh mục này không?');"
                                                                 style="display: inline-block;">
                                                                 @csrf
                                                                 @method('DELETE')

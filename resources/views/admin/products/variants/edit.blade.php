@@ -113,7 +113,7 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="image" class="form-label fw-bold text-muted text-uppercase">Product Image</label>
+                                <label for="image" class="form-label fw-bold text-muted text-uppercase">Variant Image</label>
                                 <input type="file" class="form-control" id="image" name="image">
                                 @if($variant->image)
                                     <img src="{{ asset('storage/' . $variant->image) }}" alt="Product Variant Image"

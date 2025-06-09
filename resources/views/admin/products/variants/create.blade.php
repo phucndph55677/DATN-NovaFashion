@@ -12,7 +12,7 @@
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
                             aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.variants.index', $product->id) }}">Product Variants</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.variants.index', $product->id) }}">Product Variant</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Add Product Variant</li>
                             </ol>
                         </nav>
@@ -101,14 +101,13 @@
                                     <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Still Selling</option>
                                     <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Stop Selling</option>
                                 </select>
-
                                 @error('is_active')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="image" class="form-label fw-bold text-muted text-uppercase">Product Image</label>
+                                <label for="image" class="form-label fw-bold text-muted text-uppercase">Variant Image</label>
                                 <input type="file" class="form-control" id="image" name="image">
                                 @error('image')
                                     <div class="text-danger">{{ $message }}</div>
