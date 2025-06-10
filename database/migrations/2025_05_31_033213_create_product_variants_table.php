@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('color_id')->constrained()->onDelete('cascade');   // Khóa ngoại liên kết tới bảng colors
             $table->foreignId('size_id')->constrained()->onDelete('cascade');    // Khóa ngoại liên kết tới bảng sizes
             $table->string('image')->nullable(); // Đường dẫn hoặc tên file ảnh, có thể để trống
-            $table->decimal('price', 10, 2);     // Giá sản phẩm, kiểu số thập phân với 2 chữ số thập phân
-            $table->decimal('sale', 10, 2)->default(0); // Giá khuyến mãi hoặc giảm giá, mặc định 0
+            $table->integer('price'); // VD: 150000 (150.000 VND)
+            $table->integer('sale')->nullable(); // Có thể để trống 
             $table->integer('quantity')->default(0);    // Số lượng tồn kho, mặc định 0
             $table->boolean('is_active')->default(true); // Trạng thái biến thể sản phẩm: còn bán, dừng bán
             $table->timestamps(); // Tạo 2 cột created_at và updated_at

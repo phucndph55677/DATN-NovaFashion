@@ -20,7 +20,7 @@ class ProductVariantFactory extends Factory
     public function definition(): array
     {
         $basePrice = fake()->numberBetween(100_000, 2_000_000);
-        $discount = fake()->boolean(50) ? fake()->numberBetween(10_000, $basePrice - 10_000) : 0;
+        $discount = fake()->boolean(50) ? fake()->numberBetween(10_000, $basePrice - 10_000) : null;
 
         return [
             'product_id' => Product::inRandomOrder()->first()?->id ?? Product::factory(),
@@ -28,7 +28,7 @@ class ProductVariantFactory extends Factory
             'size_id' => Size::inRandomOrder()->first()?->id ?? Size::factory(),
             'image' => fake()->imageUrl(600, 600, 'fashion'),
             'price' => $basePrice,
-            'sale' => $discount,
+            'sale' => $discount, // giờ có thể là null hoặc giá giảm
             'quantity' => fake()->numberBetween(0, 100),
             'is_active' => fake()->boolean(90), // 90% còn bán
         ];

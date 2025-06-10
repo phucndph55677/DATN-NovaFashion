@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // FK tới categories
-            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade'); // FK tới roles
+            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('cascade'); // FK tới roles
             $table->string('product_code')->unique(); // Mã sản phẩm, duy nhất
             $table->string('name'); // Tên sản phẩm
             $table->string('image')->nullable(); // Ảnh (có thể để trống)
