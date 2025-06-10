@@ -124,7 +124,8 @@
 
                                                             <!-- View -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="View" href="#">
+                                                                data-bs-placement="top" title="View" 
+                                                                href="{{ route('admin.products.show', $product->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
                                                                     fill="none" viewBox="0 0 24 24"
@@ -186,33 +187,4 @@
             </div>
         </div>
     </div>
-@endsection
-
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkbox = document.getElementById('tr_fal_switch');
-            const label = document.getElementById('toggle-label');
-            const icon = document.getElementById('toggle-icon');
-            const text = document.getElementById('toggle-text');
-
-            function updateToggleState() {
-                if (checkbox.checked) {
-                    label.classList.add('bg-success', 'border-success');
-                    label.classList.remove('bg-secondary');
-                    icon.className = 'bi bi-check-circle-fill me-1';
-                    text.textContent = 'ON';
-                } else {
-                    label.classList.remove('bg-success', 'border-success');
-                    label.classList.add('bg-secondary');
-                    icon.className = 'bi bi-x-circle-fill me-1';
-                    text.textContent = 'OFF';
-                }
-            }
-
-            checkbox.addEventListener('change', updateToggleState);
-            updateToggleState(); // Load ban đầu
-        });
-    </script>
-
 @endsection
