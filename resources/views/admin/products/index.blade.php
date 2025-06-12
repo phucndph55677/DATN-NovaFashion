@@ -67,10 +67,10 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted m-0">Product Code</label></th>
-                                                <th><label class="text-muted m-0">Product Name</label></th>
-                                                <th><label class="text-muted m-0">Category</label></th>
-                                                <th><label class="text-muted m-0">Onpage</label></th>
+                                                <th><label class="text-muted mb-0">Product Code</label></th>
+                                                <th><label class="text-muted mb-0">Product Name</label></th>
+                                                <th><label class="text-muted mb-0">Category</label></th>
+                                                <th><label class="text-muted mb-0">Onpage</label></th>
                                                 <th class="text-start"><span class="text-muted">Action</span></th>
                                             </tr>
                                         </thead>
@@ -87,7 +87,9 @@
                                                             </div>
                                                             <div class="data-content">
                                                                 <div>
-                                                                    <span class="fw-bold">{{ $product->name }}</span>
+                                                                    <span class="fw-bold" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                        {{ $product->name }}
+                                                                    </span>
                                                                 </div>
                                                                 <p class="m-0 mt-1"
                                                                     style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">

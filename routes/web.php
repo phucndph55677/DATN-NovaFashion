@@ -49,9 +49,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ]);
         // Ví dụ: admin.accounts.seller-manage.index, admin.accounts.seller-manage.create, ...
     });
+
     // Comments
-    Route::post('/comments/{comment}/toggle-status', [AdminCommentController::class, 'toggleStatus'])
-        ->name('comments.toggle-status');
+    Route::patch('/comments/{id}/toggle', [AdminCommentController::class, 'toggle'])->name('comment.toggle');
+    
     // Banners
     Route::resource('banners', AdminBannerController::class);
 
