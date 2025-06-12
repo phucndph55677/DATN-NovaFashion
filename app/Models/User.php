@@ -21,7 +21,7 @@ class User extends Authenticatable
         'role_id',
         'ranking_id',
         'image',
-        'fullname',
+        'name',
         'phone',
         'email',
         'password',

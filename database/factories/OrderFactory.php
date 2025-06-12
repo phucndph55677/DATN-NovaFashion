@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\OrderStatus;
 use Illuminate\Support\Str;
 
 /**
@@ -25,12 +26,12 @@ class OrderFactory extends Factory
 
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'order_status_id' => OrderStatus::inRandomOrder()->first()?->id ?? OrderStatus::factory(),
             'order_code' => '#' . strtoupper(Str::random(10)),
             'name' => $this->faker->name(),
             'address' => $this->faker->address(),
             'phone' => $this->faker->phoneNumber(),
             'email' => $this->faker->safeEmail(),
-            'status' => $this->faker->numberBetween(0, 3),
             'total' => $total,
             'sale_price' => $sale_price,
             'voucher_code' => $this->faker->optional()->bothify('VOUCHER-#####'),
