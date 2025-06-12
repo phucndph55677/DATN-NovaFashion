@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'role_id' => Role::inRandomOrder()->first()?->id ?? Role::factory(),
             'ranking_id' => Ranking::inRandomOrder()->first()?->id, // Có thể null nếu chưa có dữ liệu
             'image' => fake()->imageUrl(200, 200, 'people'),
-            'fullname' => fake()->name(),
+            'name' => fake()->name(),
             'phone' => fake()->unique()->numerify('+84 9## ### ###'),
             'email' => fake()->unique()->safeEmail(),
             'password' => Hash::make('password'), // mặc định cho seeding

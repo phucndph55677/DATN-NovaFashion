@@ -12,6 +12,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'order_status_id',
         'order_code',
         'name',
         'address',
@@ -29,5 +30,10 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function orderStatus()
+    {
+        return $this->belongsTo(OrderStatus::class);
     }
 }

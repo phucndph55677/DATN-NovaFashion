@@ -51,6 +51,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     // Comments
+    Route::resource('comments', AdminCommentController::class);
+
+    // Comments View product details
     Route::patch('/comments/{id}/toggle', [AdminCommentController::class, 'toggle'])->name('comment.toggle');
     
     // Banners

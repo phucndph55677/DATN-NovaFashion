@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('role_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng roles
             $table->foreignId('ranking_id')->nullable()->constrained('rankings')->onDelete('set null'); // Khóa ngoại liên kết tới bảng rankings, có thể null
             $table->string('image')->nullable(); // Ảnh đại diện người dùng (có thể null)
-            $table->string('fullname'); // Họ tên đầy đủ người dùng
+            $table->string('name'); // Họ tên đầy đủ người dùng
             $table->string('phone')->unique(); // Số điện thoại, yêu cầu duy nhất
             $table->string('email')->unique(); // Email, yêu cầu duy nhất
             $table->string('password'); // Mật khẩu mã hóa
