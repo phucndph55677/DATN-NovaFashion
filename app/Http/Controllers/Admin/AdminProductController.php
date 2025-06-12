@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -80,7 +81,10 @@ class AdminProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $comments = $product->comments()->with('user')->get();
+
+        return view('admin.products.show', compact('product', 'comments'));
     }
 
     /**
@@ -162,6 +166,7 @@ class AdminProductController extends Controller
         if($product ->image) {
             Storage::disk('public')->delete($product->image);
         }
+        
         $product->delete(); 
 
         return redirect()->route('admin.products.index');
