@@ -114,7 +114,7 @@
                                                         <th><label class="text-muted mb-0">Reviewer</label></th>
                                                         <th><label class="text-muted mb-0">Rating</label></th>
                                                         <th><label class="text-muted mb-0">Content</label></th>
-                                                        <th><label class="text-muted mb-0">Comment Date</label></th>
+                                                        <th><label class="text-muted mb-0">Review Date</label></th>
                                                         <th><label class="text-muted mb-0">Status</label></th>
                                                         <th class="text-start"><span class="text-muted">Action</span></th>
                                                     </tr>
