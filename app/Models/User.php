@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password',
         'address',
         'is_verified',
+        'status',
     ];
 
     /**
@@ -61,4 +62,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Ranking::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
 }

@@ -1,189 +1,174 @@
-@extends('layouts.app') {{-- Hoặc layout admin của bạn, ví dụ: layouts.admin_app --}}
+@extends('layouts.app')
 
-@section('title', 'Admin Management')
+@section('title', 'Admin Manage')
 
 @section('content')
     <div class="container-fluid">
-        {{-- Session Messages --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
         <div class="row">
-            <div class="col-lg-12">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
-                    <div class="d-flex align-items-center">
-                        <h4 class="fw-bold">Admin Account Management</h4>
+            <div class="col-lg-5">
+                <div class="card card-block p-card">
+                    <div class="profile-box">
+                    <div class="profile-card rounded">
+                        <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/user/1.jpg" alt="profile-bg"
+                            class="avatar-100 rounded d-block mx-auto img-fluid mb-3">
+                        <h3 class="font-600 text-white text-center mb-0">{{ $admin->name }}</h3>
+                        <p class="text-white text-center mb-5">Lập Trình Điên - Code Đơ</p>
                     </div>
-                    <div class="create-workform">
-                        <div class="d-flex flex-wrap align-items-center">
-                            <div class="modal-product-search d-flex flex-wrap">
-                                <form class="me-3 position-relative" method="GET"
-                                    action="{{ route('admin.accounts.admin-manage.index') }}">
-                                    <div class="form-group mb-0">
-                                        <input type="text" class="form-control" placeholder="Search Admin (Name, Email)"
-                                            aria-label="Search Admin" name="search" value="{{ request('search') }}">
-                                        <button type="submit" class="search-link btn btn-link position-absolute"
-                                            style="top: 50%; right: 10px; transform: translateY(-50%);">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <a href="{{ route('admin.accounts.admin-manage.create') }}"
-                                    class="btn btn-primary d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                    Add New Admin
+                    <div class="pro-content rounded">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="p-icon me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-primary" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                                </svg>
+                            </div>
+                            <p class="mb-0 eml">{{ $admin->email }}</p>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="p-icon me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-primary" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
+                                </svg>
+                            </div>
+                            <p class="mb-0">{{ $admin->phone }}</p>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="p-icon me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-primary" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <p class="mb-0">{{ $admin->address }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <div class="social-ic d-inline-flex rounded">
+                                <a href="#">
+                                <svg width="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0)">
+                                        <path
+                                            d="M341.269 85.0133H388.011V3.60533C379.947 2.496 352.213 0 319.915 0C252.523 0 206.357 42.3893 206.357 120.299V192H131.989V283.008H206.357V512H297.536V283.029H368.896L380.224 192.021H297.515V129.323C297.536 103.019 304.619 85.0133 341.269 85.0133V85.0133Z"
+                                            fill=" #0165E1" />
+                                    </g>
+                                    <defs>
+                                        <clipPath>
+                                            <rect width="512" height="512" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                                </a>
+                                <a href="#">
+                                <svg width="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g>
+                                        <path
+                                            d="M459.392 151.744C480.213 136.96 497.728 118.507 512 97.2587V97.2373C492.949 105.579 472.683 111.125 451.52 113.813C473.28 100.821 489.899 80.4053 497.707 55.808C477.419 67.904 455.019 76.4373 431.147 81.216C411.883 60.6933 384.427 48 354.475 48C296.363 48 249.579 95.168 249.579 152.981C249.579 161.301 250.283 169.301 252.011 176.917C164.757 172.651 87.5307 130.837 35.648 67.1147C26.6027 82.8373 21.2693 100.821 21.2693 120.171C21.2693 156.523 39.9787 188.736 67.904 207.403C51.0293 207.083 34.496 202.176 20.48 194.475V195.627C20.48 246.635 56.8533 289.003 104.576 298.773C96.0213 301.12 86.72 302.229 77.056 302.229C70.336 302.229 63.552 301.845 57.1947 300.437C70.784 341.995 109.397 372.565 155.264 373.568C119.552 401.493 74.1973 418.325 25.1093 418.325C16.512 418.325 8.256 417.941 0 416.896C46.5067 446.869 101.589 464 161.024 464C346.261 464 466.987 309.461 459.392 151.744V151.744Z"
+                                            fill="#1D9BF0" />
+                                    </g>
+                                </svg>
+                                </a>
+                                <a href="#">
+                                <svg width="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0)">
+                                        <path
+                                            d="M500.672 126.485L501.312 130.666C495.125 108.714 478.421 91.7756 457.195 85.6103L456.747 85.5036C416.832 74.6663 256.213 74.6663 256.213 74.6663C256.213 74.6663 95.9999 74.453 55.6799 85.5036C34.0479 91.7756 17.3226 108.714 11.2426 130.218L11.1359 130.666C-3.77607 208.554 -3.88274 302.144 11.7973 385.536L11.1359 381.312C17.3226 403.264 34.0266 420.202 55.2533 426.368L55.7013 426.474C95.5733 437.333 256.235 437.333 256.235 437.333C256.235 437.333 416.427 437.333 456.768 426.474C478.421 420.202 495.147 403.264 501.227 381.76L501.333 381.312C508.117 345.088 512 303.402 512 260.821C512 259.264 512 257.685 511.979 256.106C512 254.656 512 252.928 512 251.2C512 208.597 508.117 166.912 500.672 126.485V126.485ZM204.971 333.888V178.304L338.645 256.213L204.971 333.888Z"
+                                            fill="#c4302b" />
+                                    </g>
+                                    <defs>
+                                        <clipPath>
+                                            <rect width="512" height="512" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                                </a>
+                                <a href="#">
+                                <svg width="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0)">
+                                        <path
+                                            d="M262.955 0C122.603 0.0213333 48 89.9413 48 187.989C48 233.451 73.408 290.176 114.091 308.16C125.696 313.387 124.16 307.008 134.144 268.821C134.933 265.643 134.528 262.891 131.968 259.925C73.8133 192.661 120.619 54.3787 254.656 54.3787C448.64 54.3787 412.395 322.795 288.405 322.795C256.448 322.795 232.64 297.707 240.171 266.667C249.301 229.696 267.179 189.952 267.179 163.307C267.179 96.1493 167.125 106.112 167.125 195.093C167.125 222.592 176.853 241.152 176.853 241.152C176.853 241.152 144.661 371.2 138.688 395.499C128.576 436.629 140.053 503.211 141.056 508.949C141.675 512.107 145.216 513.109 147.2 510.507C150.379 506.347 189.291 450.837 200.192 410.709C204.16 396.096 220.437 336.789 220.437 336.789C231.168 356.16 262.101 372.373 295.061 372.373C393.109 372.373 463.979 286.187 463.979 179.243C463.637 76.7147 375.893 0 262.955 0V0Z"
+                                            fill="#E60023" />
+                                    </g>
+                                    <defs>
+                                        <clipPath>
+                                            <rect width="512" height="512" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
                                 </a>
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
-
-                <div class="card card-block card-stretch">
-                    <div class="card-body p-0">
-                        <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                            <h5 class="fw-bold">Admin List</h5>
-                        </div>
-
-                        <div class="table-responsive iq-product-table">
-                            <table class="table data-table mb-0">
-                                <thead class="table-color-heading">
-                                    <tr class="text-light">
-                                        <th><label class="text-muted m-0">ID</label></th>
-                                        <th><label class="text-muted mb-0">Avatar</label></th>
-                                        <th><label class="text-muted mb-0">Full Name</label></th>
-                                        <th><label class="text-muted mb-0">Email</label></th>
-                                        <th><label class="text-muted mb-0">Phone</label></th>
-                                        <th><label class="text-muted mb-0">Verified</label></th>
-                                        <th><label class="text-muted mb-0">Created At</label></th>
-                                        <th class="text-center"><span class="text-muted">Action</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($admins as $admin)
-                                        @if($admin->role_id == 3)
-                                        <tr>
-                                            <td>{{ $admin->id }}</td>
-                                            <td>
-                                                @php
-                                                    $imagePath = null;
-                                                    if ($admin->image) {
-                                                        $imagePath = preg_replace('#^/?storage/#', '', $admin->image);
-                                                    }
-                                                @endphp
-                                                <img
-                                                    src="{{ $imagePath && file_exists(public_path('storage/' . $imagePath))
-                                                        ? asset('storage/' . $imagePath)
-                                                        : asset('images/default-avatar.png') }}"
-                                                    alt="Avatar"
-                                                    class="img-fluid rounded-circle"
-                                                    style="width: 40px; height: 40px; object-fit: cover;"
-                                                    onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}';"
-                                                >
-                                            </td>
-                                            <td>{{ $admin->fullname }}</td>
-                                            <td>{{ $admin->email }}</td>
-                                            <td>{{ $admin->phone ?: 'N/A' }}</td>
-                                            <td>
-                                                @if ($admin->is_verified)
-                                                    <span class="badge bg-success">Verified</span>
-                                                @else
-                                                    <span class="badge bg-warning text-dark">Not Verified</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $admin->created_at ? $admin->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
-                                            <td>
-                                                <div class="d-flex justify-content-center align-items-center gap-2">
-                                                    <a href="{{ route('admin.accounts.admin-manage.show', $admin->id) }}"
-                                                        class="btn btn-sm btn-icon text-info" data-bs-toggle="tooltip"
-                                                        title="View Details">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-.294 1.006-.792 1.93-1.422 2.745M12 19c-4.478 0-8.268-2.943-9.542-7 .294-1.006.792-1.93 1.422-2.745" />
-                                                        </svg>
-                                                    </a>
-
-                                                    <a href="{{ route('admin.accounts.admin-manage.edit', $admin->id) }}"
-                                                        class="btn btn-sm btn-icon text-primary" data-bs-toggle="tooltip"
-                                                        title="Edit Admin">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                        </svg>
-                                                    </a>
-
-                                                    <form
-                                                        action="{{ route('admin.accounts.admin-manage.destroy', $admin->id) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản quản trị này không? Hành động này không thể hoàn tác.');"
-                                                        style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-icon text-danger"
-                                                            data-bs-toggle="tooltip" title="Delete Admin">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center py-4">No admin accounts found.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        {{-- @if ($admins->hasPages())
-                            <div class="d-flex justify-content-center mt-4 px-3">
-                                {{ $admins->links() }}
-                            </div>
-                        @endif --}}
-
+            </div>
+            <div class="col-lg-7">
+                <div class="card card-block">
+                    <div class="card-header d-flex justify-content-between ">
+                    <div class="header-title">
+                        <h4 class="card-title mb-0">About Me</h4>
+                    </div>
+                    </div>
+                    <div class="card-body">
+                    <p>AI CUNG PHAI BAT DAU TU DAU DO</p>
+                    <p>AI CUNG PHAI BAT DAU TU DAU DO</p>
+                    <p>AI CUNG PHAI BAT DAU TU DAU DO</p>
+                    <p>AI CUNG PHAI BAT DAU TU DAU DO</p>
+                    <p>AI CUNG PHAI BAT DAU TU DAU DO</p>
+                    <h5 class="mb-2 mt-4">Personal Skills</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary me-2" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Lorem ipsum dolor sit amet,
+                            consectetur adipiscing elit.
+                        </li>
+                        <li class="mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary me-2" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Aliquam ultrices tellus in
+                            auctor blandit.
+                        </li>
+                        <li class="mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary me-2" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Etiam tincidunt erat non
+                            ante sagittis bibendum.
+                        </li>
+                        <li class="mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary me-2" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Nunc malesuada massa ut
+                            nisl sollicitudin semper.
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary me-2" width="20" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Fusce et arcu in dui feugiat finibus.
+                        </li>
+                    </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        // Initialize Bootstrap tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
-@endpush

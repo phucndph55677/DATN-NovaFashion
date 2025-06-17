@@ -10,95 +10,53 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminManageController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        $query = User::where('role_id', 3); // role_id = 3 là admin
+        $admin = User::where('role_id', 1)->firstOrFail(); // Nếu không có thì báo lỗi 404
 
-        if ($request->has('search') && $request->search != '') {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('fullname', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('email', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        $admins = $query->latest()->paginate(10);
-
-        return view('admin.accounts.adminManage.index', compact('admins'));
+        return view('admin.accounts.adminManage.index', compact('admin'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('admin.accounts.adminManage.create');
+        //
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'fullname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:20', 'regex:/^\+?[0-9\s\-]{7,20}$/', 'unique:users,phone'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'is_verified' => ['required', 'boolean'],
-        ], [
-            'fullname.required' => 'Họ và tên không được để trống.',
-            'fullname.max' => 'Họ và tên không được vượt quá 255 ký tự.',
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Email phải có định dạng hợp lệ.',
-            'email.unique' => 'Email này đã được đăng ký.',
-            'phone.regex' => 'Số điện thoại không đúng định dạng.',
-            'phone.unique' => 'Số điện thoại này đã được sử dụng.',
-            'password.required' => 'Mật khẩu không được để trống.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-            'address.max' => 'Địa chỉ không được vượt quá 500 ký tự.',
-            'image.image' => 'File tải lên phải là hình ảnh.',
-            'image.mimes' => 'Hình ảnh phải có định dạng jpeg, png, jpg, gif hoặc svg.',
-            'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
-            'is_verified.required' => 'Trạng thái xác thực là bắt buộc.',
-            'is_verified.boolean' => 'Trạng thái xác thực không hợp lệ.',
-        ]);
-
-        $data = $request->all();
-        $data['password'] = Hash::make($request->password);
-        $data['role_id'] = 3; // role_id admin là 3
-
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/avatars', 'public');
-            $data['image'] = $path;
-        } else {
-            $data['image'] = null;
-        }
-
-        User::create($data);
-
-        return redirect()->route('admin.accounts.admin-manage.index')
-            ->with('success', 'Admin account created successfully.');
+        //
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(User $user)
     {
-        if ($user->role_id != 3) {
-            abort(404);
-        }
-        return view('admin.accounts.adminManage.show', compact('user'));
+        //
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(User $user)
     {
-        if ($user->role_id != 3) {
-            abort(404);
-        }
         return view('admin.accounts.adminManage.edit', compact('user'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, User $user)
     {
-        if ($user->role_id != 3) {
-            abort(403, 'Unauthorized action.');
-        }
 
         $request->validate([
             'fullname' => ['required', 'string', 'max:255'],
@@ -150,19 +108,11 @@ class AdminManageController extends Controller
                          ->with('success', 'Admin account updated successfully.');
     }
 
-    public function destroy(User $user)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
     {
-        if ($user->role_id != 3) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        if ($user->image && Storage::disk('public')->exists($user->image)) {
-            Storage::disk('public')->delete($user->image);
-        }
-
-        $user->delete();
-
-        return redirect()->route('admin.accounts.admin-manage.index')
-            ->with('success', 'Tài khoản quản trị đã được xóa thành công.');
+        //
     }
 }

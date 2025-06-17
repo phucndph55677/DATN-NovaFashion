@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('password'); // Mật khẩu mã hóa
             $table->text('address')->nullable(); // Địa chỉ (có thể null); 
             $table->boolean('is_verified')->default(false); // Trạng thái xác thực (false: chưa xác thực, true: đã xác thực)
+            $table->tinyInteger('status')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
