@@ -17,6 +17,6 @@
     rel="stylesheet">
 <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
-    rel="stylesheet">   
+    rel="stylesheet">
 <link rel="stylesheet" href="https://templates.iqonic.design/datum-dist/laravel/public/vendor/vanillajs-datepicker/dist/css/datepicker.min.css">
 <link rel="stylesheet" href="https://templates.iqonic.design/datum-dist/laravel/public/vendor/Leaflet/leaflet.css" />

@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('chat_details', function (Blueprint $table) {
             $table->id(); // Khóa chính id
             $table->foreignId('chat_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng chats
-            $table->text('content'); // Nội dung chi tiết tin nhắn
+            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+            $table->text('message'); // Nội dung chi tiết tin nhắn
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }
