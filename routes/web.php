@@ -41,11 +41,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('admin-manage', AdminManageController::class);
     });
 
-    // Comments
-    Route::resource('comments', AdminReviewController::class);
+    // Reviews
+    Route::resource('reviews', AdminReviewController::class);
 
     // Comments View product details
     Route::patch('/comments/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('comment.toggle');
+
+    Route::patch('/reviews/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('reviews.toggle');
     
     // Banners
     Route::resource('banners', AdminBannerController::class);

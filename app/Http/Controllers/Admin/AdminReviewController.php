@@ -76,6 +76,6 @@ class AdminReviewController extends Controller
         $review->save();
 
         $productId = $review->product_id;
-        return redirect()->route('admin.products.show', $productId);
+        return redirect()->route('admin.reviews.index', $productId);
     }
 }
