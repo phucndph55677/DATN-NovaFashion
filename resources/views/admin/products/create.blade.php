@@ -40,7 +40,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="fw-bold mb-3">Basic Information</h5>
-                                <form class="row g-3" method="POST" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+                                <form class="row g-3" action="{{ route('admin.products.store') }}" method="post" enctype="multipart/form-data">
                                     @csrf
 
                                     <div class="mb-3">

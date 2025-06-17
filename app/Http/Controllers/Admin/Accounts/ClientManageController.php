@@ -7,162 +7,98 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Ranking;
 
 class ClientManageController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        $query = User::where('role_id', 2); // role_id = 2 là client
-
-        if ($request->has('search') && $request->search != '') {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('fullname', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('email', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        $clients = $query->latest()->paginate(10);
+        $clients = User::where('role_id', 3)->get();
 
         return view('admin.accounts.clientManage.index', compact('clients'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('admin.accounts.clientManage.create');
+        //
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'fullname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:20', 'regex:/^\+?[0-9\s\-]{7,20}$/', 'unique:users,phone'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'is_verified' => ['required', 'boolean'],
-        ], [
-            'fullname.required' => 'Họ và tên không được để trống.',
-            'fullname.max' => 'Họ và tên không được vượt quá 255 ký tự.',
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Email phải có định dạng hợp lệ.',
-            'email.unique' => 'Email này đã được đăng ký.',
-            'phone.regex' => 'Số điện thoại không đúng định dạng.',
-            'phone.unique' => 'Số điện thoại này đã được sử dụng.',
-            'password.required' => 'Mật khẩu không được để trống.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-            'address.max' => 'Địa chỉ không được vượt quá 500 ký tự.',
-            'image.image' => 'File tải lên phải là hình ảnh.',
-            'image.mimes' => 'Hình ảnh phải có định dạng jpeg, png, jpg, gif hoặc svg.',
-            'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
-            'is_verified.required' => 'Trạng thái xác thực là bắt buộc.',
-            'is_verified.boolean' => 'Trạng thái xác thực không hợp lệ.',
-        ]);
-
-        $data = $request->all();
-        $data['password'] = Hash::make($request->password);
-        $data['role_id'] = 2; // role_id client là 2
-
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads/avatars', 'public');
-            $data['image'] = $path;
-        } else {
-            $data['image'] = null;
-        }
-
-        User::create($data);
-
-        return redirect()->route('admin.accounts.client-manage.index')
-            ->with('success', 'Client account created successfully.');
+        //
     }
 
-    public function show(User $user)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        if ($user->role_id != 2) {
-            abort(404);
-        }
-        return view('admin.accounts.clientManage.show', compact('user'));
+        $client = User::findOrFail($id);
+        $reviews = $client->reviews()->with('user')->get();
+
+        return view('admin.accounts.clientManage.show', compact('client', 'reviews'));
     }
 
-    public function edit(User $user)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        if ($user->role_id != 2) {
-            abort(404);
-        }
-        return view('admin.accounts.clientManage.edit', compact('user'));
+        $client = User::where('role_id', 3)->findOrFail($id);
+        $rankings = Ranking::all(); // Lấy toàn bộ danh sách ranking
+        $statuses = [
+            (object)['id' => 1, 'name' => 'Active'],
+            (object)['id' => 0, 'name' => 'Inactive'],
+        ];
+
+        return view('admin.accounts.clientManage.edit', compact('client', 'rankings', 'statuses'));
     }
 
-    public function update(Request $request, User $user)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
-        if ($user->role_id != 2) {
-            abort(403, 'Unauthorized action.');
-        }
+        $client = User::where('role_id', 3)->findOrFail($id);
 
-        $request->validate([
-            'fullname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'phone' => ['nullable', 'string', 'max:20', 'regex:/^\+?[0-9\s\-]{7,20}$/', 'unique:users,phone,' . $user->id],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'is_verified' => ['required', 'boolean'],
-        ], [
-            'fullname.required' => 'Họ và tên không được để trống.',
-            'fullname.max' => 'Họ và tên không được vượt quá 255 ký tự.',
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Email phải có định dạng hợp lệ.',
-            'email.unique' => 'Email này đã được đăng ký.',
-            'phone.regex' => 'Số điện thoại không đúng định dạng.',
-            'phone.unique' => 'Số điện thoại này đã được sử dụng.',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-            'address.max' => 'Địa chỉ không được vượt quá 500 ký tự.',
-            'image.image' => 'File tải lên phải là hình ảnh.',
-            'image.mimes' => 'Hình ảnh phải có định dạng jpeg, png, jpg, gif hoặc svg.',
-            'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
-            'is_verified.required' => 'Trạng thái xác thực là bắt buộc.',
-            'is_verified.boolean' => 'Trạng thái xác thực không hợp lệ.',
-        ]);
+        $data = $request->validate(
+            [
+                'ranking_id' => 'required',
+                'status' => 'required',
+            ],
+            [
+                'ranking_id.required' => 'Vui lòng chọn xếp hạng.',
+                'status.required' => 'Vui lòng chọn trạng thái.',
+            ]
+        );
 
-        if ($request->hasFile('image')) {
-            if ($user->image) {
-                Storage::disk('public')->delete($user->image);
-            }
-            $path = $request->file('image')->store('uploads/avatars', 'public');
-            $user->image = $path;
-        }
+        $client->update($data);
 
-        $user->fullname = $request->fullname;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->address = $request->address;
-        $user->is_verified = $request->is_verified;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        return redirect()->route('admin.accounts.client-manage.index')
-                         ->with('success', 'Client account updated successfully.');
+        return redirect()->route('admin.accounts.client-manage.index');
     }
 
-    public function destroy(User $user)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
     {
-        if ($user->role_id != 2) {
-            abort(403, 'Unauthorized action.');
+        $client = User::where('role_id', 3)->findOrFail($id);
+
+        if($client ->image) {
+            Storage::disk('public')->delete($client->image);
         }
 
-        if ($user->image && Storage::disk('public')->exists($user->image)) {
-            Storage::disk('public')->delete($user->image);
-        }
+        $client->delete();
 
-        $user->delete();
-
-        return redirect()->route('admin.accounts.client-manage.index')
-            ->with('success', 'Tài khoản khách hàng đã được xóa thành công.');
+        return redirect()->route('admin.accounts.client-manage.index');
     }
 }

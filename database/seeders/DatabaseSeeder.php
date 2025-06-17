@@ -32,7 +32,6 @@ class DatabaseSeeder extends Seeder
             // ProductFavoriteSeeder::class,
             // VariantImageSeeder::class,
             // ReviewSeeder::class,
-            // CommentSeeder::class,
             // CartSeeder::class,
             // CartDetailSeeder::class,
             // ChatSeeder::class,

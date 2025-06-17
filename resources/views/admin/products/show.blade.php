@@ -98,7 +98,7 @@
 
                     <div class="card-body">
                         <hr>
-                        <h5 class="fw-bold mb-3">Comment List</h5>
+                        <h5 class="fw-bold mb-3">Review List</h5>
                         <!-- Card Table -->
                         <div class="row">
                             <div class="col-lg-12">
@@ -111,7 +111,8 @@
                                                 <thead class="table-color-heading">
                                                     <tr class="text-light">
                                                         <th><label class="text-muted m-0">ID</label></th>
-                                                        <th><label class="text-muted mb-0">Commenter</label></th>
+                                                        <th><label class="text-muted mb-0">Reviewer</label></th>
+                                                        <th><label class="text-muted mb-0">Rating</label></th>
                                                         <th><label class="text-muted mb-0">Content</label></th>
                                                         <th><label class="text-muted mb-0">Comment Date</label></th>
                                                         <th><label class="text-muted mb-0">Status</label></th>
@@ -119,34 +120,32 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($comments as $comment)
+                                                    @foreach ($reviews as $review)
                                                         <tr class="white-space-no-wrap">
-                                                            <td>{{ $comment->id }}</td>
-                                                            <td>{{ $comment->user->fullname ?? 'N/A' }}</td>
-                                                            {{-- <td>
-                                                                @if ($comment->user)
-                                                                    <a href="#" target="_blank">
-                                                                        {{ $comment->user->fullname }}
-                                                                    </a>
-                                                                @else
-                                                                    <a href="#" class="text-muted" title="Tài khoản không tồn tại">
-                                                                        (Không có tài khoản)
-                                                                    </a>
-                                                                @endif
-                                                            </td> --}}
-                                                            <td style="white-space: normal; word-break: break-word; max-width: 300px;">
-                                                                {{ $comment->content }}
-                                                            </td>                                                         
-                                                            <td>{{ $comment->created_at->format('d/m/Y') }}</td>
-                                                            <td>{{ $comment->status == 1 ? 'Hiển thị' : 'Bị ẩn' }}</td>
+                                                            <td>{{ $review->id }}</td>
+                                                            <td>{{ $review->user->name ?? 'N/A' }}</td>                                                       
                                                             <td>
-                                                                <form action="{{ route('admin.comment.toggle', $comment->id) }}" method="POST">
+                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                    @if ($i <= $review->rating)
+                                                                        <span style="color: gold; font-size: 20px;">&#9733;</span>
+                                                                    @else
+                                                                        <span style="color: #ccc; font-size: 20px;">&#9733;</span>
+                                                                    @endif
+                                                                @endfor
+                                                            </td>
+                                                            <td style="white-space: normal; word-break: break-word; max-width: 300px;">
+                                                                {{ $review->content }}
+                                                            </td>                                                         
+                                                            <td>{{ $review->created_at->format('d/m/Y') }}</td>
+                                                            <td>{{ $review->status == 1 ? 'Hiển thị' : 'Bị ẩn' }}</td>
+                                                            <td>
+                                                                <form action="{{ route('admin.comment.toggle', $review->id) }}" method="POST">
                                                                     @csrf
                                                                     @method('PATCH')
                                                                     <button type="submit"
-                                                                            onclick="return confirm('Bạn có muốn {{ $comment->status == 1 ? 'ẩn' : 'bỏ ẩn' }} bình luận này không?')"
-                                                                            class="btn btn-sm {{ $comment->status == 1 ? 'btn-danger' : 'btn-success' }} rounded-pill px-3 shadow-sm">
-                                                                        {{ $comment->status == 1 ? 'Ẩn' : 'Bỏ ẩn' }}
+                                                                            onclick="return confirm('Bạn có muốn {{ $review->status == 1 ? 'ẩn' : 'bỏ ẩn' }} đánh giá này không?')"
+                                                                            class="btn btn-sm {{ $review->status == 1 ? 'btn-danger' : 'btn-success' }} rounded-pill px-3 shadow-sm">
+                                                                        {{ $review->status == 1 ? 'Ẩn' : 'Bỏ ẩn' }}
                                                                     </button>
                                                                 </form>
                                                             </td>

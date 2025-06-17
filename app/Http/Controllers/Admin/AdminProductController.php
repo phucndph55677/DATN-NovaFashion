@@ -82,9 +82,9 @@ class AdminProductController extends Controller
     public function show(string $id)
     {
         $product = Product::findOrFail($id);
-        $comments = $product->comments()->with('user')->get();
+        $reviews = $product->reviews()->with('user')->get();
 
-        return view('admin.products.show', compact('product', 'comments'));
+        return view('admin.products.show', compact('product', 'reviews'));
     }
 
     /**

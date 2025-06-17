@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminBannerController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
-use App\Http\Controllers\Admin\AdminCommentController;
+use App\Http\Controllers\Admin\AdminReviewController;
 
 Route::get('/', function () {
     return view('layouts.app');
@@ -31,30 +31,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
   
     // Accounts
      Route::prefix('accounts')->name('accounts.')->group(function () {
-        // Admin Management
-        Route::resource('admin-manage', AdminManageController::class)->parameters([
-            'admin-manage' => 'user' // Ánh xạ tham số route 'admin-manage' thành 'user' trong controller
-        ]);
-        // Ví dụ: admin.accounts.admin-manage.index, admin.accounts.admin-manage.create, ...
-
         // Client Management
-        Route::resource('client-manage', ClientManageController::class)->parameters([
-            'client-manage' => 'user' // Ánh xạ tham số route 'client-manage' thành 'user' trong controller
-        ]);
-        // // Ví dụ: admin.accounts.client-manage.index, admin.accounts.client-manage.create, ...
+        Route::resource('client-manage', ClientManageController::class);
 
         // Seller Management
-        Route::resource('seller-manage', SellerManageController::class)->parameters([
-            'seller-manage' => 'user' // Ánh xạ tham số route 'seller-manage' thành 'user' trong controller
-        ]);
-        // Ví dụ: admin.accounts.seller-manage.index, admin.accounts.seller-manage.create, ...
+        Route::resource('seller-manage', SellerManageController::class);
+
+        // Admin Management
+        Route::resource('admin-manage', AdminManageController::class);
     });
 
     // Comments
-    Route::resource('comments', AdminCommentController::class);
+    Route::resource('comments', AdminReviewController::class);
 
     // Comments View product details
-    Route::patch('/comments/{id}/toggle', [AdminCommentController::class, 'toggle'])->name('comment.toggle');
+    Route::patch('/comments/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('comment.toggle');
     
     // Banners
     Route::resource('banners', AdminBannerController::class);
