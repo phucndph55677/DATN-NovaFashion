@@ -139,7 +139,7 @@
                                                             <td>{{ $review->created_at->format('d/m/Y') }}</td>
                                                             <td>{{ $review->status == 1 ? 'Hiển thị' : 'Bị ẩn' }}</td>
                                                             <td>
-                                                                <form action="{{ route('admin.comment.toggle', $review->id) }}" method="POST">
+                                                                <form action="{{ route('admin.products.toggle', $review->id) }}" method="POST">
                                                                     @csrf
                                                                     @method('PATCH')
                                                                     <button type="submit"
