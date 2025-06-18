@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
 use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\Admin\AdminVoucherController;
 
 Route::get('/', function () {
     return view('layouts.app');
@@ -29,9 +30,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/variants/{id}/edit', [AdminProductVariantController::class, 'edit'])->name('variants.edit');
     Route::put('/variants/{id}', [AdminProductVariantController::class, 'update'])->name('variants.update');
     Route::delete('/variants/{id}', [AdminProductVariantController::class, 'destroy'])->name('variants.destroy');
-  
+
     // Accounts
-     Route::prefix('accounts')->name('accounts.')->group(function () {
+    Route::prefix('accounts')->name('accounts.')->group(function () {
         // Client Management
         Route::resource('client-manage', ClientManageController::class);
 
@@ -47,11 +48,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // View Reviews
     Route::patch('/reviews/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('reviews.toggle');
-    
+
     Route::patch('/products/{id}/toggle', [AdminProductController::class, 'toggle'])->name('products.toggle');
-    
     // Banners
     Route::resource('banners', AdminBannerController::class);
     Route::resource('orders', AdminOrderController::class);
 
+    // Vouchers
+    Route::resource('vouchers', AdminVoucherController::class);
 });
