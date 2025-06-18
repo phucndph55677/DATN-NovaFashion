@@ -44,10 +44,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Reviews
     Route::resource('reviews', AdminReviewController::class);
 
-    // Comments View product details
-    Route::patch('/comments/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('comment.toggle');
-
+    // View Reviews
     Route::patch('/reviews/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('reviews.toggle');
+    
+    Route::patch('/products/{id}/toggle', [AdminProductController::class, 'toggle'])->name('products.toggle');
     
     // Banners
     Route::resource('banners', AdminBannerController::class);

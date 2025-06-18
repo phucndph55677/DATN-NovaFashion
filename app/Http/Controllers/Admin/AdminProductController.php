@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Product;
-use App\Models\Comment;
+use App\Models\Product;;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -170,5 +170,18 @@ class AdminProductController extends Controller
         $product->delete(); 
 
         return redirect()->route('admin.products.index');
+    }
+
+    /**
+     * Hiển thị bình luận tương ứng với sản phẩm.
+     */
+    public function toggle(Request $request, $id)
+    {
+        $review = Review::findOrFail($id);
+        $review->status = $review->status == 1 ? 0 : 1; // Chuyển đổi trạng thái
+        $review->save();
+
+        $productId = $review->product_id;
+        return redirect()->route('admin.products.show', $productId);
     }
 }
