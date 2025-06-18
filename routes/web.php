@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminProductVariantController;
@@ -51,5 +52,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     // Banners
     Route::resource('banners', AdminBannerController::class);
+    Route::resource('orders', AdminOrderController::class);
 
 });
