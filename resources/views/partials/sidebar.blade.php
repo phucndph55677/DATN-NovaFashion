@@ -120,7 +120,7 @@
                     </a>
                 </li>
                 <li class=" sidebar-layout ">
-                    <a href="#" class="svg-icon">
+                    <a href="{{ route('admin.dashboards.index') }}" class="svg-icon">
                         <i class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -177,7 +177,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                     </a>
-                    <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle">  
+                    <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class="} sidebar-layout ">
                             <a href="{{ route('admin.accounts.client-manage.index') }}"
                                 class="svg-icon">
