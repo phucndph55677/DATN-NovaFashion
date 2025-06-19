@@ -24,7 +24,7 @@ class ProductFactory extends Factory
             'role_id' => Role::inRandomOrder()->first()?->id ?? Role::factory(),
             'product_code' => strtoupper(Str::random(8)), // Ví dụ: "A7F3K9BZ"
             'name' => fake()->words(3, true), // Ví dụ: "Wooden Dining Table"
-            'image' => fake()->imageUrl(600, 400, 'products'),
+            'image' => 'https://picsum.photos/600/400?random=' . fake()->numberBetween(1, 1000), // Sử dụng picsum.photos thay vì placeholder
             'description' => fake()->optional()->paragraph(),
             'material' => fake()->optional()->word(),
             'onpage' => fake()->boolean(80), // 80% sản phẩm hiển thị

@@ -11,12 +11,16 @@ use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminVoucherController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 Route::get('/', function () {
     return view('layouts.app');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
+     // Dashboards
+    Route::resource('dashboards', AdminDashboardController::class);
+
     // Categories
     Route::resource('categories', AdminCategoryController::class);
 

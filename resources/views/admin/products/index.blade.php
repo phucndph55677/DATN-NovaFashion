@@ -102,7 +102,7 @@
                                                     <td>
                                                         <div>
                                                             <input type="checkbox" id="tr_fal_switch_{{ $product->id }}" class="checkboxs" {{ $product->onpage ? 'checked' : '' }} disabled />
-                                                            <label for="tr_fal_switch_{{ $product->id }}" class="toggles text-white bg-success border-success"> 
+                                                            <label for="tr_fal_switch_{{ $product->id }}" class="toggles text-white bg-success border-success">
                                                                 <p class="texts ps-1">On &nbsp;&nbsp;Off</p>
                                                             </label>
                                                         </div>
@@ -126,7 +126,7 @@
 
                                                             <!-- View -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="View" 
+                                                                data-bs-placement="top" title="View"
                                                                 href="{{ route('admin.products.show', $product->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
