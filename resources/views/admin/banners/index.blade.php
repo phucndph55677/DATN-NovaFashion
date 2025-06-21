@@ -1,22 +1,19 @@
 @extends('layouts.app')
+
 @section('title', 'Banner')
 
 @section('content')
     <div class="container-fluid">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
         <div class="row">
             <div class="col-lg-12">
+                <!-- Header -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
                         <h4 class="fw-bold">Banner</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
+                            <!-- Search -->
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
@@ -31,6 +28,8 @@
                                         </a>
                                     </div>
                                 </form>
+
+                                <!-- Add Button -->
                                 <a href="{{ route('admin.banners.create') }}"
                                     class="btn btn-primary position-relative d-flex align-items-center justify-content-between">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" fill="none"
@@ -44,6 +43,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Card Table -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card car card-stretch">
@@ -59,13 +60,16 @@
                                         Export
                                     </button>
                                 </div>
+
+                                 <!-- Table -->
                                 <div class="table-responsive iq-product-table">
                                     <table class="table data-table mb-0">
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
                                                 <th><label class="text-muted mb-0">Image</label></th>
-                                                <th><label class="text-muted mb-0">Description</label></th>
+                                                <th><label class="text-muted mb-0">Banner Name</label></th>
+                                                <th><label class="text-muted mb-0">Location</label></th>
                                                 <th><label class="text-muted mb-0">Status</label></th>
                                                 <th><label class="text-muted mb-0">Start Date</label></th>
                                                 <th><label class="text-muted mb-0">End Date</label></th>
@@ -73,28 +77,31 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($banners as $index => $banner)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
+                                            @foreach ($banners as $banner)
+                                                <tr class="white-space-no-wrap">
+                                                    <td>{{ $banner->id }}</td>
+                                                    <td class="">
+                                                        <div class="active-project-1 d-flex align-items-center mt-0">
+                                                            <div class="h-avatar is-medium">
+                                                                <img class="avatar rounded" alt="user-icon"
+                                                                    src="{{ asset('storage/' . $banner->image) }}"  style="width: 90pt; height: 70px;">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td style="white-space: normal; word-break: break-word; max-width: 150px;">
+                                                        {{ $banner->name }}
+                                                    </td>    
+                                                    <td>{{ $banner->location->name }}</td>
                                                     <td>
-                                                        @if ($banner->image)
-                                                            <img src="{{ asset('storage/' . $banner->image) }}"
-                                                                alt="Banner Image" width="150" height="100">
-                                                        @else
-                                                            <span class="text-muted">No Image</span>
-                                                        @endif
+                                                        <div>
+                                                            <input type="checkbox" id="tr_fal_switch_{{ $banner->id }}" class="checkboxs" {{ $banner->status ? 'checked' : '' }} disabled />
+                                                            <label for="tr_fal_switch_{{ $banner->id }}" class="toggles text-white bg-success border-success"> 
+                                                                <p class="texts ps-1">On &nbsp;&nbsp;Off</p>
+                                                            </label>
+                                                        </div>
                                                     </td>
-                                                    <td>{{ $banner->description }}</td>
-                                                    <td>
-                                                        @if ($banner->status)
-                                                            <span class="badge bg-success">Visible</span>
-                                                        @else
-                                                            <span class="badge bg-secondary">Hidden</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ \Carbon\Carbon::parse($banner->start_date)->format('d/m/Y') }}
-                                                    </td>
-                                                    <td>{{ \Carbon\Carbon::parse($banner->end_date)->format('d/m/Y') }}</td>
+                                                    <td>{{ $banner->start_date->format('d/m/Y') }}</td>
+                                                    <td>{{ $banner->end_date->format('d/m/Y') }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-start align-items-center gap-2">
 

@@ -11,10 +11,11 @@ class Banner extends Model
     use HasFactory;
 
     protected $fillable = [
+        'location_id',
+        'name',
         'image',
         'status',
         'product_link',
-        'description',
         'start_date',
         'end_date',
     ];
@@ -23,4 +24,9 @@ class Banner extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
 }

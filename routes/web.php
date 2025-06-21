@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\AdminProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminProductVariantController;
 use App\Http\Controllers\Admin\AdminCategoryController;
-use App\Http\Controllers\AdminBannerController;
+use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
@@ -84,8 +84,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('/reviews/{id}/toggle', [AdminReviewController::class, 'toggle'])->name('reviews.toggle');
 
     Route::patch('/products/{id}/toggle', [AdminProductController::class, 'toggle'])->name('products.toggle');
+
     // Banners
     Route::resource('banners', AdminBannerController::class);
+
+    // Order
     Route::resource('orders', AdminOrderController::class);
 
     // Vouchers

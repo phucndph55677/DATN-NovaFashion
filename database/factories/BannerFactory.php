@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Banner;
+use App\Models\Location;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,10 +22,11 @@ class BannerFactory extends Factory
         $endDate = $this->faker->dateTimeBetween('now', '+2 months');
 
         return [
+            'location_id' => Location::inRandomOrder()->first()?->id ?? Location::factory(), // random có sẵn hoặc tự tạo mới
+            'name' => $this->faker->sentence(3),
             'image' => $this->faker->imageUrl(1200, 400, 'products', true, 'Banner'),
             'status' => $this->faker->boolean(80), // 80% hiển thị
             'product_link' => $this->faker->optional()->url(),
-            'description' => $this->faker->optional()->sentence(),
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
         ];
