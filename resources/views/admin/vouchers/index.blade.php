@@ -12,7 +12,7 @@
                         <h4 class="fw-bold">Voucher</h4>
                     </div>
                     <div class="create-workform">
-                        <div class="d-flex flex-wrap align-items-center">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between">
                             <!-- Search -->
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
@@ -66,42 +66,38 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted mb-0">Name</label></th>
                                                 <th><label class="text-muted mb-0">Voucher Code</label></th>
-                                                <th><label class="text-muted mb-0">Quantity</label></th>
                                                 <th><label class="text-muted mb-0">Sale Price(%)</label></th>
-                                                {{-- <th><label class="text-muted mb-0">Min Price(VNĐ)</label></th>
-                                                <th><label class="text-muted mb-0">Max Price(VNĐ)</label></th> --}}
-                                                {{-- <th><label class="text-muted mb-0">Start Date</label></th>
-                                                <th><label class="text-muted mb-0">End Date</label></th> --}}
+                                                <th><label class="text-muted mb-0">Max Discount(VND)</label></th>
+                                                <th><label class="text-muted mb-0">Quantity</label></th>
+                                                <th><label class="text-muted mb-0">Total User</label></th>
                                                 <th><label class="text-muted mb-0">Status</label></th>
                                                 <th class="text-start"><span class="text-muted">Action</span></th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
                                             @foreach ($vouchers as $voucher)
-                                                <tr>
+                                                <tr class="white-space-no-wrap">
                                                     <td>{{ $voucher->id }}</td>
-                                                    <td>{{ $voucher->name }}</td>
                                                     <td>{{ $voucher->voucher_code }}</td>
+                                                    <td>{{ $voucher->sale_price }}</td>
+                                                    <td>{{ $voucher->max_discount }}</td>
                                                     <td>{{ $voucher->quantity }}</td>
-                                                    <td>{{ number_format($voucher->sale_price, 0) }}</td>
-                                                    {{-- <td>{{ $voucher->min_price ? number_format($voucher->min_price, 0, '', '.') : 'N/A' }}</td>
-                                                    <td>{{ $voucher->max_price ? number_format($voucher->max_price, 0, '', '.') : 'N/A' }}</td> --}}
-                                                    {{-- <td>{{ $voucher->start_date->format('d/m/Y') }}</td>
-                                                    <td>{{ $voucher->end_date->format('d/m/Y') }}</td> --}}
+                                                    <td>{{ $voucher->total_used }}</td>
                                                     <td>
-                                                        @if($voucher->end_date < now())
-                                                            <span class="badge bg-danger">Expired</span>
-                                                        @elseif($voucher->start_date > now())
-                                                            <span class="badge bg-warning">Upcoming</span>
-                                                        @else
-                                                            <span class="badge bg-success">Active</span>
-                                                        @endif
+                                                        <div>
+                                                            <input type="checkbox" id="tr_fal_switch_{{ $voucher->id }}" class="checkboxs" {{ $voucher->status ? 'checked' : '' }} disabled />
+                                                            <label for="tr_fal_switch_{{ $voucher->id }}" class="toggles text-white bg-success border-success">
+                                                                <p class="texts ps-1">On &nbsp;&nbsp;Off</p>
+                                                            </label>
+                                                            {{-- <span class="badge {{ $voucher->status ? 'bg-success' : 'bg-danger' }}">
+                                                                {{ $voucher->status ? 'Đang hoạt động' : 'Không hoạt động' }}
+                                                            </span> --}}
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-start align-items-center">
+
                                                             <!-- Edit -->
                                                             <a class="" data-bs-toggle="tooltip"
                                                                 data-bs-placement="top" title="Edit" href="{{ route('admin.vouchers.edit', $voucher->id) }}">
