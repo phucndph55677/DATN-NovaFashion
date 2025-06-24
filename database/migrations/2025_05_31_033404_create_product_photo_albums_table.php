@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('variant_images', function (Blueprint $table) {
+        Schema::create('product_photo_albums', function (Blueprint $table) {
             $table->id(); // Khóa chính id
             $table->foreignId('product_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng products
             $table->string('image')->nullable(); // Đường dẫn hoặc tên file ảnh, có thể để trống
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('variant_images');
+        Schema::dropIfExists('product_photo_albums');
     }
 };

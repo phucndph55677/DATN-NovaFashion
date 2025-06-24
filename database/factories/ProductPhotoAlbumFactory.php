@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Product;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\VariantImage>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductPhotoAlbum>
  */
-class VariantImageFactory extends Factory
+class ProductPhotoAlbumFactory extends Factory
 {
     /**
      * Define the model's default state.
