@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VariantImage extends Model
+class ProductPhotoAlbum extends Model
 {
-    /** @use HasFactory<\Database\Factories\VariantImageFactory> */
+    /** @use HasFactory<\Database\Factories\ProductPhotoAlbumFactory> */
     use HasFactory;
 
     protected $fillable = [

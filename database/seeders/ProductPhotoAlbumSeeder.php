@@ -4,15 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\VariantImage;
+use App\Models\ProductPhotoAlbum;
 
-class VariantImageSeeder extends Seeder
+class ProductPhotoAlbumSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        VariantImage::factory()->count(100)->create();
+        ProductPhotoAlbum::factory()->count(100)->create();
     }
 }
