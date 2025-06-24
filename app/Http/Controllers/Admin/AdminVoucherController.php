@@ -17,6 +17,7 @@ class AdminVoucherController extends Controller
     public function index(Request $request)
     {
         $vouchers = Voucher::all();
+
         return view('admin.vouchers.index', compact('vouchers'));
     }
 
@@ -25,8 +26,7 @@ class AdminVoucherController extends Controller
      */
     public function create()
     {
-        $roles = Role::whereIn('name', ['admin', 'client', 'seller'])->get();
-        return view('admin.vouchers.create', compact('roles'));
+        return view('admin.vouchers.create');
     }
 
     /**
@@ -36,74 +36,50 @@ class AdminVoucherController extends Controller
     {
         $data = $request->validate(
             [
-                'name' => 'required|string|max:255',
                 'voucher_code' => 'required|string|unique:vouchers,voucher_code',
-                'quantity' => 'required|integer|min:1',
-                'sale_price' => 'required|string|numeric|max:100',
-                'min_price' => 'required|string',
-                'max_price' => 'required|string',
+                'sale_price' => 'required|numeric|max:100',
+                'max_discount' => 'required|numeric|min:1',
+                'min_price' => 'required|numeric|min:1',
+                'quantity' => 'required|numeric|min:1',
+                'user_limit' => 'required|numeric|min:1|lte:quantity',                
                 'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
-                'role_id' => 'required|exists:roles,id',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'status' => 'required',
+                'description' => 'nullable|string',
             ],
             [
-                'name.required' => 'Tên voucher không được để trống.',
-                'name.string' => 'Tên voucher phải là chuỗi.',
-                'name.max' => 'Tên voucher không được vượt quá 255 ký tự.',
                 'voucher_code.required' => 'Mã voucher không được để trống.',
                 'voucher_code.string' => 'Mã voucher phải là chuỗi.',
                 'voucher_code.unique' => 'Mã voucher đã tồn tại.',
-                'quantity.required' => 'Số lượng không được để trống.',
-                'quantity.integer' => 'Số lượng phải là số nguyên.',
-                'quantity.min' => 'Số lượng phải lớn hơn 0.',
                 'sale_price.required' => 'Giá giảm không được để trống.',
+                'sale_price.numeric' => 'Giá giảm phải là số.',
                 'sale_price.max' => 'Giá giảm không được vượt quá 100%.',
+                'max_discount.required' => 'Giảm giá tối đa không được để trống.',
+                'max_discount.numeric' => 'Giảm giá tối đa phải là số.',
+                'max_discount.min' => 'Giảm giá tối đa lớn hơn 0.',
                 'min_price.required' => 'Giá trị đơn hàng tối thiểu không được để trống.',
-                'max_price.required' => 'Giá trị đơn hàng tối đa không được để trống.',
+                'min_price.numeric' => 'Giá trị đơn hàng tối thiểu phải là số.',
+                'min_price.min' => 'Giá trị đơn hàng tối thiểu phải lớn hơn 0.',
+                'quantity.required' => 'Số lượng không được để trống.',
+                'quantity.numeric' => 'Số lượng phải là số.',
+                'quantity.min' => 'Số lượng phải lớn hơn 0.',
+                'user_limit.required' => 'Số lượt mỗi người dùng không được để trống.',
+                'user_limit.numeric' => 'Số lượt mỗi người dùng phải là số.',
+                'user_limit.min' => 'Số lượt mỗi người dùng phải lớn hơn 0.',
+                'user_limit.lte' => 'Số lượt mỗi người dùng phải <= số lượng voucher.',
                 'start_date.required' => 'Ngày bắt đầu không được để trống.',
                 'start_date.date' => 'Ngày bắt đầu không hợp lệ.',
                 'end_date.required' => 'Ngày kết thúc không được để trống.',
                 'end_date.date' => 'Ngày kết thúc không hợp lệ.',
-                'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu.',
-                'role_id.required' => 'Vui lòng chọn đối tượng áp dụng.',
-                'role_id.exists' => 'Vai trò không tồn tại.',
+                'end_date.after_or_equal' => 'Ngày kết thúc phải >= ngày bắt đầu.',
+                'status.required' => 'Vui lòng chọn trạng thái.',
+                'description.string' => 'Mô tả phải là chuỗi.',
             ]
         );
 
-        // Convert formatted currency strings to numbers
-        $salePrice = (float) str_replace('.', '', $data['sale_price']);
-        $minPrice = (float) str_replace('.', '', $data['min_price']);
-        $maxPrice = (float) str_replace('.', '', $data['max_price']);
+        Voucher::create($data);
 
-        // Validate numeric values
-        if ($salePrice < 0) {
-            return back()->withErrors(['sale_price' => 'Giá giảm phải lớn hơn hoặc bằng 0.'])->withInput();
-        }
-        if ($minPrice < 0) {
-            return back()->withErrors(['min_price' => 'Giá trị đơn hàng tối thiểu phải lớn hơn hoặc bằng 0.'])->withInput();
-        }
-        if ($maxPrice <= $minPrice) {
-            return back()->withErrors(['max_price' => 'Giá trị đơn hàng tối đa phải lớn hơn giá trị tối thiểu.'])->withInput();
-        }
-
-        // Map form fields to database columns
-        $voucherData = [
-            'name' => $data['name'],
-            'voucher_code' => $data['voucher_code'],
-            'sale_price' => $salePrice,
-            'min_price' => $minPrice,
-            'max_price' => $maxPrice,
-            'quantity' => $data['quantity'],
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
-            'role_id' => $data['role_id'],
-            'status' => true,
-        ];
-
-        Voucher::create($voucherData);
-
-        return redirect()->route('admin.vouchers.index')
-            ->with('success', 'Mã giảm giá đã được tạo thành công.');
+        return redirect()->route('admin.vouchers.index');
     }
 
     /**
@@ -111,8 +87,7 @@ class AdminVoucherController extends Controller
      */
     public function show(string $id)
     {
-        $voucher = Voucher::findOrFail($id);
-        return view('admin.vouchers.show', compact('voucher'));
+        //
     }
 
     /**
@@ -121,8 +96,12 @@ class AdminVoucherController extends Controller
     public function edit(string $id)
     {
         $voucher = Voucher::findOrFail($id);
-        $roles = Role::all();
-        return view('admin.vouchers.edit', compact('voucher', 'roles'));
+        $statuses = [
+            (object)['id' => 1, 'name' => 'On'],
+            (object)['id' => 0, 'name' => 'Off'],
+        ];
+        
+        return view('admin.vouchers.edit', compact('voucher', 'statuses'));
     }
 
     /**
@@ -134,78 +113,54 @@ class AdminVoucherController extends Controller
 
         $data = $request->validate(
             [
-                'name' => 'required|string|max:255',
                 'voucher_code' => [
                     'required',
                     'string',
                     Rule::unique('vouchers', 'voucher_code')->ignore($voucher->id),
                 ],
-                'quantity' => 'required|integer|min:1',
-                'sale_price' => 'required|string|numeric|max:100',
-                'min_price' => 'required|string',
-                'max_price' => 'required|string',
+                'sale_price' => 'required|numeric|max:100',
+                'max_discount' => 'required|numeric|min:1',
+                'min_price' => 'required|numeric|min:1',
+                'quantity' => 'required|numeric|min:1',
+                'user_limit' => 'required|numeric|min:1|lte:quantity',                
                 'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
-                'role_id' => 'nullable|exists:roles,id',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'status' => 'required',
+                'description' => 'nullable|string',
             ],
             [
-                'name.required' => 'Tên voucher không được để trống.',
-                'name.string' => 'Tên voucher phải là chuỗi.',
-                'name.max' => 'Tên voucher không được vượt quá 255 ký tự.',
                 'voucher_code.required' => 'Mã voucher không được để trống.',
                 'voucher_code.string' => 'Mã voucher phải là chuỗi.',
                 'voucher_code.unique' => 'Mã voucher đã tồn tại.',
-                'quantity.required' => 'Số lượng không được để trống.',
-                'quantity.integer' => 'Số lượng phải là số nguyên.',
-                'quantity.min' => 'Số lượng phải lớn hơn 0.',
                 'sale_price.required' => 'Giá giảm không được để trống.',
+                'sale_price.numeric' => 'Giá giảm phải là số.',
                 'sale_price.max' => 'Giá giảm không được vượt quá 100%.',
+                'max_discount.required' => 'Giảm giá tối đa không được để trống.',
+                'max_discount.numeric' => 'Giảm giá tối đa phải là số.',
+                'max_discount.min' => 'Giảm giá tối đa lớn hơn 0.',
                 'min_price.required' => 'Giá trị đơn hàng tối thiểu không được để trống.',
-                'max_price.required' => 'Giá trị đơn hàng tối đa không được để trống.',
+                'min_price.numeric' => 'Giá trị đơn hàng tối thiểu phải là số.',
+                'min_price.min' => 'Giá trị đơn hàng tối thiểu phải lớn hơn 0.',
+                'quantity.required' => 'Số lượng không được để trống.',
+                'quantity.numeric' => 'Số lượng phải là số.',
+                'quantity.min' => 'Số lượng phải lớn hơn 0.',
+                'user_limit.required' => 'Số lượt mỗi người dùng không được để trống.',
+                'user_limit.numeric' => 'Số lượt mỗi người dùng phải là số.',
+                'user_limit.min' => 'Số lượt mỗi người dùng phải lớn hơn 0.',
+                'user_limit.lte' => 'Số lượt mỗi người dùng phải <= số lượng voucher.',
                 'start_date.required' => 'Ngày bắt đầu không được để trống.',
                 'start_date.date' => 'Ngày bắt đầu không hợp lệ.',
                 'end_date.required' => 'Ngày kết thúc không được để trống.',
                 'end_date.date' => 'Ngày kết thúc không hợp lệ.',
-                'end_date.after' => 'Ngày kết thúc phải sau ngày bắt đầu.',
-                'role_id.exists' => 'Vai trò không tồn tại.',
-
+                'end_date.after_or_equal' => 'Ngày kết thúc phải >= ngày bắt đầu.',
+                'status.required' => 'Vui lòng chọn trạng thái.',
+                'description.string' => 'Mô tả phải là chuỗi.',
             ]
         );
 
-        // Convert formatted currency strings to numbers
-        $salePrice = (float) str_replace('.', '', $data['sale_price']);
-        $minPrice = (float) str_replace('.', '', $data['min_price']);
-        $maxPrice = (float) str_replace('.', '', $data['max_price']);
+        $voucher->update($data);
 
-        // Validate numeric values
-        if ($salePrice < 0) {
-            return back()->withErrors(['sale_price' => 'Giá giảm phải lớn hơn hoặc bằng 0.'])->withInput();
-        }
-        if ($minPrice < 0) {
-            return back()->withErrors(['min_price' => 'Giá trị đơn hàng tối thiểu phải lớn hơn hoặc bằng 0.'])->withInput();
-        }
-        if ($maxPrice <= $minPrice) {
-            return back()->withErrors(['max_price' => 'Giá trị đơn hàng tối đa phải lớn hơn giá trị tối thiểu.'])->withInput();
-        }
-
-        // Map form fields to database columns
-        $voucherData = [
-            'name' => $data['name'],
-            'voucher_code' => $data['voucher_code'],
-            'sale_price' => $salePrice,
-            'min_price' => $minPrice,
-            'max_price' => $maxPrice,
-            'quantity' => $data['quantity'],
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
-            'role_id' => $data['role_id'],
-            'status' => true,
-        ];
-
-        $voucher->update($voucherData);
-
-        return redirect()->route('admin.vouchers.index')
-            ->with('success', 'Mã giảm giá đã được cập nhật thành công.');
+        return redirect()->route('admin.vouchers.index');
     }
 
     /**
@@ -216,7 +171,6 @@ class AdminVoucherController extends Controller
         $voucher = Voucher::findOrFail($id);
         $voucher->delete();
 
-        return redirect()->route('admin.vouchers.index')
-            ->with('success', 'Mã giảm giá đã được xóa thành công.');
+        return redirect()->route('admin.vouchers.index');
     }
 }

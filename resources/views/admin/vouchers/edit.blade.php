@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Voucher')
+@section('title', 'Voucher')
 
 @section('content')
     <div class="container-fluid">
@@ -9,11 +9,10 @@
             <div class="col-lg-12 mb-2">
                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="d-flex align-items-center justify-content-between">
-                        <nav style="--bs-breadcrumb-divider: '>';"
-                            aria-label="breadcrumb">
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.vouchers.index') }}">Voucher</a></li>
-                                <li class="breadcrumb-item active fw-bold" aria-current="page">Edit Voucher</li>
+                                <li class="breadcrumb-item active" aria-current="page">Edit Voucher</li>
                             </ol>
                         </nav>
                     </div>
@@ -31,7 +30,7 @@
 
             <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
-                <h4 class="fw-bold d-flex align-items-center">Edit Voucher</h4>
+                <h4 class="fw-bold d-flex align-items-center">Update Voucher</h4>
             </div>
 
             <!-- Form -->
@@ -39,105 +38,98 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="fw-bold mb-3">Basic Information</h5>
-                        <form action="{{ route('admin.vouchers.update', $voucher->id) }}" method="POST">
+                            <form class="row g-3" action="{{ route('admin.vouchers.update', $voucher->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <div class="row">
-                                <!-- Left Column -->
-                                <div class="col-md-6">
-                                    <!-- Name -->
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label fw-bold text-muted text-uppercase">Voucher Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Voucher Name" value="{{ old('name', $voucher->name) }}">
-                                        @error('name')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Voucher Code -->
-                                    <div class="mb-3">
-                                        <label for="voucher_code" class="form-label fw-bold text-muted text-uppercase">Voucher Code</label>
-                                        <input type="text" class="form-control" id="voucher_code" name="voucher_code" placeholder="Enter Voucher Code" value="{{ old('voucher_code', $voucher->voucher_code) }}">
-                                        @error('voucher_code')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Quantity -->
-                                    <div class="mb-3">
-                                        <label for="quantity" class="form-label fw-bold text-muted text-uppercase">Quantity</label>
-                                        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="{{ old('quantity', $voucher->quantity) }}" min="1">
-                                        @error('quantity')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Sale Price -->
-                                    <div class="mb-3">
-                                        <label for="sale_price" class="form-label fw-bold text-muted text-uppercase">Sale Price (%)</label>
-                                        <input type="number" class="form-control" id="sale_price" name="sale_price" placeholder="Enter Sale Price" value="{{ old('sale_price', (int)$voucher->sale_price) }}">
-                                        @error('sale_price')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Min Price -->
-                                    <div class="mb-3">
-                                        <label for="min_price" class="form-label fw-bold text-muted text-uppercase">Minimum Order (VNĐ)</label>
-                                        <input type="text" class="form-control" id="min_price" name="min_price" placeholder="Enter Minimum Order Amount" value="{{ old('min_price', number_format($voucher->min_price, 0, ',', '.')) }}" onkeyup="formatCurrency(this)">
-                                        @error('min_price')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Right Column -->
-                                <div class="col-md-6">
-                                    <!-- Max Price -->
-                                    <div class="mb-3">
-                                        <label for="max_price" class="form-label fw-bold text-muted text-uppercase">Maximum Discount (VNĐ)</label>
-                                        <input type="text" class="form-control" id="max_price" name="max_price" placeholder="Enter Maximum Discount Amount" value="{{ old('max_price', number_format($voucher->max_price, 0, ',', '.')) }}" onkeyup="formatCurrency(this)">
-                                        @error('max_price')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Start Date -->
-                                    <div class="mb-3">
-                                        <label for="start_date" class="form-label fw-bold text-muted text-uppercase">Start Date</label>
-                                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="{{ old('start_date', $voucher->start_date->format('Y-m-d\TH:i')) }}">
-                                        @error('start_date')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- End Date -->
-                                    <div class="mb-3">
-                                        <label for="end_date" class="form-label fw-bold text-muted text-uppercase">End Date</label>
-                                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="{{ old('end_date', $voucher->end_date->format('Y-m-d\TH:i')) }}">
-                                        @error('end_date')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Apply to Role -->
-                                    <div class="mb-3">
-                                        <label for="role_id" class="form-label fw-bold text-muted text-uppercase">Apply to Role</label>
-                                        <select class="form-select" id="role_id" name="role_id" required>
-                                            <option value="">Select Role</option>
-                                            @foreach($roles as $role)
-                                                <option value="{{ $role->id }}" {{ old('role_id', $voucher->role_id) == $role->id ? 'selected' : '' }}>
-                                                    {{ ucfirst($role->name) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('role_id')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                         
+                            <div class="col-md-6 mb-3">
+                                <label for="voucher_code" class="form-label fw-bold text-muted text-uppercase">Voucher Code</label>
+                                <input type="text" class="form-control" id="voucher_code" name="voucher_code" placeholder="Enter Voucher Code" value="{{ $voucher->voucher_code }}">
+                                @error('voucher_code')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
+                            <div class="col-md-6 mb-3">
+                                <label for="sale_price" class="form-label fw-bold text-muted text-uppercase">Sale Price (%)</label>
+                                <input type="number" class="form-control" id="sale_price" name="sale_price" placeholder="Enter Sale Price" value="{{ $voucher->sale_price }}">
+                                @error('sale_price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="max_discount" class="form-label fw-bold text-muted text-uppercase">Max Discount (VND)</label>
+                                <input type="number" class="form-control" id="max_discount" name="max_discount" placeholder="Enter Max Discount" Value="{{ $voucher->max_discount }}">
+                                @error('max_discount')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="min_price" class="form-label fw-bold text-muted text-uppercase">Min Price (VNĐ)</label>
+                                <input type="number" class="form-control" id="min_price" name="min_price" placeholder="Enter Min Price" value="{{ $voucher->min_price }}">
+                                @error('min_price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="quantity" class="form-label fw-bold text-muted text-uppercase">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="{{ $voucher->quantity }}">
+                                @error('quantity')
+                                       <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="user_limit" class="form-label fw-bold text-muted text-uppercase">User Limit</label>
+                                <input type="number" class="form-control" id="user_limit" name="user_limit" placeholder="Enter User Limit" value="{{ $voucher->user_limit }}">
+                                @error('user_limit')
+                                       <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+ 
+                           <div class="col-md-6 mb-3">
+                                <label for="start_date" class="form-label fw-bold text-muted text-uppercase">Start Date</label>
+                                <input type="datetime-local" class="form-control" id="start_date" name="start_date" placeholder="Enter Start Date" value="{{ $voucher->start_date }}">
+                                @error('start_date')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="end_date" class="form-label fw-bold text-muted text-uppercase">End Date</label>
+                                <input type="datetime-local" class="form-control" id="end_date" name="end_date" placeholder="Enter End Date" value="{{ $voucher->end_date }}">
+                                @error('end_date')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="description" class="form-label fw-bold text-muted text-uppercase">Description</label>
+                                <textarea class="form-control" name="description" id="description" rows="4" placeholder="Enter Description">{{ $voucher->description }}</textarea>
+                                @error('description')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label fw-bold text-muted text-uppercase">Status</label>
+                                <select id="status" name="status" class="form-select form-control choicesjs">
+                                    <option value="">Select Status</option>
+                                        @foreach ($statuses as $status)
+                                            <option value="{{ $status->id }}"
+                                                @selected($status->id == $voucher->status)>
+                                                {{ $status->name }}</option>      
+                                        @endforeach
+                                    </option>
+                                </select>
+                                @error('status')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        
                             <!-- Submit -->
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="submit" class="btn btn-primary">Update Voucher</button>
@@ -149,30 +141,3 @@
         </div>
     </div>
 @endsection
-
-<script>
-function formatCurrency(input) {
-    // Remove all non-digit characters
-    let value = input.value.replace(/\D/g, '');
-    
-    // Format the number with thousand separators
-    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    
-    // Update the input value
-    input.value = value;
-}
-
-// Add event listeners when the document is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Format initial values
-    const inputs = ['sale_price', 'min_price', 'max_price'];
-    inputs.forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            formatCurrency(input);
-        }
-    });
-});
-</script>
-
-
