@@ -11,14 +11,16 @@ class Voucher extends Model
     use HasFactory;
 
     protected $fillable = [
-        'role_id',
         'user_id',
-        'name',
         'voucher_code',
         'quantity',
+        'total_used',
+        'user_limit',
         'sale_price',
         'min_price',
         'max_price',
+        'status',
+        'description',
         'start_date',
         'end_date',
     ];
@@ -27,11 +29,6 @@ class Voucher extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
 
     public function user()
     {
