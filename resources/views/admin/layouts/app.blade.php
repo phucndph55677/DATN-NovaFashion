@@ -7,7 +7,7 @@
 
     <title>@yield('title', 'NovaFashion | CRM Admin Dashboard')</title>
 
-    @include('partials.header')
+    @include('admin.partials.header')
 
 </head>
 <body class="">
@@ -21,9 +21,9 @@
   <!-- Wrapper Start -->
   <div class="wrapper">
 
-    @include('partials.sidebar')
+    @include('admin.partials.sidebar')
 
-    @include('partials.navbar')
+    @include('admin.partials.navbar')
 
         <div class="content-page ">
             <div class="container-fluid">
@@ -38,9 +38,9 @@
   <!-- Wrapper End-->
 
 
-  @include('partials.footer')
+  @include('admin.partials.footer')
 
-  @include('partials.script')
+  @include('admin.partials.script')
 
   @yield('scripts')
 </body>
