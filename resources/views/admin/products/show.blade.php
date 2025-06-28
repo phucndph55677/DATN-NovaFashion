@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Product')
+@section('title', 'Sản Phẩm')
 
 @section('content')
     <div class="container-fluid">
@@ -12,8 +12,8 @@
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
                             aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.products.index') }}">Product</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Show Product</li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.products.index') }}">Sản Phẩm</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Chi Tiết Sản Phẩm</li>
                             </ol>
                         </nav>
                     </div>
@@ -24,21 +24,21 @@
                                 d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="ms-2">Back</span>
+                        <span class="ms-2">Quay Lại</span>
                     </a>
                 </div>
             </div>
 
             <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
-                <h4 class="fw-bold d-flex align-items-center">Detail Product</h4>
+                <h4 class="fw-bold d-flex align-items-center">Chi Tiết Sản Phẩm</h4>
             </div>
 
             <!-- Form -->
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-3">Product Name: {{ $product->name }}</h5>
+                        <h5 class="fw-bold mb-3">Tên Sản Phẩm: {{ $product->name }}</h5>
                         <hr>
                         <div class="row">
                             <div class="col-12 col-sm-5">
@@ -57,17 +57,17 @@
 
                             <div class="col-12 col-sm-7">
                                 <div class="col-12">
-                                    <h5>Product Variant:</h5>
+                                    <h5>Biến Thể Sản Phẩm:</h5>
                                     <!-- Table -->
                                     <table class="table mb-2">
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
-                                                <th><label class="text-muted mb-0">Image</label></th>
-                                                <th><label class="text-muted mb-0">Color</label></th>
-                                                <th><label class="text-muted mb-0">Size</label></th>
-                                                <th><label class="text-muted mb-0">Quantity</label></th>
-                                                <th><label class="text-muted mb-0">Price</label></th>
-                                                <th><label class="text-muted mb-0">Sale</label></th>
+                                                <th><label class="text-muted mb-0">Hình Ảnh</label></th>
+                                                <th><label class="text-muted mb-0">Màu Sắc</label></th>
+                                                <th><label class="text-muted mb-0">Kích Thước</label></th>
+                                                <th><label class="text-muted mb-0">Số Lượng</label></th>
+                                                <th><label class="text-muted mb-0">Giá</label></th>
+                                                <th><label class="text-muted mb-0">Giảm Giá</label></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -86,11 +86,11 @@
                                         </tbody>
                                     </table>
 
-                                    <h5 class="mt-2">Date of entry: <small>{{ $product->created_at->format('d/m/Y') }}</small></h5>
-                                    <h5 class="mt-2">Material: <small>{{ $product->material ?? 'Không có' }}</small></h5>
-                                    <h5 class="mt-2">Active: <small>{{ $product->onpage ? 'Đang bán' : 'Dừng bán' }}</small></h5>
-                                    <h5 class="mt-2">Category: <small>{{ $product->category->name }}</small></h5>                                                   
-                                    <h5 class="mt-2">Description: <small>{{ $product->description }}</small></h5>
+                                    <h5 class="mt-2">Ngày Nhập: <small>{{ $product->created_at->format('d/m/Y') }}</small></h5>
+                                    <h5 class="mt-2">Chất Liệu: <small>{{ $product->material ?? 'Không có' }}</small></h5>
+                                    <h5 class="mt-2">Trạng Thái: <small>{{ $product->onpage ? 'Đang bán' : 'Dừng bán' }}</small></h5>
+                                    <h5 class="mt-2">Danh Mục: <small>{{ $product->category->name }}</small></h5>                                                   
+                                    <h5 class="mt-2">Mô Tả: <small>{{ $product->description }}</small></h5>
                                 </div>                              
                             </div>
                         </div>
@@ -98,7 +98,7 @@
 
                     <div class="card-body">
                         <hr>
-                        <h5 class="fw-bold mb-3">Review List</h5>
+                        <h5 class="fw-bold mb-3">Danh Sách Đánh Giá</h5>
                         <!-- Card Table -->
                         <div class="row">
                             <div class="col-lg-12">
@@ -111,12 +111,12 @@
                                                 <thead class="table-color-heading">
                                                     <tr class="text-light">
                                                         <th><label class="text-muted m-0">ID</label></th>
-                                                        <th><label class="text-muted mb-0">Reviewer</label></th>
-                                                        <th><label class="text-muted mb-0">Rating</label></th>
-                                                        <th><label class="text-muted mb-0">Content</label></th>
-                                                        <th><label class="text-muted mb-0">Review Date</label></th>
-                                                        <th><label class="text-muted mb-0">Status</label></th>
-                                                        <th class="text-start"><span class="text-muted">Action</span></th>
+                                                        <th><label class="text-muted mb-0">Người Đánh Giá</label></th>
+                                                        <th><label class="text-muted mb-0">Đánh Giá</label></th>
+                                                        <th><label class="text-muted mb-0">Nội Dung</label></th>
+                                                        <th><label class="text-muted mb-0">Ngày Đánh Giá</label></th>
+                                                        <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                        <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
