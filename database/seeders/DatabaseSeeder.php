@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             // VoucherSeeder::class,
             // PointSeeder::class,
             // LocationSeeder::class,
-            // BannerSeeder::class,            
+            // BannerSeeder::class,
         ]);
     }
 }

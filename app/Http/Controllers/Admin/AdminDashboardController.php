@@ -7,7 +7,6 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class AdminDashboardController extends Controller
@@ -18,14 +17,18 @@ class AdminDashboardController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
 
+        // Chuyển sang Carbon và lấy đầu ngày - cuối ngày để so sánh chính xác
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
         // Thống kê tổng quan
         $totalProducts = Product::count();
-        $totalOrders = Order::whereBetween('created_at', [$startDate, $endDate])->count();
-        $totalUsers = User::whereBetween('created_at', [$startDate, $endDate])->count();
-        $totalRevenue = Order::whereBetween('created_at', [$startDate, $endDate])->sum('total_amount');
+        $totalOrders = Order::whereBetween('created_at', [$start, $end])->count();
+        $totalUsers = User::whereBetween('created_at', [$start, $end])->count();
+        $totalRevenue = Order::whereBetween('created_at', [$start, $end])->sum('total_amount');
 
         // Doanh thu theo ngày
-        $revenueData = Order::whereBetween('created_at', [$startDate, $endDate])
+        $revenueData = Order::whereBetween('created_at', [$start, $end])
             ->selectRaw('DATE(created_at) as date, SUM(total_amount) as total')
             ->groupBy('date')
             ->orderBy('date', 'asc')
@@ -49,7 +52,7 @@ class AdminDashboardController extends Controller
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
-            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->whereBetween('orders.created_at', [$start, $end])
             ->selectRaw('products.*, COUNT(DISTINCT order_details.order_id) as total_orders, SUM(order_details.quantity) as total_quantity')
             ->groupBy('products.id')
             ->orderBy('total_orders', 'desc')
@@ -60,7 +63,7 @@ class AdminDashboardController extends Controller
         $productData = $topProductsChart->pluck('total_orders')->toArray();
 
         // Dữ liệu cho biểu đồ người dùng theo ngày
-        $usersData = User::whereBetween('created_at', [$startDate, $endDate])
+        $usersData = User::whereBetween('created_at', [$start, $end])
             ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
             ->groupBy('date')
             ->orderBy('date', 'asc')
@@ -84,7 +87,7 @@ class AdminDashboardController extends Controller
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
-            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->whereBetween('orders.created_at', [$start, $end])
             ->selectRaw('products.*, COUNT(DISTINCT order_details.order_id) as total_orders, SUM(order_details.quantity) as total_quantity')
             ->groupBy('products.id')
             ->with(['variants' => function($query) {
@@ -96,14 +99,14 @@ class AdminDashboardController extends Controller
 
         // Đơn hàng gần đây
         $recentOrders = Order::with(['user', 'orderDetails.productVariant.product'])
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$start, $end])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
         // Khách hàng mới
         $newCustomers = User::where('role_id', 2)
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$start, $end])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
@@ -127,6 +130,7 @@ class AdminDashboardController extends Controller
         ));
     }
 
+    // Các hàm CRUD không dùng đến
     public function create() {}
     public function store(Request $request) {}
     public function show($id) {}
