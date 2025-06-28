@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Product')
+@section('title', 'Sản Phẩm')
 
 @section('content')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
                 <!-- Header -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h4 class="fw-bold">Product</h4>
+                        <h4 class="fw-bold">Sản Phẩm</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -18,7 +18,7 @@
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
                                         <input type="text" class="form-control" id="exampleInputText"
-                                            placeholder="Search Product">
+                                            placeholder="Tìm kiếm sản phẩm...">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -37,7 +37,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
-                                    Add Product
+                                    Thêm Sản Phẩm
                                 </a>
                             </div>
                         </div>
@@ -50,14 +50,14 @@
                         <div class="card card-block card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                                    <h5 class="fw-bold">Product List</h5>
+                                    <h5 class="fw-bold">Danh Sách Sản Phẩm</h5>
                                     <button class="btn btn-secondary btn-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                         </svg>
-                                        Export
+                                        Xuất
                                     </button>
                                 </div>
 
@@ -67,11 +67,11 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted mb-0">Product Code</label></th>
-                                                <th><label class="text-muted mb-0">Product Name</label></th>
-                                                <th><label class="text-muted mb-0">Category</label></th>
-                                                <th><label class="text-muted mb-0">Onpage</label></th>
-                                                <th class="text-start"><span class="text-muted">Action</span></th>
+                                                <th><label class="text-muted mb-0">Mã Sản Phẩm</label></th>
+                                                <th><label class="text-muted mb-0">Tên Sản Phẩm</label></th>
+                                                <th><label class="text-muted mb-0">Danh Mục</label></th>
+                                                <th><label class="text-muted mb-0">Trên Trang</label></th>
+                                                <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -112,7 +112,7 @@
 
                                                             <!-- Variants -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="Variants"
+                                                                data-bs-placement="top" title="Biến Thể"
                                                                 href="{{ route('admin.variants.index', $product->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
@@ -126,7 +126,7 @@
 
                                                             <!-- View -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="View"
+                                                                data-bs-placement="top" title="Xem"
                                                                 href="{{ route('admin.products.show', $product->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
@@ -143,7 +143,7 @@
 
                                                             <!-- Edit -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="Edit"
+                                                                data-bs-placement="top" title="Sửa"
                                                                 href="{{ route('admin.products.edit', $product->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
@@ -165,7 +165,7 @@
                                                                 @method('DELETE')
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-icon text-danger"
-                                                                    data-bs-toggle="tooltip" title="Delete">
+                                                                    data-bs-toggle="tooltip" title="Xoá">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20"
                                                                         fill="none" viewBox="0 0 24 24"
                                                                         stroke="currentColor">
