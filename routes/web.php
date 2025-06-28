@@ -15,14 +15,17 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use Illuminate\Support\Facades\Session;
 
+
+// ROUTE ADMIN
+
 // Trang chủ (kiểm tra session nếu người dùng đã đăng nhập)
-Route::get('/', function () {
-    if (Session::has('admin_user')) {
-        return redirect()->route('admin.dashboard');
-    } else {
-        return redirect()->route('admin.login.show');
-    }
-});
+// Route::get('/', function () {   
+//     if (Session::has('admin_user')) {
+//         return redirect()->route('admin.dashboard');
+//     } else {
+//         return redirect()->route('admin.login.show');
+//     }
+// });
 
 Route::prefix('admin')->name('admin.')->group(function () {
     // Đăng nhập
@@ -93,4 +96,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Vouchers
     Route::resource('vouchers', AdminVoucherController::class);
+});
+
+
+// ROUTE CLIENT
+
+Route::get('/', function () {
+    return view('home');
 });
