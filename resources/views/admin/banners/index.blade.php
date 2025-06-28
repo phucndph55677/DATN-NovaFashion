@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('title', 'Banner')
 
@@ -18,7 +18,7 @@
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
                                         <input type="text" class="form-control" id="exampleInputText"
-                                            placeholder="Search Banner">
+                                            placeholder="Tìm kiếm banner...">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -37,7 +37,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
-                                    Add Banner
+                                    Thêm Banner
                                 </a>
                             </div>
                         </div>
@@ -50,14 +50,14 @@
                         <div class="card car card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                                    <h5 class="fw-bold">Banner List</h5>
+                                    <h5 class="fw-bold">Danh Sách Banner</h5>
                                     <button class="btn btn-secondary btn-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                         </svg>
-                                        Export
+                                        Xuất
                                     </button>
                                 </div>
 
@@ -67,13 +67,13 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted mb-0">Image</label></th>
-                                                <th><label class="text-muted mb-0">Banner Name</label></th>
-                                                <th><label class="text-muted mb-0">Location</label></th>
-                                                <th><label class="text-muted mb-0">Status</label></th>
-                                                <th><label class="text-muted mb-0">Start Date</label></th>
-                                                <th><label class="text-muted mb-0">End Date</label></th>
-                                                <th class="text-start"><span class="text-muted">Action</span></th>
+                                                <th><label class="text-muted mb-0">Hình Ảnh Banner</label></th>
+                                                <th><label class="text-muted mb-0">Tên Banner</label></th>
+                                                <th><label class="text-muted mb-0">Vị Trí</label></th>
+                                                <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                <th><label class="text-muted mb-0">Ngày Bắt Đầu</label></th>
+                                                <th><label class="text-muted mb-0">Ngày Kết Thúc</label></th>
+                                                <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -90,12 +90,12 @@
                                                     </td>
                                                     <td style="white-space: normal; word-break: break-word; max-width: 150px;">
                                                         {{ $banner->name }}
-                                                    </td>    
+                                                    </td>
                                                     <td>{{ $banner->location->name }}</td>
                                                     <td>
                                                         <div>
                                                             <input type="checkbox" id="tr_fal_switch_{{ $banner->id }}" class="checkboxs" {{ $banner->status ? 'checked' : '' }} disabled />
-                                                            <label for="tr_fal_switch_{{ $banner->id }}" class="toggles text-white bg-success border-success"> 
+                                                            <label for="tr_fal_switch_{{ $banner->id }}" class="toggles text-white bg-success border-success">
                                                                 <p class="texts ps-1">On &nbsp;&nbsp;Off</p>
                                                             </label>
                                                         </div>
@@ -108,7 +108,7 @@
                                                             <!-- Edit -->
                                                             <a href="{{ route('admin.banners.edit', $banner->id) }}"
                                                                 class="btn btn-sm btn-icon text-primary"
-                                                                data-bs-toggle="tooltip" title="Edit">
+                                                                data-bs-toggle="tooltip" title="Sửa">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20"
                                                                     fill="none" viewBox="0 0 24 24"
                                                                     stroke="currentColor">
@@ -121,13 +121,13 @@
                                                             <!-- Delete -->
                                                             <form action="{{ route('admin.banners.destroy', $banner->id) }}"
                                                                 method="POST"
-                                                                onsubmit="return confirm('Are you sure you want to delete this banner?');"
+                                                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner này không?');"
                                                                 style="display: inline-block;">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-icon text-danger"
-                                                                    data-bs-toggle="tooltip" title="Delete">
+                                                                    data-bs-toggle="tooltip" title="Xóa">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20"
                                                                         fill="none" viewBox="0 0 24 24"
                                                                         stroke="currentColor">

@@ -27,7 +27,7 @@ class AdminBannerController extends Controller
     public function create()
     {
         $locations = Location::all();
-        
+
         return view('admin.banners.create', compact('locations'));
     }
 
@@ -38,7 +38,7 @@ class AdminBannerController extends Controller
     {
         $data = $request->validate(
             [
-                'name' => 'required|string|max:255',                
+                'name' => 'required|string|max:255',
                 'location_id' => 'required|exists:locations,id',
                 'product_link' => 'required|url',
                 'status' => 'required',
@@ -84,8 +84,8 @@ class AdminBannerController extends Controller
         $locations = Location::all();
         $banner = Banner::findOrFail($id);
         $statuses = [
-            (object)['id' => 1, 'name' => 'On'],
-            (object)['id' => 0, 'name' => 'Off'],
+            (object)['id' => 1, 'name' => 'Hiện'],
+            (object)['id' => 0, 'name' => 'Ẩn'],
         ];
 
         return view('admin.banners.edit', compact('locations', 'banner', 'statuses'));
@@ -100,7 +100,7 @@ class AdminBannerController extends Controller
 
         $data = $request->validate(
             [
-                'name' => 'required|string|max:255',                
+                'name' => 'required|string|max:255',
                 'location_id' => 'required|exists:locations,id',
                 'product_link' => 'required|url',
                 'status' => 'required',

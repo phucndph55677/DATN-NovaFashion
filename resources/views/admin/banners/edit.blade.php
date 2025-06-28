@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('title', 'Banner')
 
@@ -13,7 +13,7 @@
                             aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
                                 <li class="breadcrumb-item"><a href="{{ route('admin.banners.index') }}">Banner</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Edit Banner</li>
+                                <li class="breadcrumb-item active" aria-current="page">Sửa Banner</li>
                             </ol>
                         </nav>
                     </div>
@@ -24,13 +24,13 @@
                                 d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ms-2">Back</span>
+                        <span class="ms-2">Quay Lại</span>
                     </a>
                 </div>
-                
+
                 <!-- Title -->
                 <div class="col-lg-12 mb-3 d-flex justify-content-between">
-                    <h4 class="fw-bold d-flex align-items-center">Update Banner</h4>
+                    <h4 class="fw-bold d-flex align-items-center">Cập Nhật Banner</h4>
                 </div>
 
                 <!-- Form -->
@@ -38,21 +38,21 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="fw-bold mb-3">Basic Information</h5>
+                                <h5 class="fw-bold mb-3">Thông Tin Cơ Bản</h5>
                                 <form class="row g-3" action="{{ route('admin.banners.update', $banner->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="name" class="form-label fw-bold text-muted text-uppercase">Banner Name</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Banner Name" value="{{ $banner->name }}">
+                                        <label for="name" class="form-label fw-bold text-muted text-uppercase">Tên Banner</label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập Tên Banner" value="{{ $banner->name }}">
                                         @error('name')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="product_link" class="form-label fw-bold text-muted text-uppercase">Product Link</label>
+                                        <label for="product_link" class="form-label fw-bold text-muted text-uppercase">Link Sản Phẩm</label>
                                         <input type="text" class="form-control" id="product_link" name="product_link" placeholder="https://example.com/san-pham/abc" value="{{ $banner->product_link }}">
                                         @error('product_link')
                                             <div class="text-danger">{{ $message }}</div>
@@ -60,11 +60,11 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="location_id" class="form-label fw-bold text-muted text-uppercase">Location</label>
+                                        <label for="location_id" class="form-label fw-bold text-muted text-uppercase">Vị Trí</label>
                                         <select id="location_id" name="location_id" class="form-select form-control choicesjs">
-                                            <option value="">Select Location</option>
+                                            <option value="">Chọn Vị Trí</option>
                                             @foreach ($locations as $location)
-                                                <option value="{{ $location->id }}" 
+                                                <option value="{{ $location->id }}"
                                                     @selected($location->id == $banner->location_id)>
                                                     {{ $location->name }}</option>
                                             @endforeach
@@ -75,13 +75,13 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="status" class="form-label fw-bold text-muted text-uppercase">Status</label>
+                                        <label for="status" class="form-label fw-bold text-muted text-uppercase">Trạng Thái</label>
                                         <select id="status" name="status" class="form-select form-control choicesjs">
-                                            <option value="">Select Status</option>
+                                            <option value="">Chọn Trạng Thái</option>
                                                 @foreach ($statuses as $status)
                                                     <option value="{{ $status->id }}"
                                                         @selected($status->id == $banner->status)>
-                                                        {{ $status->name }}</option>      
+                                                        {{ $status->name }}</option>
                                                 @endforeach
                                             </option>
                                         </select>
@@ -91,23 +91,23 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="start_date" class="form-label fw-bold text-muted text-uppercase">Start Date</label>
-                                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" placeholder="Enter Start Date" value="{{ $banner->start_date }}">
+                                        <label for="start_date" class="form-label fw-bold text-muted text-uppercase">Ngày Bắt Đầu</label>
+                                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" placeholder="Chọn Ngày Bắt Đầu" value="{{ $banner->start_date }}">
                                         @error('start_date')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                      <div class="col-md-6 mb-3">
-                                        <label for="end_date" class="form-label fw-bold text-muted text-uppercase">End Date</label>
-                                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" placeholder="Enter End Date" value="{{ $banner->end_date }}">
+                                        <label for="end_date" class="form-label fw-bold text-muted text-uppercase">Ngày Kết Thúc</label>
+                                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" placeholder="Chọn Ngày Kết Thúc" value="{{ $banner->end_date }}">
                                         @error('end_date')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="image" class="form-label fw-bold text-muted text-uppercase">Banner Image</label>
+                                        <label for="image" class="form-label fw-bold text-muted text-uppercase">Hình Ảnh Banner</label>
                                         <input type="file" class="form-control" id="image" name="image">
                                         @if($banner->image)
                                             <img src="{{ asset('storage/' . $banner->image) }}" alt="Banner Image"
@@ -116,11 +116,11 @@
                                         @error('image')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
-                                    </div> 
+                                    </div>
 
                                     <!-- Submit -->
                                     <div class="d-flex justify-content-end mt-3">
-                                        <button type="submit" class="btn btn-primary">Create Banner</button>
+                                        <button type="submit" class="btn btn-primary">Cập Nhật Banner</button>
                                     </div>
                                 </form>
                             </div>
@@ -130,4 +130,4 @@
             </div>
         </div>
     </div>
-@endsection 
+@endsection
