@@ -97,8 +97,8 @@ class AdminVoucherController extends Controller
     {
         $voucher = Voucher::findOrFail($id);
         $statuses = [
-            (object)['id' => 1, 'name' => 'On'],
-            (object)['id' => 0, 'name' => 'Off'],
+            (object)['id' => 1, 'name' => 'Hiện'],
+            (object)['id' => 0, 'name' => 'Ẩn'],
         ];
         
         return view('admin.vouchers.edit', compact('voucher', 'statuses'));
