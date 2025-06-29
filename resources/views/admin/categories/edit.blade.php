@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Category')
+@section('title', 'Danh Mục')
 
 @section('content')
     <div class="container-fluid">
@@ -12,8 +12,8 @@
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
                             aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.categories.index') }}">Category</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Edit Category</li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.categories.index') }}">Danh Mục</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Sửa Danh Mục</li>
                             </ol>
                         </nav>
                     </div>
@@ -24,29 +24,29 @@
                                 d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="ms-2">Back</span>
+                        <span class="ms-2">Quay Lại</span>
                     </a>
                 </div>
             </div>
 
             <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
-                <h4 class="fw-bold d-flex align-items-center">Update Category</h4>
+                <h4 class="fw-bold d-flex align-items-center">Cập Nhật Danh Mục</h4>
             </div>
 
             <!-- Form -->
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-3">Basic Information</h5>
+                        <h5 class="fw-bold mb-3">Thông Tin Cơ Bản</h5>
                         <form class="row g-3" action="{{ route('admin.categories.update', $category->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
                             <!-- Category Name -->
                             <div class="col-md-12 mb-3">
-                                <label for="name" class="form-label fw-bold text-muted text-uppercase">Category Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Category Name" value="{{ $category->name }}">
+                                <label for="name" class="form-label fw-bold text-muted text-uppercase">Tên Danh Mục</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Nhập Tên Danh Mục" value="{{ $category->name }}">
                                 @error('name')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -54,8 +54,8 @@
 
                             <!-- Description -->
                             <div class="col-md-12 mb-3">
-                                <label for="description" class="form-label fw-bold text-muted text-uppercase">Description</label>
-                                <textarea class="form-control" name="description" id="description" rows="4" placeholder="Enter Description">{{ $category->description }}</textarea>
+                                <label for="description" class="form-label fw-bold text-muted text-uppercase">Mô Tả</label>
+                                <textarea class="form-control" name="description" id="description" rows="4" placeholder="Nhập Mô Tả">{{ $category->description }}</textarea>
                                 @error('description')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -63,9 +63,7 @@
 
                             <!-- Submit -->
                             <div class="d-flex justify-content-end mt-3">
-                                <button class="btn btn-primary">
-                                    Update Category
-                                </button>
+                                <button class="btn btn-primary">Cập Nhật Danh Mục</button>
                             </div>
                         </form>
                     </div>
