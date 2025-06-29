@@ -89,9 +89,9 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="onpage" class="form-label fw-bold text-muted text-uppercase">Trên Trang</label>
+                                        <label for="onpage" class="form-label fw-bold text-muted text-uppercase">Trang</label>
                                         <select id="onpage" name="onpage" class="form-select form-control choicesjs">
-                                            <option value="">Chọn Trên Trang</option>
+                                            <option value="">Chọn Trang</option>
                                                 <option value="1" {{ old('onpage') == '1' ? 'selected' : '' }}>Có</option>
                                                 <option value="0" {{ old('onpage') == '0' ? 'selected' : '' }}>Không
                                             </option>
