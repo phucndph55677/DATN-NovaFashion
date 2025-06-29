@@ -92,9 +92,9 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="onpage" class="form-label fw-bold text-muted text-uppercase">Trên Trang</label>
+                                        <label for="onpage" class="form-label fw-bold text-muted text-uppercase">Trang</label>
                                         <select id="onpage" name="onpage" class="form-select form-control choicesjs">
-                                            <option value="">Chọn Trên Trang</option>
+                                            <option value="">Chọn Trang</option>
                                             @foreach ($onpages as $onpage)
                                                 <option value="{{ $onpage->id }}"
                                                     @selected($onpage->id == $product->onpage)>
