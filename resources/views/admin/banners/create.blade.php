@@ -86,23 +86,23 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="start_date" class="form-label fw-bold text-muted text-uppercase">Ngày Bắt Đầu</label>
-                                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" placeholder="Chọn Ngày Bắt Đầu" value="{{ old('start_date') }}">
+                                        <label for="start_date" class="form-label fw-bold text-muted text-uppercase">Bắt Đầu</label>
+                                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" placeholder="Chọn Bắt Đầu" value="{{ old('start_date') }}">
                                         @error('start_date')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                      <div class="col-md-6 mb-3">
-                                        <label for="end_date" class="form-label fw-bold text-muted text-uppercase">Ngày Kết Thúc</label>
-                                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" placeholder="CHọn Ngày Kết Thúc" value="{{ old('end_date') }}">
+                                        <label for="end_date" class="form-label fw-bold text-muted text-uppercase">Kết Thúc</label>
+                                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" placeholder="Chọn Kết Thúc" value="{{ old('end_date') }}">
                                         @error('end_date')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="image" class="form-label fw-bold text-muted text-uppercase">Hình Ảnh Banner</label>
+                                        <label for="image" class="form-label fw-bold text-muted text-uppercase">Hình Ảnh</label>
                                         <input type="file" class="form-control" id="image" name="image">
                                         @error('image')
                                             <div class="text-danger">{{ $message }}</div>
