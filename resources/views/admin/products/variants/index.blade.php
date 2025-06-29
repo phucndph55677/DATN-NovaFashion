@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Product Variants')
+@section('title', 'Biến Thể')
 
 @section('content')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
                 <!-- Header -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h4 class="fw-bold">Product Variant</h4>
+                        <h4 class="fw-bold">Biến Thể</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -17,7 +17,7 @@
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
-                                        <input type="text" class="form-control" id="exampleInputText"placeholder="Search Product Variant">
+                                        <input type="text" class="form-control" id="exampleInputText"placeholder="Tìm kiếm biến thể...">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,7 +36,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
-                                    Add Product Variants
+                                    Thêm Biến Thể
                                 </a>
                             </div>
                         </div>
@@ -50,17 +50,9 @@
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
                                     <ol class="breadcrumb ps-0 mb-0 pb-0">
-                                        <h5><a href="{{ route('admin.products.index') }}">Product List</a> > </h5>
-                                        <h5 class="fw-bold">Variant of: {{ $product->name }}</h5>
+                                        <h5><a href="{{ route('admin.products.index') }}">Danh Sách Sản Phẩm</a> > </h5>
+                                        <h5 class="fw-bold">Biến Thể Của: {{ $product->name }}</h5>
                                     </ol>
-                                    <button class="btn btn-secondary btn-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                        Export
-                                    </button>
                                 </div>
 
                                 <!-- Table -->
@@ -69,14 +61,14 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted m-0">Variant Image</label></th>
-                                                <th><label class="text-muted m-0">Price</label></th>
-                                                <th><label class="text-muted m-0">Sale</label></th>
-                                                <th><label class="text-muted m-0">Color</label></th>
-                                                <th><label class="text-muted m-0">Size</label></th>
-                                                <th><label class="text-muted m-0">Quantity</label></th>
-                                                <th><label class="text-muted m-0">Active</label></th>
-                                                <th class="text-start"><span class="text-muted">Action</span></th>
+                                                <th><label class="text-muted m-0">Hình Ảnh</label></th>
+                                                <th><label class="text-muted m-0">Giá</label></th>
+                                                <th><label class="text-muted m-0">Khuyến Mãi</label></th>
+                                                <th><label class="text-muted m-0">Màu sắc</label></th>
+                                                <th><label class="text-muted m-0">Kích Cỡ</label></th>
+                                                <th><label class="text-muted m-0">Số Lượng</label></th>
+                                                <th><label class="text-muted m-0">Trạng Thái</label></th>
+                                                <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -109,7 +101,7 @@
 
                                                             <!-- Edit -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="Edit" href="{{ route('admin.variants.edit', $variant->id) }}">
+                                                                data-bs-placement="top" title="Sửa" href="{{ route('admin.variants.edit', $variant->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
                                                                     fill="none" viewBox="0 0 24 24"
@@ -128,7 +120,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-sm btn-icon text-danger"
-                                                                    data-bs-toggle="tooltip" title="Delete">
+                                                                    data-bs-toggle="tooltip" title="Xóa">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" fill="none"
                                                                         viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path stroke-linecap="round" stroke-linejoin="round"

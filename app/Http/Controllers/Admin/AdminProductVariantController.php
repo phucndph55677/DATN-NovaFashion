@@ -31,8 +31,8 @@ class AdminProductVariantController extends Controller
         $colors = Color::all();
         $sizes = Size::all();
         $is_actives = [
-            (object)['id' => 1, 'name' => 'On'],
-            (object)['id' => 0, 'name' => 'Off'],
+            (object)['id' => 1, 'name' => 'Hiện'],
+            (object)['id' => 0, 'name' => 'Ẩn'],
         ];
 
         return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id', 'is_actives'));
@@ -102,8 +102,8 @@ class AdminProductVariantController extends Controller
         $colors = Color::all();
         $sizes = Size::all();
         $is_actives = [
-            (object)['id' => 1, 'name' => 'On'],
-            (object)['id' => 0, 'name' => 'Off'],
+            (object)['id' => 1, 'name' => 'Hiện'],
+            (object)['id' => 0, 'name' => 'Ẩn'],
         ];
 
         return view('admin.products.variants.edit', compact('variant', 'colors', 'sizes', 'is_actives'));
