@@ -51,6 +51,105 @@
                 </section>
                 <!--/Slider-->
 
+                <!-- Ưu đãi Voucher -->
+                <section class="home-new-prod my-5">
+                    <h2 class="title-section text-center fw-bold mb-4">ƯU ĐÃI NỔI BẬT</h2>
+
+                    <div class="swiper mySwiper px-3">
+                        <div class="swiper-wrapper">
+                            @foreach ($vouchers as $voucher)
+                                <div class="swiper-slide">
+                                    <div class="border rounded-3 p-4 bg-light h-100 d-flex flex-column justify-content-between"
+                                        style="min-width: 250px;">
+                                        <div>
+                                            <h5 class="fw-bold mb-2">Giảm {{ number_format($voucher->sale_price) }}%</h5>
+                                            <p class="mb-1">Tối đa ₫{{ number_format($voucher->max_discount) }}k</p>
+                                            <p class="mb-1">Đơn từ ₫{{ number_format($voucher->min_price) }}k</p>
+                                            <p class="text-danger small mb-0">HSD:
+                                                {{ \Carbon\Carbon::parse($voucher->end_date)->format('d-m-Y') }}
+                                            </p>
+                                        </div>
+                                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                                            <button class="btn btn-link p-0 text-decoration-underline fw-bold"
+                                                style="font-size: 14px;" data-bs-toggle="modal"
+                                                data-bs-target="#voucherModal{{ $voucher->id }}">Điều kiện</button>
+                                            <a href="#" class="btn btn-dark btn-sm">Dùng mã</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Nút điều hướng đẹp hơn -->
+                        <div class="swiper-button-next text-dark"></div>
+                        <div class="swiper-button-prev text-dark"></div>
+                    </div>
+                </section>
+
+                <!--  Modal -->
+                @foreach ($vouchers as $voucher)
+                    <div class="modal fade" id="voucherModal{{ $voucher->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+                            <div class="modal-content rounded-4 border border-light-subtle shadow-sm">
+                                <div class="modal-header border-0 align-items-center justify-content-between px-4 pt-4 pb-0">
+                                    <h5 class="modal-title text-uppercase fs-5 fw-bold m-0">
+                                        CHI TIẾT MÃ ƯU ĐÃI
+                                    </h5>
+                                    <!-- Nút X bên phải, ngang hàng -->
+                                    <button type="button" class="btn border-0 bg-transparent p-0" data-bs-dismiss="modal"
+                                        aria-label="Đóng"
+                                        style="font-size: 2rem; line-height: 1; color: #7e7e7e; font-weight: 390;">
+                                        &times;
+                                    </button>
+                                </div>
+
+                                <!-- Body -->
+                                <div class="modal-body px-4 py-3">
+                                    <div class="border rounded-4 text-center px-3 py-4 mb-4">
+                                        <h4 class="text-uppercase mb-2 fw-bold">Voucher
+                                            {{ number_format($voucher->sale_price) }}%
+                                        </h4>
+                                        <p class="mb-3 text-muted" style="font-size: 14px;">
+                                            Giảm tối đa ₫{{ number_format($voucher->max_discount) }}k cho đơn từ
+                                            ₫{{ number_format($voucher->min_price) }}k
+                                        </p>
+
+                                        <!-- Mã và Copy -->
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+                                            <div class="border rounded px-4 py-2 fw-bold fs-6 bg-light"
+                                                id="voucher-code-{{ $voucher->id }}">
+                                                {{ $voucher->voucher_code }}
+                                            </div>
+                                            <button class="btn btn-outline-dark btn-sm rounded-circle"
+                                                onclick="copyVoucherCode('{{ $voucher->id }}')" title="Sao chép mã">
+                                                <i class="bi bi-clipboard"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Thông báo sao chép -->
+                                        <div class="text-success text-center mt-2 d-none"
+                                            id="copied-message-{{ $voucher->id }}">
+                                            <i class="bi bi-check-circle-fill"></i> Đã sao chép mã!
+                                        </div>
+                                    </div>
+
+                                    <p class="mb-1">Hạn sử dụng:
+                                        {{ \Carbon\Carbon::parse($voucher->start_date)->format('d/m/Y') }} -
+                                        {{ \Carbon\Carbon::parse($voucher->end_date)->format('d/m/Y') }}
+                                    </p>
+
+                                    <p class="mt-3 mb-1">Điều kiện áp dụng:</p>
+                                    <ul class="ps-3 mb-0" style="font-size: 14px;">
+                                        <li>- Địa điểm áp dụng: Web, App</li>
+                                        <li>- {{ $voucher->description }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                <!-- End Ưu đãi Voucher -->
+
                 <!-- New Arrival -->
                 <section class="home-new-prod">
                     <div class="title-section">NEW ARRIVAL</div>
@@ -493,4 +592,36 @@
             <p class="notify__add-to-cart--success text-uppercase">Thêm vào giỏ hàng thành công !</p>
         </div> 
     </body>
+@endsection
+
+@section('scripts')
+    <!--Copy Voucher -->
+    <script>
+        function copyVoucherCode(id) {
+            const codeText = document.getElementById('voucher-code-' + id).innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const msg = document.getElementById('copied-message-' + id);
+                msg.classList.remove('d-none');
+                setTimeout(() => {
+                    msg.classList.add('d-none');
+                }, 3000);
+            });
+        }
+    </script>
+
+    <script>
+        const swiper = new Swiper(".mySwiper", {
+            slidesPerView: 1.2,
+            spaceBetween: 16,
+            breakpoints: {
+                576: { slidesPerView: 2.2 },
+                768: { slidesPerView: 3.2 },
+                992: { slidesPerView: 4.2 }
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    </script>
 @endsection
