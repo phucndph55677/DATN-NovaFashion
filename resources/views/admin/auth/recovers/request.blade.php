@@ -5,7 +5,7 @@
 <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="utRtm9vhlYvt3uBr1zbXpsXOlv7DLGp3P1js0F8B">
+        <meta name="csrf-token" content="5iKUe50erAgjxUXUyXJPhdGYqZFOez6uQTUrhMeq">
 
         <title>NovaFashion</title>
 
@@ -36,14 +36,21 @@
                         <div class="card p-5">
                             <div class="card-body">
                             <a href="https://templates.iqonic.design/datum-dist/laravel/public" class="auth-logo">
-
-                                <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/logo-dark.png" class="img-fluid rounded-normal "
-                                    alt="logo">
+                                <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/logo-dark.png" class="img-fluid rounded-normal " alt="logo">
                             </a>
-                            <h3 class="mb-3 font-weight-bold text-center">Đặt Lại Mật Khẩu</h3>
+                            <h3 class="mb-3 font-weight-bold text-center">Chào bạn,</h3>
                             <div class="mb-5">
-                                <p class="line-around text-secondary mb-0"><span class="line-around-1">Vui lòng nhập mật khẩu mới để thay đổi mật khẩu của bạn.</span></p>
+                                <p class="line-around text-secondary mb-0"><span class="line-around-1"> Vui lòng nhập Email của bạn để nhận liên kết đổi mật khẩu.</span></p>
                             </div>
+                            
+                            <!-- Validation Errors -->
+                            @if (session('success'))
+                                <div class="alert alert-success">
+                                    <ul class="mb-0 mt-1">
+                                        <li>{{ session('success') }}</li>
+                                    </ul>
+                                </div>
+                            @endif
 
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -55,31 +62,18 @@
                                 </div>
                             @endif
 
-                            <form method="POST" class="mt-5" action="{{ route('admin.password.update') }}" data-toggle="validator">
+                            <form method="POST" action="{{ route('admin.request') }}">
                                 @csrf
-                                <input type="hidden" name="token" value="{{ $token }}">
-                                <input type="hidden" name="email" value="{{ request()->email }}">
 
-                                <div class="col-lg-12 mt-2">
-                                    <div class="form-group">
-                                            <label class="text-secondary mb-2 form-label text-dark">Mật Khẩu</label>
-                                            <input class="form-control" type="password" placeholder="********" id="password" name="password" autocomplete="new-password" >
-                                            {{-- @error('password')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror --}}
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 mt-2">
+                                <div class="row">
+                                    <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label class="text-secondary mb-2 form-label text-dark">Xác Nhận Mật Khẩu</label>
-                                            <input class="form-control" type="password" placeholder="********" id="password_confirmation" name="password_confirmation" autocomplete="new-password" >
-                                            {{-- @error('password_confirmation')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror --}}
+                                            <label class="text-secondary form-label text-dark">Email</label>
+                                            <input class="form-control" type="email" id="email" name="email" placeholder="admin@example.com" value="{{ old('email') }}">
                                         </div>
                                     </div>
-                                <button type="submit" class="btn btn-primary d-block w-100">Đặt lại mật khẩu</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary d-block w-100">Gửi Link Đặt Lại Mật Khẩu</button>
                             </form>
                             </div>
                         </div>

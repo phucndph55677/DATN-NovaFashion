@@ -35,6 +35,7 @@ class UserFactory extends Factory
             'password' => Hash::make('password'), // mặc định cho seeding
             'address' => fake()->address(),
             'is_verified' => fake()->boolean(70), // 70% user đã xác thực
+            'verification_token' => Str::random(64),
             'status' => $this->faker->numberBetween(0, 1), // random 0 hoặc 1
             'remember_token' => Str::random(10),
         ];

@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="GG1grqFGI0iifedlpobNA7bO38yGIbGs50Lsprk9">
 
-    <title>Admin login</title>
+    <title>NovaFashion</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
@@ -14,17 +14,16 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="https://templates.iqonic.design/datum-dist/laravel/public/images/favicon.ico" />
     <link rel="stylesheet" href="https://templates.iqonic.design/datum-dist/laravel/public/vendor/@fortawesome/fontawesome-free/css/all.min.css">
-
     <link rel="stylesheet" href="https://templates.iqonic.design/datum-dist/laravel/public/css/datum.css">
     <link rel="stylesheet" href="https://templates.iqonic.design/datum-dist/laravel/public/css/custom.css">
     <link rel="stylesheet" href="https://templates.iqonic.design/datum-dist/laravel/public/css/customizer.css">
 </head>
 
-<body class="">
-
+<body class="  ">
     <!-- loader Start -->
     <div id="loading">
-        <div id="loading-center"></div>
+        <div id="loading-center">
+        </div>
     </div>
     <!-- loader END -->
 
@@ -39,66 +38,81 @@
                                     <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/logo-dark.png"
                                         class="img-fluid rounded-normal" alt="logo">
                                 </a>
-                                <h3 class="mb-3 font-weight-bold text-center">Đăng Nhập</h3>
-                                <p class="text-center text-secondary mb-4">Đăng nhập vào tài khoản của bạn để tiếp tục</p>
+                                <h3 class="mb-3 font-weight-bold text-center">Đăng nhập</h3>
+                                <div class="mb-5">
+                                    <p class="line-around text-secondary mb-0"><span class="line-around-1">Đăng nhập vào tài khoản của bạn để tiếp tục</span>
+                                    </p>
+                                </div>
 
                                 <!-- Validation Errors -->
                                 @if ($errors->any())
                                     <div class="alert alert-danger">
-                                        {{ $errors->first() }}
+                                        <ul class="mb-0 mt-1">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
                                     </div>
                                 @endif
 
-                                @if (session('success'))
-                                    <div class="alert alert-success">
-                                        {{ session('success') }}
+                                <!-- Form Nhập Tài Khoản, Mật Khẩu -->
+                                <form method="POST" class="mt-5" action="{{ route('admin.login') }}" data-toggle="validator">
+                                    @csrf
+                                    
+                                    <div class="row">
+                                        <!-- Tài Khoản -->
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label class="text-secondary form-label text-dark">Email</label>
+                                                <input id="email" type="email" name="email" class="form-control mb-0" placeholder="admin@example.com" autofocus value="{{ old('email') }}">
+                                                @error('email')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <!-- Mật Khẩu -->
+                                        <div class="col-lg-12 mt-2">
+                                            <div class="form-group position-relative">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <label class="text-secondary form-label text-dark">Mật Khẩu</label>
+                                                    <label class="form-label">
+                                                        <a href="{{ route('admin.request.show') }}" class="text-primary">Quên mật khẩu?</a>
+                                                    </label>
+                                                </div>
+
+                                                <div class="input-group">
+                                                    <input id="password" class="form-control mb-0" type="password" name="password" placeholder="********" autocomplete="current-password">
+
+                                                    <!-- Icon SVG 👁 Hover -->
+                                                    <span
+                                                        onmouseover="document.getElementById('password').type='text';"
+                                                        onmouseout="document.getElementById('password').type='password';"
+                                                        style="cursor: pointer; display: flex; align-items: center; padding: 0 10px;"
+                                                    >
+                                                        <!-- Heroicons Eye SVG -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor"
+                                                            width="20" height="20">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                                @error('password')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
-                                @endif
 
-                                <!-- Form đăng nhập -->
-                                <form method="POST" action="{{ route('admin.login') }}" class="needs-validation" novalidate>
- <form method="POST" action="{{ route('admin.login') }}" class="needs-validation" novalidate>
-    @csrf
-    <div class="row">
-        <!-- Email -->
-        <div class="col-lg-12">
-            <div class="form-group">
-                <label class="text-secondary form-label text-dark">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" class="form-control mb-0 @error('email') is-invalid @enderror" placeholder="admin@example.com" required>
-                
-                <!-- Hiển thị lỗi cho trường email -->
-                @error('email')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-        </div>
-
-        <!-- Password -->
-        <div class="col-lg-12 mt-2">
-            <div class="form-group">
-                <div class="d-flex justify-content-between align-items-center">
-                    <label class="text-secondary form-label text-dark">Mật Khẩu</label>
-                    <a href="{{ route('admin.password.request') }}" class="text-primary">Quên mật khẩu?</a>
-                </div>
-                <input class="form-control mb-0 @error('password') is-invalid @enderror" type="password" placeholder="********" name="password" required autocomplete="current-password">
-                
-                <!-- Hiển thị lỗi cho trường password -->
-                @error('password')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary w-100 d-block mt-2">Đăng nhập</button>
-    <div class="col-lg-12 mt-3">
-        <p class="mb-0 text-center text-dark">Đã có tài khoản? <a href="{{ route('admin.register.show') }}" class="text-primary">Đăng ký</a></p>
-    </div>
-</form>
-
+                                    <button type="submit" class="btn btn-primary w-100 d-block mt-2">Đăng Nhập</button>
+                                    <div class="col-lg-12 mt-3">
+                                        <p class="mb-0 text-center text-dark">Bạn chưa có tài khoản? <a href="{{ route('admin.register.show') }}" class="text-primary">Đăng ký</a></p>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -106,10 +120,7 @@
             </div>
         </section>
     </div>
-@if (session('admin_user'))
-    <!-- Nếu đã có admin trong session, chuyển hướng tới dashboard -->
-    <script>window.location = "{{ route('admin.dashboard') }}";</script>
-@endif
+
     <!-- Backend Bundle JavaScript -->
     <script src="https://templates.iqonic.design/datum-dist/laravel/public/js/libs.min.js"></script>
     <script src="https://templates.iqonic.design/datum-dist/laravel/public/js/core/external.min.js"></script>

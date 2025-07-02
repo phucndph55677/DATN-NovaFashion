@@ -6,14 +6,14 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeEmail extends Mailable
+class VerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public $user; 
+    public $user;
 
     public function __construct($user)
     {
@@ -22,7 +22,7 @@ class WelcomeEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Chào mừng bạn đến với NovaFashion!')
-            ->view('admin.emails.welcome');
+        return $this->subject('Xác minh địa chỉ email')
+            ->view('admin.emails.verify');
     }
 }

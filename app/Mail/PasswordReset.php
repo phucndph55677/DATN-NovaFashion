@@ -3,17 +3,17 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailable;;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeEmail extends Mailable
+class PasswordReset extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public $user; 
+    public $user;
 
     public function __construct($user)
     {
@@ -22,7 +22,7 @@ class WelcomeEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Chào mừng bạn đến với NovaFashion!')
-            ->view('admin.emails.welcome');
+        return $this->subject('Thông báo đổi mật khẩu thành công')
+                    ->view('admin.emails.reset'); 
     }
 }
