@@ -1,18 +1,20 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminOrderController;
-use App\Http\Controllers\Admin\AdminProductController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminProductVariantController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminProductVariantController;
 use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\Admin\AdminVoucherController;
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
-use App\Http\Controllers\Admin\AdminReviewController;
-use App\Http\Controllers\Admin\AdminVoucherController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminAuthController;
+
+use App\Http\Controllers\Client\ClientVoucherController;
 
 
 // ROUTE ADMIN
@@ -96,3 +98,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::get('/', function () {
     return view('home');
 });
+
+Route::get('/', [ClientVoucherController::class, 'showVoucher'])->name('home');

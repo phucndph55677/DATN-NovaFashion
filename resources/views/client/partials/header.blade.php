@@ -10,6 +10,10 @@
         <meta property="og:image" content="https://cotton4u.vn/files/news/2025/06/25/fe731be98a6cffcf815840d34f760324.webp"/>
         <meta name='dmca-site-verification' content='dlRDRm5zUFJPVHN0RFJhZ0t3TnNzUT090' />
     <link rel="manifest" href="https://ivymoda.com/manifest.json?gcm_sender_id=" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script type="text/javascript">
         var base_url = 'https://ivymoda.com/';
         var static_url = 'https://pubcdn.ivymoda.com/ivy2/';
