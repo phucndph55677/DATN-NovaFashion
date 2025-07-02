@@ -330,7 +330,7 @@
                                 id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 <img src="https://templates.iqonic.design/datum-dist/laravel/public/images/user/1.jpg" class="img-fluid avatar-rounded" alt="user">
-                                <span class="mb-0 ms-2 user-name">John Doe</span>
+                                <span class="mb-0 ms-2 user-name"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li class="dropdown-item d-flex svg-icon">
@@ -371,23 +371,26 @@
                                     </svg>
                                     <a href="https://templates.iqonic.design/datum-dist/laravel/public/userprivacysetting">Privacy Settings</a>
                                 </li>
-                                <li class="dropdown-item  d-flex svg-icon border-top">
+                                <li class="dropdown-item d-flex svg-icon border-top" style="cursor: pointer;">
                                     <svg class="svg-icon me-0 text-secondary" id="h-05-p" width="20"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                     </svg>
-                                        <div class="ms-2"><form method="POST" action="https://templates.iqonic.design/datum-dist/laravel/public/logout">
-                                            <input type="hidden" name="_token" value="gfurOE1yl71MrJZLHBRsEQnB9K83kYd6VOZZ24lc" autocomplete="off">                                            <p  class="mb-0 iq-login"
-                                               onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                                                  Logout
-                                            </p>
-                                            </form>
-                                            </div>
 
+                                    <div class="ms-2">
+                                        <span class="mb-0 iq-login" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Đăng xuất
+                                        </span>
+                                    </div>
+
+                                    <!-- Form ẩn -->
+                                    <form id="logout-form" method="POST" action="{{ route('admin.logout') }}" style="display: none;">
+                                        @csrf
+                                    </form>
                                 </li>
+
                             </ul>
                         </li>
                     </ul>

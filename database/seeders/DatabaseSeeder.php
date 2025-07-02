@@ -46,6 +46,7 @@ class DatabaseSeeder extends Seeder
             // PointSeeder::class,
             // LocationSeeder::class,
             // BannerSeeder::class,
+            // AdminUserSeeder::class,
         ]);
     }
 }
