@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Review')
+@section('title', 'Đánh Giá')
 
 @section('content')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
                 <!-- Header -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h4 class="fw-bold">Review</h4>
+                        <h4 class="fw-bold">Đánh Giá</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -18,7 +18,7 @@
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
                                         <input type="text" class="form-control" id="exampleInputText"
-                                            placeholder="Search Review">
+                                            placeholder="Tìm kiếm đánh giá...">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,15 +39,7 @@
                         <div class="card card-block card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                                    <h5 class="fw-bold">Review List</h5>
-                                    <button class="btn btn-secondary btn-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                        Export
-                                    </button>
+                                    <h5 class="fw-bold">Danh Sách Đánh Giá</h5>
                                 </div>
 
                                 <!-- Table -->
@@ -56,13 +48,13 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted mb-0">Product Name</label></th>
-                                                <th><label class="text-muted mb-0">Reviewer</label></th>
-                                                <th><label class="text-muted mb-0">Rating</label></th>
-                                                <th><label class="text-muted mb-0">Content</label></th>
-                                                <th><label class="text-muted mb-0">Review Date</label></th>
-                                                <th><label class="text-muted mb-0">Status</label></th>
-                                                <th class="text-start"><span class="text-muted">Action</span></th>
+                                                <th><label class="text-muted mb-0">Tên Sản Phẩm</label></th>
+                                                <th><label class="text-muted mb-0">Người Đánh Giá</label></th>
+                                                <th><label class="text-muted mb-0">Xếp Hạng</label></th>
+                                                <th><label class="text-muted mb-0">Nội Dung</label></th>
+                                                <th><label class="text-muted mb-0">Ngày Đánh Giá</label></th>
+                                                <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -108,7 +100,7 @@
                                                         <div class="modal-dialog modal-dialog-centered modal-lg">
                                                             <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="contentModalLabel{{ $review->id }}">Content Reviewer</h5>
+                                                                <h5 class="modal-title" id="contentModalLabel{{ $review->id }}">Nội Dung</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                                                             </div>
                                                             <div class="modal-body">
