@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Orders')
+@section('title', 'Đơn Hàng')
 
 @section('content')
     <div class="container-fluid">
@@ -9,7 +9,7 @@
                 <!-- Header -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h4 class="fw-bold">All Orders</h4>
+                        <h4 class="fw-bold">Đơn Hàng</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -17,7 +17,7 @@
                             <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
-                                        <input type="text" class="form-control" id="exampleInputText"placeholder="Tìm kiếm biến thể...">
+                                        <input type="text" class="form-control" id="exampleInputText"placeholder="Tìm kiếm đơn hàng...">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +38,7 @@
                         <div class="card card-block card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-0">
-                                    <h5 class="fw-bold">Orders List</h5>
+                                    <h5 class="fw-bold">Danh Sách Đơn Hàng</h5>
                                 </div>
 
                                 <form method="GET" action="{{ route('admin.orders.index') }}" class="px-3 py-2">
@@ -46,7 +46,7 @@
                                         
                                         <!-- Trạng thái -->
                                         <div class="col-lg-auto flex-grow-1">
-                                            <label class="form-label">Trạng thái</label>
+                                            <label class="form-label">Trạng Thái</label>
                                             <select name="status" class="form-select form-select-sm rounded-pill shadow-sm">
                                                 <option value="">-- Tất cả --</option>
                                                 @foreach ($order_statuses as $status)
@@ -59,7 +59,7 @@
 
                                         <!-- Khoảng thời gian -->
                                         <div class="col-lg-auto flex-grow-1">
-                                            <label class="form-label">Khoảng thời gian</label>
+                                            <label class="form-label">Khoảng Thời Gian</label>
                                             <select name="filter_by_time" class="form-select form-select-sm rounded-pill shadow-sm">
                                                 <option value="">-- Lựa chọn --</option>
                                                 <option value="week" {{ request('filter_by_time') == 'week' ? 'selected' : '' }}>Tuần này</option>
@@ -70,14 +70,14 @@
 
                                         <!-- Từ ngày -->
                                         <div class="col-lg-auto flex-grow-1">
-                                            <label class="form-label">Từ ngày</label>
+                                            <label class="form-label">Từ Ngày</label>
                                             <input type="date" name="start_date" class="form-control form-control-sm rounded-pill shadow-sm"
                                                 value="{{ request('start_date') }}">
                                         </div>
 
                                         <!-- Đến ngày -->
                                         <div class="col-lg-auto flex-grow-1">
-                                            <label class="form-label">Đến ngày</label>
+                                            <label class="form-label">Đến Ngày</label>
                                             <input type="date" name="end_date" class="form-control form-control-sm rounded-pill shadow-sm"
                                                 value="{{ request('end_date') }}">
                                         </div>
@@ -85,7 +85,7 @@
                                         <!-- Nút hành động -->
                                         <div class="col-lg-auto d-flex gap-2">
                                             <button type="submit" class="btn btn-primary btn-sm rounded-pill shadow-sm px-3">Lọc</button>
-                                            <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary btn-sm rounded-pill shadow-sm px-3">Reset</a>
+                                            <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary btn-sm rounded-pill shadow-sm px-3">Cài Lại</a>
                                         </div>
                                     </div>
                                 </form>
@@ -96,12 +96,12 @@
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted m-0">Order_Code</label></th>
-                                                <th><label class="text-muted mb-0">Name</label></th>
-                                                <th><label class="text-muted mb-0">Total</label></th>
-                                                <th><label class="text-muted mb-0">Status</label></th>
-                                                <th><label class="text-muted mb-0">Date</label></th>                   
-                                                <th class="text-start"><span class="text-muted">Action</span></th>
+                                                <th><label class="text-muted m-0">Mã Đơn Hàng</label></th>
+                                                <th><label class="text-muted mb-0">Tên Khách Hàng</label></th>
+                                                <th><label class="text-muted mb-0">Tổng Tiền</label></th>
+                                                <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                <th><label class="text-muted mb-0">Ngày Đặt</label></th>
+                                                <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -122,7 +122,7 @@
 
                                                         <!-- View -->
                                                         <a class="" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top" title="View"
+                                                            data-bs-placement="top" title="Xem"
                                                             href="{{ route('admin.orders.show', $order->id) }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                 class="text-secondary me-4" width="20"
