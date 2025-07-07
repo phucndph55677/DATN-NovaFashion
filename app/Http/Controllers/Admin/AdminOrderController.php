@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\OrderStatus;
-use App\Models\Product;
 use Illuminate\Http\Request;
 
 class AdminOrderController extends Controller
@@ -17,25 +15,43 @@ class AdminOrderController extends Controller
     public function index(Request $request)
     {
 
-        $query = Order::with('user', 'orderStatus')->orderBy('created_at', 'desc');
+        $query = Order::with('orderStatus');
 
-        // Lọc theo trạng thái nếu có
+        // Lọc theo trạng thái
         if ($request->filled('status')) {
             $query->where('order_status_id', $request->status);
         }
 
-        // Lọc theo thời gian
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
-        } elseif ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        } elseif ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
+        // Lọc theo khoảng thời gian có sẵn
+        if ($request->filled('filter_by_time')) {
+            match ($request->filter_by_time) {
+                'week' => $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]),
+                'month' => $query->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()]),
+                'year' => $query->whereBetween('created_at', [now()->startOfYear(), now()->endOfYear()]),
+                default => null
+            };
         }
 
-        $orders = $query->paginate(10);
-        $statuses = OrderStatus::all(); // truyền danh sách trạng thái
-        return view('admin.orders.index', compact('orders', 'statuses'));
+        // Lọc theo ngày cụ thể
+        if (!empty($request->start_date) && !empty($request->end_date)) {
+            $start = $request->start_date . ' 00:00:00';
+            $end = $request->end_date . ' 23:59:59';
+            $query->whereBetween('created_at', [$start, $end]);
+
+        } elseif (!empty($request->start_date)) {
+            $query->where('created_at', '>=', $request->start_date . ' 00:00:00');
+
+        } elseif (!empty($request->end_date)) {
+            $query->where('created_at', '<=', $request->end_date . ' 23:59:59');
+        }
+
+        // Lấy danh sách đơn hàng sau khi lọc
+        $orders = $query->latest()->get();
+
+        // Truyền danh sách trạng thái đơn hàng
+        $order_statuses = OrderStatus::all();
+        
+        return view('admin.orders.index', compact('orders', 'order_statuses'));
     }
 
     /**
@@ -59,15 +75,20 @@ class AdminOrderController extends Controller
      */
     public function show(string $id)
     {
-        $order = Order::with('orderDetails.productVariant.product')->findOrFail($id);
+        // Lấy đơn hàng + trạng thái
+        $order = Order::with('orderStatus')->findOrFail($id); // lấy 1 đơn hàng theo ID
+
+        // Lấy danh sách sản phẩm trong đơn hàng
+        $orderDetails = $order->orderDetails()->with([
+            'productVariant.product',
+            'productVariant.color',
+            'productVariant.size',
+        ])->get();
+
+        // Truyền danh sách trạng thái đơn hàng
         $order_statuses = OrderStatus::all();
 
-        $total = $order->orderDetails->sum(function ($detail) {
-            return $detail->price * $detail->quantity;
-        });
-        $invoices = Invoice::all();
-        $completedStatus = OrderStatus::where('name', 'Hoàn thành')->first();
-        return view('admin.orders.show', compact('order', 'invoices', 'total', 'order_statuses', 'completedStatus'));
+        return view('admin.orders.show', compact('order', 'orderDetails', 'order_statuses'));
     }
 
     /**
@@ -75,9 +96,7 @@ class AdminOrderController extends Controller
      */
     public function edit(string $id)
     {
-        $order = Order::findOrFail($id);
-        $statuses = OrderStatus::all();
-        return view('admin.orders.edit', compact('order', 'statuses'));
+        //
     }
 
     /**
@@ -85,17 +104,15 @@ class AdminOrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $data = $request->validate([
             'order_status_id' => 'required|exists:order_statuses,id',
         ]);
 
-
-
         $order = Order::findOrFail($id);
-        $order->order_status_id = $request->order_status_id;
+        $order->order_status_id = $data['order_status_id'];
         $order->save();
 
-        return redirect()->route('admin.orders.index')->with('success', 'Cập nhật đơn hàng thành công.');
+        return redirect()->back();
     }
 
     /**

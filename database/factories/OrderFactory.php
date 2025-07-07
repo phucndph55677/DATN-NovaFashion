@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Voucher;
 use App\Models\OrderStatus;
 use Illuminate\Support\Str;
 
@@ -18,25 +19,27 @@ class OrderFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Order::class;
+
     public function definition(): array
     {
-        $total = $this->faker->randomFloat(2, 100, 5000);
-        $sale_price = $this->faker->randomFloat(2, 0, $total * 0.3);
-        $total_amount = $total - $sale_price;
+        $subtotal = $this->faker->randomFloat(2, 100, 5000);
+        $discount = $this->faker->randomFloat(2, 0, $subtotal * 0.3);
+        $total_amount = $subtotal - $discount;
 
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'order_status_id' => OrderStatus::inRandomOrder()->first()?->id ?? OrderStatus::factory(),
+            'voucher_id' => Voucher::inRandomOrder()->first()?->id ?? null,
             'order_code' => '#' . strtoupper(Str::random(10)),
             'name' => $this->faker->name(),
             'address' => $this->faker->address(),
             'phone' => $this->faker->phoneNumber(),
             'email' => $this->faker->safeEmail(),
-            'total' => $total,
-            'sale_price' => $sale_price,
-            'voucher_code' => $this->faker->optional()->bothify('VOUCHER-#####'),
-            'payment' => $this->faker->randomElement(['Tiền mặt', 'Thẻ tín dụng', 'Chuyển khoản']),
+            'subtotal' => $subtotal,
+            'discount' => $discount,
             'total_amount' => $total_amount,
+            'payment' => $this->faker->randomElement(['Tiền mặt', 'Thẻ tín dụng', 'Chuyển khoản']),
             'note' => $this->faker->optional()->sentence(),
         ];
     }
