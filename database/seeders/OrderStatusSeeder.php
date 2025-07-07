@@ -18,7 +18,7 @@ class OrderStatusSeeder extends Seeder
             'Đã xác nhận',
             'Chưa thanh toán',
             'Đã thanh toán',
-            'Đang chuẩn bị hàng',
+            'Chuẩn bị hàng',
             'Đang giao hàng',
             'Đã giao hàng',
             'Thành công',

@@ -13,17 +13,16 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'order_status_id',
+        'voucher_id',
         'order_code',
         'name',
         'address',
         'phone',
         'email',
-        'status',
-        'total',
-        'sale_price',
-        'voucher_code',
-        'payment',
+        'subtotal',
+        'discount',
         'total_amount',
+        'payment',
         'note',
     ];
 
@@ -36,9 +35,31 @@ class Order extends Model
     {
         return $this->belongsTo(OrderStatus::class);
     }
+
+     public function voucher()
+    {
+        return $this->belongsTo(Voucher::class);
+    }
+
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+
+    public function getBadgeColorAttribute()
+    {
+        $status = $this->orderStatus?->name;
+
+        return match (true) {
+            in_array($status, ['Chờ xác nhận', 'Đã xác nhận']) => 'info',
+            in_array($status, ['Chưa thanh toán', 'Đã thanh toán']) => 'success',
+            $status === 'Chuẩn bị hàng' => 'secondary',
+            in_array($status, ['Đang giao hàng', 'Đã giao hàng']) => 'warning',
+            $status === 'Thành công' => 'primary',
+            $status === 'Hoàn hàng' => 'dark',
+            $status === 'Hủy đơn' => 'danger',
+            default => 'light',
+        };
     }
 
 }
