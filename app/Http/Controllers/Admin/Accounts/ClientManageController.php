@@ -56,8 +56,8 @@ class ClientManageController extends Controller
         $client = User::where('role_id', 3)->findOrFail($id);
         $rankings = Ranking::all(); // Lấy toàn bộ danh sách ranking
         $statuses = [
-            (object)['id' => 1, 'name' => 'Active'],
-            (object)['id' => 0, 'name' => 'Inactive'],
+            (object)['id' => 1, 'name' => 'Hoạt Động'],
+            (object)['id' => 0, 'name' => 'Không Hoạt Động'],
         ];
 
         return view('admin.accounts.clientManage.edit', compact('client', 'rankings', 'statuses'));

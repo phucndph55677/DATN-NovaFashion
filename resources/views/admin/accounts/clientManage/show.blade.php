@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Client Manage')
+@section('title', 'Quản Lý Khách Hàng')
 
 @section('content')
     <div class="container-fluid">
@@ -12,8 +12,8 @@
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
                             aria-label="breadcrumb">
                             <ol class="breadcrumb ps-0 mb-0 pb-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.accounts.client-manage.index') }}">Client</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Show Client</li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.accounts.client-manage.index') }}">Danh Sách Khách Hàng</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Xem Khách Hàng</li>
                             </ol>
                         </nav>
                     </div>
@@ -24,14 +24,14 @@
                                 d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="ms-2">Back</span>
+                        <span class="ms-2">Quay Lại</span>
                     </a>
                 </div>
             </div>
 
             <!-- Title -->
             <div class="col-lg-12 mb-3 d-flex justify-content-between">
-                <h4 class="fw-bold d-flex align-items-center">Detail Client</h4>
+                <h4 class="fw-bold d-flex align-items-center">Chi Tiết Khách Hàng</h4>
             </div>
 
             <!-- Form -->
@@ -50,7 +50,7 @@
                                 >
                                 <h5 class="mt-3 fw-semibold">{{ $client->name }}</h5>
                                 <span class="badge bg-{{ $client->status ? 'success' : 'danger' }}">
-                                    {{ $client->status ? 'Active' : 'Inactive' }}
+                                    {{ $client->status ? 'Hoạt Động' : 'Không Hoạt Động' }}
                                 </span>
                             </div>
 
@@ -61,16 +61,16 @@
                                         <strong>Email:</strong> {{ $client->email }}
                                     </li>
                                     <li class="list-group-item px-0">
-                                        <strong>Phone:</strong> {{ $client->phone }}
+                                        <strong>Số Điện Thoại:</strong> {{ $client->phone }}
                                     </li>
                                     <li class="list-group-item px-0">
-                                        <strong>Ranking:</strong> {{ $client->ranking->name }}
+                                        <strong>Xếp Hạng:</strong> {{ $client->ranking->name }}
                                     </li>
                                     {{-- <li class="list-group-item px-0">
                                         <strong>Address:</strong> {{ $client->address }}
                                     </li> --}}
                                     <li class="list-group-item px-0 border-bottom">
-                                        <strong>Address:</strong> {{ $client->address }}
+                                        <strong>Địa Chỉ:</strong> {{ $client->address }}
                                     </li>
                                 </ul>
                             </div>
@@ -79,7 +79,7 @@
 
                     <div class="card-body">
                         <hr>
-                        <h5 class="fw-bold mb-3">Order List</h5>
+                        <h5 class="fw-bold mb-3">Danh Sách Đơn Hàng</h5>
                         <!-- Card Table -->
                         <div class="row">
                             <div class="col-lg-12">
@@ -92,11 +92,11 @@
                                                 <thead class="table-color-heading">
                                                     <tr class="text-light">
                                                         <th><label class="text-muted m-0">ID</label></th>
-                                                        <th><label class="text-muted mb-0">Commenter</label></th>
-                                                        <th><label class="text-muted mb-0">Content</label></th>
-                                                        <th><label class="text-muted mb-0">Comment Date</label></th>
-                                                        <th><label class="text-muted mb-0">Status</label></th>
-                                                        <th class="text-start"><span class="text-muted">Action</span></th>
+                                                        <th><label class="text-muted mb-0">Người Đánh Giá</label></th>
+                                                        <th><label class="text-muted mb-0">Nội Dung</label></th>
+                                                        <th><label class="text-muted mb-0">Ngày Đánh Giá</label></th>
+                                                        <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                        <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -112,7 +112,7 @@
 
                     <div class="card-body">
                         <hr>
-                        <h5 class="fw-bold mb-3">Review List</h5>
+                        <h5 class="fw-bold mb-3">Danh Sách Đánh Giá</h5>
                         <!-- Card Table -->
                         <div class="row">
                             <div class="col-lg-12">
@@ -125,12 +125,12 @@
                                                 <thead class="table-color-heading">
                                                     <tr class="text-light">
                                                         <th><label class="text-muted m-0">ID</label></th>
-                                                        <th><label class="text-muted mb-0">Product Name</label></th>
-                                                        <th><label class="text-muted mb-0">Ranking</label></th>
-                                                        <th><label class="text-muted mb-0">Content</label></th>
-                                                        <th><label class="text-muted mb-0">Comment Date</label></th>
-                                                        <th><label class="text-muted mb-0">Status</label></th>
-                                                        <th class="text-start"><span class="text-muted">Action</span></th>
+                                                        <th><label class="text-muted mb-0">Tên Sản Phẩm</label></th>
+                                                        <th><label class="text-muted mb-0">Xếp Hạng</label></th>
+                                                        <th><label class="text-muted mb-0">Nội Dung</label></th>
+                                                        <th><label class="text-muted mb-0">Ngày Đánh Giá</label></th>
+                                                        <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                        <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
