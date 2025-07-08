@@ -91,14 +91,6 @@ class ClientManageController extends Controller
      */
     public function destroy(string $id)
     {
-        $client = User::where('role_id', 3)->findOrFail($id);
-
-        if($client ->image) {
-            Storage::disk('public')->delete($client->image);
-        }
-
-        $client->delete();
-
-        return redirect()->route('admin.accounts.client-manage.index');
+        //
     }
 }
