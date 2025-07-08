@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('title', 'Client Manage')
+@section('title', 'Quản Lý Khách Hàng')
 
 @section('content')
     <div class="container-fluid">
@@ -8,7 +8,7 @@
             <div class="col-lg-12">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 my-schedule mb-4">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h4 class="fw-bold">Client</h4>
+                        <h4 class="fw-bold">Quản Lý Khách Hàng</h4>
                     </div>
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -16,7 +16,7 @@
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
                                         <input type="text" class="form-control" id="exampleInputText"
-                                            placeholder="Search Client">
+                                            placeholder="Tìm kiếm khách hàng...">
                                         <a class="search-link" href="#">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,26 +36,18 @@
                         <div class="card card-block card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-md-0">
-                                    <h5 class="fw-bold">Client List</h5>
-                                    <button class="btn btn-secondary btn-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="20"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                        Export
-                                    </button>
+                                    <h5 class="fw-bold">Danh Sách Khách Hàng</h5>
                                 </div>
                                 <div class="table-responsive iq-invoice-table">
                                     <table class="table data-table mb-0">
                                         <thead class="table-color-heading">
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
-                                                <th><label class="text-muted mb-0">Client Name</label></th>
-                                                <th><label class="text-muted mb-0">Phone</label></th>
-                                                <th><label class="text-muted mb-0">Ranking</label></th>
-                                                <th><label class="text-muted mb-0">Status</label></th>
-                                                <th class="text-start"><span class="text-muted">Action</span></th>
+                                                <th><label class="text-muted mb-0">Tên Khách Hàng</label></th>
+                                                <th><label class="text-muted mb-0">Số Điện Thoại</label></th>
+                                                <th><label class="text-muted mb-0">Xếp Hạng</label></th>
+                                                <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -87,7 +79,7 @@
 
                                                             <!-- View -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="View" 
+                                                                data-bs-placement="top" title="Xem" 
                                                                 href="{{ route('admin.accounts.client-manage.show', $client->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
@@ -104,7 +96,7 @@
 
                                                             <!-- Edit -->
                                                             <a class="" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="Edit"
+                                                                data-bs-placement="top" title="Sửa"
                                                                 href="{{ route('admin.accounts.client-manage.edit', $client->id) }}">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="text-secondary me-4" width="20"
@@ -126,7 +118,7 @@
                                                                 @method('DELETE')
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-icon text-danger"
-                                                                    data-bs-toggle="tooltip" title="Delete">
+                                                                    data-bs-toggle="tooltip" title="Xóa">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20"
                                                                         fill="none" viewBox="0 0 24 24"
                                                                         stroke="currentColor">
