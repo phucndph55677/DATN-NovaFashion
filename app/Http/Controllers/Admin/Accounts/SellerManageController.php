@@ -97,8 +97,8 @@ class SellerManageController extends Controller
     {
         $seller = User::where('role_id', 2)->findOrFail($id);
         $statuses = [
-            (object)['id' => 1, 'name' => 'Active'],
-            (object)['id' => 0, 'name' => 'Inactive'],
+            (object)['id' => 1, 'name' => 'Hoạt Động'],
+            (object)['id' => 0, 'name' => 'Không Hoạt Động'],
         ];
 
         return view('admin.accounts.sellerManage.edit', compact('seller', 'statuses'));
