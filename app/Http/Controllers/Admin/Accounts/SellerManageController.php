@@ -179,14 +179,6 @@ class SellerManageController extends Controller
      */
     public function destroy(string $id)
     {
-        $seller = User::where('role_id', 2)->findOrFail($id);
-
-        if($seller ->image) {
-            Storage::disk('public')->delete($seller->image);
-        }
-
-        $seller->delete();
-
-        return redirect()->route('admin.accounts.seller-manage.index');
+      //
     }
 }
