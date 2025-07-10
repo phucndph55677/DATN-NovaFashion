@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -13,9 +15,14 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $today = Carbon::now()->startOfDay();
+        $vouchers = Voucher::where('status', 1) // chỉ lấy voucher đang hiện
+        ->whereDate('end_date', '>=', $today) // còn hạn
+        ->orderBy('created_at', 'desc') // ưu tiên mới nhất
+        ->get();
         $products = Product::with(['variants.color', 'variants.size'])->latest()->get();
 
-        return view('home', compact('products'));
+        return view('home', compact('products', 'vouchers'));
     }
 
     /**
