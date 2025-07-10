@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
 
+use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ClientVoucherController;
 
 
@@ -95,8 +96,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // ROUTE CLIENT
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', [ClientVoucherController::class, 'showVoucher'])->name('home');
+// Route::get('/', [ClientVoucherController::class, 'showVoucher'])->name('home');

@@ -57,7 +57,7 @@
 
                     <div class="swiper mySwiper px-3">
                         <div class="swiper-wrapper">
-                            @foreach ($vouchers as $voucher)
+                            {{-- @foreach ($vouchers as $voucher)
                                 <div class="swiper-slide">
                                     <div class="border rounded-3 p-4 bg-light h-100 d-flex flex-column justify-content-between"
                                         style="min-width: 250px;">
@@ -77,7 +77,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
+                            @endforeach --}}
                         </div>
 
                         <!-- Nút điều hướng đẹp hơn -->
@@ -87,7 +87,7 @@
                 </section>
 
                 <!--  Modal -->
-                @foreach ($vouchers as $voucher)
+                {{-- @foreach ($vouchers as $voucher)
                     <div class="modal fade" id="voucherModal{{ $voucher->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
                             <div class="modal-content rounded-4 border border-light-subtle shadow-sm">
@@ -147,7 +147,7 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @endforeach --}}
                 <!-- End Ưu đãi Voucher -->
 
                 <!-- New Arrival -->
@@ -168,61 +168,67 @@
                         <div class="exclusive-content">
                             <div class="exclusive-inner active" id="tab-women">
                                 <div class="list-products new-prod-slider owl-carousel">
-                                    <div class="item-new-prod">
-                                        <div class="product">
-                                            <div class="thumb-product">
-                                                <a
-                                                    href="https://ivymoda.com/sanpham/ocean-breeze-dress-dam-lua-xoe-ms-48b0040-42162">
-                                                    <img data-src="https://cotton4u.vn/files/product/thumab/400/2025/03/04/44e71716cb6e538b14d55dd2bea5499a.webp"
-                                                        alt="Ocean Breeze Dress - Đầm lụa xòe" class=" owl-lazy" />
-                                                    <img data-src="https://cotton4u.vn/files/product/thumab/400/2025/03/04/5da1bbf636a0c4d43e865d835351f512.webp"
-                                                        alt="Ocean Breeze Dress - Đầm lụa xòe"
-                                                        class="hover-img owl-lazy" />
-                                                </a>
-                                            </div>
-                                            <div class="info-product">
-                                                <div class="list-color">
-                                                    <ul>
-                                                        <li class="checked ">
-                                                            <a href="javascript:void(0)" class="color-picker"
-                                                                data-id="42162">
-                                                                <img data-src="https://cotton4u.vn/ivy2/images/color/h60.png"
-                                                                    alt="h60" class="owl-lazy" />
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                    <div class="favourite" data-id="42162">
-                                                        <i class="icon-ic_heart"></i>
+                                    @foreach ($products as $product)
+                                        @php
+                                            $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
+                                        @endphp
+                                        
+                                        <div class="item-new-prod">
+                                            {{-- <div class="product"> --}}
+                                            <div class="product" data-product-id="{{ $product->id }}">
+                                                <div class="thumb-product">
+                                                    <a href="#">
+                                                        <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
+                                                        {{-- <img class="hover-img" src=""> --}}
+                                                    </a>
+                                                </div>
+                                                <div class="info-product">
+                                                    <div class="list-color">
+                                                        <ul>
+                                                            @foreach ($product->variants->unique('color_id') as $colorVariant)
+                                                                <li class="{{ $loop->first ? 'checked' : '' }} ">
+                                                                    <a href="" 
+                                                                        class="color-picker" 
+                                                                        data-image="{{ asset('storage/' . $colorVariant->image) }}"
+                                                                        data-price="{{ $colorVariant->price }}"
+                                                                        data-sale="{{ $colorVariant->sale }}"
+                                                                        data-product="{{ $product->id }}">
+                                                                        <span style="display:inline-block;
+                                                                            width: 20px;
+                                                                            height: 20px;
+                                                                            border-radius: 50%;
+                                                                            background-color: {{ $colorVariant->color->color_code }};
+                                                                            border: 1px solid {{ strtolower($colorVariant->color->color_code) === '#ffffff' ? '#ccc' : 'transparent' }};">
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                        <div class="favourite" data-id="42162">
+                                                            <i class="icon-ic_heart"></i>
+                                                        </div>
+                                                    </div>
+                                                    <h3 class="title-product">
+                                                        <a href="#">{{ $product->name }}</a>
+                                                    </h3>
+                                                    <div class="price-product">
+                                                        @if ($variant && $variant->sale > 0 && $variant->sale < $variant->price)
+                                                            <ins><span>{{ number_format($variant->sale, 0, ',', '.') }} VND</span></ins>
+                                                            <del><span>{{ number_format($variant->price, 0, ',', '.') }} VND</span></del>
+                                                        @elseif ($variant)
+                                                            <ins><span>{{ number_format($variant->price, 0, ',', '.') }} VND</span></ins>
+                                                        @else
+                                                            <ins><span>Liên hệ</span></ins> {{-- Trường hợp không có biến thể --}}
+                                                        @endif
                                                     </div>
                                                 </div>
-                                                <h3 class="title-product">
-                                                    <a href="https://ivymoda.com/sanpham/ocean-breeze-dress-dam-lua-xoe-ms-48b0040-42162">Ocean Breeze Dress - Đầm lụa xòe</a>
-                                                </h3>
-                                                <div class="price-product">
-                                                    <ins>
-                                                        <span>1.790.000đ</span>
-                                                    </ins>
+                                                <div class="add-to-cart">
+                                                    <a href="javascript:void(0)"><i class="icon-ic_shopping-bag"></i></a>
                                                 </div>
                                             </div>
-                                            <div class="add-to-cart">
-                                                <a href="javascript:void(0)"><i class="icon-ic_shopping-bag"></i></a>
-                                            </div>
-                                            <div class="list-size">
-                                                <ul>
-                                                    <li data-product-sub-id="202577"><button
-                                                            class="btn bt-large">s</button></li>
-                                                    <li data-product-sub-id="202581"><button
-                                                            class="btn bt-large">m</button></li>
-                                                    <li data-product-sub-id="202585"><button
-                                                            class="btn bt-large">l</button></li>
-                                                    <li data-product-sub-id="202589"><button
-                                                            class="btn bt-large">xl</button></li>
-                                                    <li class="unactive"><button class="btn bt-large">xxl</button></li>
-                                                </ul>
-                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    @endforeach
+                                </div>               
                                 <div class="link-product">
                                     <a href="https://ivymoda.com/danh-muc/hang-nu-moi-ve" class="all-product">Xem tất cả1</a>
                                 </div>
@@ -624,4 +630,47 @@
             },
         });
     </script>
+
+    {{-- JS xử lý khi click màu -> hiển thị ảnh + giá tương ứng --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.color-picker').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const productId = this.dataset.product;
+                    const image = this.dataset.image;
+                    const price = parseInt(this.dataset.price);
+                    const sale = parseInt(this.dataset.sale);
+
+                    const wrapper = document.querySelector(`.product[data-product-id="${productId}"]`);
+                    if (!wrapper) return;
+
+                    // 1. Đổi ảnh sản phẩm
+                    wrapper.querySelector('.product-img').src = image;
+
+                    // 2. Đổi giá
+                    const priceEl = wrapper.querySelector('.price-product ins span');
+                    const saleEl = wrapper.querySelector('.price-product del span');
+
+                    if (sale > 0 && sale < price) {
+                        priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
+                        saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        saleEl.parentElement.style.display = 'inline';
+                    } else {
+                        priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        if (saleEl) {
+                            saleEl.textContent = '';
+                            saleEl.parentElement.style.display = 'none';
+                        }
+                    }
+
+                    // 3. Đánh dấu màu được chọn
+                    wrapper.querySelectorAll('.list-color li').forEach(li => li.classList.remove('checked'));
+                    this.closest('li').classList.add('checked');
+                });
+            });
+        });
+    </script>
+
 @endsection
