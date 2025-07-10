@@ -97,5 +97,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // ROUTE CLIENT
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Route::get('/', [ClientVoucherController::class, 'showVoucher'])->name('home');
