@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
 
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\Client\ClientVoucherController;
+use App\Http\Controllers\Client\ClientProductController;
 
 
 // ROUTE ADMIN
@@ -97,3 +97,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // ROUTE CLIENT
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('product.show');
