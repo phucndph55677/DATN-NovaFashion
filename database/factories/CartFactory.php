@@ -3,8 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Product;
+use App\Models\Cart;
 use App\Models\User;
+use App\Models\Voucher;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cart>
@@ -16,16 +17,21 @@ class CartFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Cart::class;
+
     public function definition(): array
     {
-        // Lấy product ngẫu nhiên hoặc tạo mới nếu chưa có
-        $product = Product::inRandomOrder()->first() ?? Product::factory()->create();
+        $subtotal = fake()->randomFloat(2, 100, 1000);
+        $discount = fake()->randomFloat(2, 0, $subtotal * 0.3);
+        $total = $subtotal - $discount;
 
         return [
-            'product_id' => $product->id,
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'voucher_id' => Voucher::inRandomOrder()->first()?->id ?? null,
             'quantity' => fake()->numberBetween(1, 5),
-            'price' => $product->price ?? fake()->randomFloat(2, 50, 500), // Giá tại thời điểm thêm vào giỏ
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'total_amount' => $total,
         ];
     }
 }

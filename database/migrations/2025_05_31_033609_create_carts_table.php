@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id(); // Khóa chính id
-            $table->foreignId('product_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng products
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng users
-            $table->integer('quantity')->default(1); // Số lượng sản phẩm trong giỏ, mặc định 1
-            $table->decimal('price', 10, 2); // Giá sản phẩm tại thời điểm thêm vào giỏ
-            $table->timestamps(); // Tạo 2 cột created_at và updated_at
+            $table->foreignId('voucher_id')->nullable()->constrained()->onDelete('set null'); // Khóa ngoại liên kết tới bảng vouchers
+            $table->integer('quantity')->default(0); // Tổng số lượng sản phẩm trong giỏ
+            $table->decimal('subtotal', 10, 2)->default(0); // Tổng trước giảm
+            $table->decimal('discount', 10, 2)->default(0); // Số tiền giảm giá
+            $table->decimal('total_amount', 10, 2)->default(0); // Tổng sau giảm
+            $table->timestamps();
         });
     }
 
