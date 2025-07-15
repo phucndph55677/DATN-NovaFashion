@@ -1,6 +1,6 @@
 @extends('client.layouts.app')
 
-@section('title', 'Trang chủ')
+@section('title', 'Trang Chủ')
 
 @section('content')
     <body>
@@ -177,7 +177,7 @@
                                             {{-- <div class="product"> --}}
                                             <div class="product" data-product-id="{{ $product->id }}">
                                                 <div class="thumb-product">
-                                                    <a href="#">
+                                                    <a href="{{ route('product.show', $product->id) }}">
                                                         <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
                                                         {{-- <img class="hover-img" src=""> --}}
                                                     </a>
