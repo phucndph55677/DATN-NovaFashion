@@ -10,20 +10,27 @@ class Cart extends Model
     /** @use HasFactory<\Database\Factories\CartFactory> */
     use HasFactory;
 
-     protected $fillable = [
-        'product_id',
+    protected $fillable = [
         'user_id',
+        'voucher_id',
         'quantity',
-        'price',
+        'subtotal',
+        'discount',
+        'total_amount',
     ];
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function voucher()
+    {
+        return $this->belongsTo(Voucher::class);
+    }
+
+    public function cartDetail()
+    {
+        return $this->hasMany(CartDetail::class);
     }
 }
