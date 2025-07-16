@@ -183,8 +183,11 @@
                     </div>
                 </div>
 
-                <div class="item wallet">
-                    <a class="icon" href="https://ivymoda.com/customer/login" onclick="window.location.href = 'https://ivymoda.com/customer/login';"><i class="icon-ic_avatar"></i></a>
+                 <div class="item wallet">
+                    <a class="icon" href="{{ route('login') }}"
+                        onclick="window.location.href = '{{ route('login') }}';">
+                        <i class="icon-ic_avatar"></i>
+                    </a>
                 </div> 
 
                  <div class="item item-cart">
