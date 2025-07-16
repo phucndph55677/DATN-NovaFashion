@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
-
+use App\Http\Controllers\Client\ClientAuthController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ClientProductController;
 
@@ -99,3 +99,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('product.show');
+
+// Route cho đăng nhập client
+Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [ClientAuthController::class, 'login'])->name('login.post');
