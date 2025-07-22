@@ -177,7 +177,7 @@
                                             {{-- <div class="product"> --}}
                                             <div class="product" data-product-id="{{ $product->id }}">
                                                 <div class="thumb-product">
-                                                    <a href="{{ route('product.show', $product->id) }}">
+                                                    <a href="{{ route('products.show', $product->id) }}">
                                                         <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
                                                         {{-- <img class="hover-img" src=""> --}}
                                                     </a>
