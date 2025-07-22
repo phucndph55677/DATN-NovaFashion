@@ -26,21 +26,6 @@
                                     <div class="product-detail__gallery">
                                         <div class="product-gallery__slide">
                                             <div class="product-gallery__slide--big">
-                                                {{-- <div class="swiper-nav-prev">
-                                                    <span class="icon-ic_down"></span>
-                                                </div>
-                                                <div class="swiper-nav-next">
-                                                    <span class="icon-ic_down"></span>
-                                                </div> --}}
-                                                {{-- <div class="swiper-container swiper">
-                                                    <div class="swiper-wrapper">
-                                                        <div class="swiper-slide">
-                                                            <div class="item-zoom" data-image="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
-                                                                <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> --}}
                                                 <div class="thumb-product">
                                                     <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" style="width: 550px; height: 550px">
                                                 </div>     
@@ -119,11 +104,11 @@
                                                 <div class="size-group" data-color-id="{{ $colorId }}" style="{{ $loop->first ? '' : 'display: none;' }}">
                                                     @foreach ($variantsByColor as $colorVariant)
                                                         <label style="display: inline-block; margin: 5px; padding: 5px 9px; border: 1px solid #ccc; border-radius: 4px;">
-                                                            {{-- <input type="radio" name="size" value="{{ $colorVariant->size->id }}"> --}}
                                                             <input type="radio" name="size" value="{{ $colorVariant->size->id }}"
-                                                                data-size-id="{{ $colorVariant->size->id }}"
                                                                 data-price="{{ $colorVariant->price }}"
-                                                                data-sale="{{ $colorVariant->sale }}">
+                                                                data-sale="{{ $colorVariant->sale }}"
+                                                                data-size-id="{{ $colorVariant->size->id }}"
+                                                                data-variant-id="{{ $colorVariant->id }}">
                                                             <span class="text-uppercase">{{ $colorVariant->size->name }}</span>
                                                         </label>
                                                     @endforeach
@@ -131,25 +116,39 @@
                                             @endforeach
                                         </div>
 
-                                        <div class="product-quantity">
-                                            <p style="font-weight: 500;">Số lượng</p>
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <button type="button" class="quantity-decrease" style="width: 32px;">-</button>
-                                                <input type="number" name="quantity" id="quantity-input" value="1" min="1" style="width: 60px; text-align: center;" />
-                                                <button type="button" class="quantity-increase" style="width: 32px;">+</button>
+                                        <div class="product-cart">
+                                            {{-- Chỉ hiển thị 1 input số lượng --}}
+                                            <div class="product-quantity">
+                                                <p style="font-weight: 500;">Số lượng</p>
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <button type="button" class="quantity-decrease" style="width: 32px;">-</button>
+                                                    <input type="number" id="quantity_input" value="1" min="1" style="width: 60px; text-align: center;" />
+                                                    <button type="button" class="quantity-increase" style="width: 32px;">+</button>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="product-cart" style="display: flex; gap: 10px;">
-                                            <button class="btn btn--large add-to-cart-detail">
-                                                Thêm vào giỏ
-                                            </button>
-                                            <a href="" id="purchase">
-                                                <button class="btn btn--large btn--outline">Mua hàng</button>
-                                            </a>
-                                            <button class="btn btn--large btn--outline btn--wishlist" data-id="42167">
-                                                <i class="icon-ic_heart"></i>
-                                            </button>
+                                            <div  style="display: flex; gap: 10px;">                                                
+                                                {{-- Form Thêm vào giỏ --}}
+                                                <form action="{{ route('carts.add') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_variant_id" id="product_variant_id_add" value="{{ $variant->id }}">
+                                                    <input type="hidden" name="quantity" id="quantity_add" value="1">
+                                                    <button type="submit" class="btn btn--large">Thêm vào giỏ</button>
+                                                </form>
+
+                                                {{-- Form Mua hàng --}}
+                                                <form action="{{ route('carts.buy') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_variant_id" id="product_variant_id_buy" value="{{ $variant->id }}">
+                                                    <input type="hidden" name="quantity" id="quantity_buy" value="1">
+                                                    <button type="submit" class="btn btn--large btn--outline">Mua hàng</button>
+                                                </form>
+
+                                                {{-- Yêu thích --}}
+                                                <button class="btn btn--large btn--outline btn--wishlist">
+                                                    <i class="icon-ic_heart"></i>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div class="product-detail__tab">
@@ -199,45 +198,17 @@
         </div>
     </main>
 
-<div class="add-card-size" id="fancybox-add-to-cart">
-    <div class="thank-you__icon"><svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M56.7833 20.1167C62.9408 13.9592 71.2921 10.5 80 10.5C84.3117 10.5 88.5812 11.3493 92.5648 12.9993C96.5483 14.6493 100.168 17.0678 103.217 20.1167C106.266 23.1655 108.684 26.785 110.334 30.7686C111.984 34.7521 112.833 39.0216 112.833 43.3333V62.8333H47.1667V43.3333C47.1667 34.6254 50.6259 26.2741 56.7833 20.1167ZM46.1667 62.8333V43.3333C46.1667 34.3602 49.7312 25.7545 56.0762 19.4096C62.4212 13.0646 71.0268 9.5 80 9.5C84.4431 9.5 88.8426 10.3751 92.9474 12.0754C97.0523 13.7757 100.782 16.2678 103.924 19.4096C107.065 22.5513 109.558 26.281 111.258 30.3859C112.958 34.4907 113.833 38.8903 113.833 43.3333V62.8333H133.333C133.582 62.8333 133.793 63.0163 133.828 63.2626L147.162 156.596C147.182 156.739 147.139 156.885 147.044 156.994C146.949 157.104 146.812 157.167 146.667 157.167H13.3333C13.1884 157.167 13.0506 157.104 12.9556 156.994C12.8606 156.885 12.8179 156.739 12.8384 156.596L26.1717 63.2626C26.2069 63.0163 26.4178 62.8333 26.6667 62.8333H46.1667ZM113.333 63.8333H46.6667H27.1003L13.9098 156.167H146.09L132.9 63.8333H113.333Z" fill="#212121"></path>
-        <path d="M107.205 91.3663L80.4451 121.251L64.5853 106.174L62 108.893L80.6618 126.634L110 93.8694L107.205 91.3663Z" fill="black"></path>
-    </svg>
-    </div>
-    <p class="notify__add-to-cart--success text-uppercase">Thêm vào giỏ hàng thành công !</p>
-</div>
-<div id="overlay"></div>
-
+    {{-- <div class="add-card-size" id="fancybox-add-to-cart">
+        <div class="thank-you__icon"><svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M56.7833 20.1167C62.9408 13.9592 71.2921 10.5 80 10.5C84.3117 10.5 88.5812 11.3493 92.5648 12.9993C96.5483 14.6493 100.168 17.0678 103.217 20.1167C106.266 23.1655 108.684 26.785 110.334 30.7686C111.984 34.7521 112.833 39.0216 112.833 43.3333V62.8333H47.1667V43.3333C47.1667 34.6254 50.6259 26.2741 56.7833 20.1167ZM46.1667 62.8333V43.3333C46.1667 34.3602 49.7312 25.7545 56.0762 19.4096C62.4212 13.0646 71.0268 9.5 80 9.5C84.4431 9.5 88.8426 10.3751 92.9474 12.0754C97.0523 13.7757 100.782 16.2678 103.924 19.4096C107.065 22.5513 109.558 26.281 111.258 30.3859C112.958 34.4907 113.833 38.8903 113.833 43.3333V62.8333H133.333C133.582 62.8333 133.793 63.0163 133.828 63.2626L147.162 156.596C147.182 156.739 147.139 156.885 147.044 156.994C146.949 157.104 146.812 157.167 146.667 157.167H13.3333C13.1884 157.167 13.0506 157.104 12.9556 156.994C12.8606 156.885 12.8179 156.739 12.8384 156.596L26.1717 63.2626C26.2069 63.0163 26.4178 62.8333 26.6667 62.8333H46.1667ZM113.333 63.8333H46.6667H27.1003L13.9098 156.167H146.09L132.9 63.8333H113.333Z" fill="#212121"></path>
+            <path d="M107.205 91.3663L80.4451 121.251L64.5853 106.174L62 108.893L80.6618 126.634L110 93.8694L107.205 91.3663Z" fill="black"></path>
+        </svg>
+        </div>
+        <p class="notify__add-to-cart--success text-uppercase">Thêm vào giỏ hàng thành công !</p>
+    </div> --}}
 @endsection
 
 @section('scripts')
-    {{-- <script>
-        $(function() {
-            var zoom = function(elm) {
-                elm.on('mouseover', function() {
-                    $(this).children('.img').css('transform', 'scale(2)');
-                }).on('mouseout', function() {
-                    $(this).children('.img').css('transform', 'scale(1)');
-                }).on('mousemove', function(e) {
-                    $(this).children('.img').css('transform-origin', ((e.pageX - $(this).offset().left) / $(this).width()) * 100 + '% ' + ((e.pageY - $(this).offset().top) / $(this).height()) * 100 +'%');
-                })
-            }
-
-            let isMobile = false;
-
-            if (typeof navigator.userAgent != "undefined" && /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent))
-                isMobile = true;
-
-            $('.item-zoom').each(function() {
-                $(this).append('<div class="img"></div>').children('.img').css('background-image', 'url('+ $(this).data('image') +')');
-                
-                if (!isMobile) zoom($(this));
-            })
-
-        });
-    </script> --}}
-
     {{-- JS xử lý khi click màu -> hiển thị ảnh + giá tương ứng --}}
     {{-- JS xử lý khi click size + màu -> hiển thị giá tương ứng --}}
     <script>
@@ -318,30 +289,78 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const quantityInput = document.getElementById('quantity_input');
+            const quantityAdd = document.getElementById('quantity_add');
+            const quantityBuy = document.getElementById('quantity_buy');
+
             const decreaseBtn = document.querySelector('.quantity-decrease');
             const increaseBtn = document.querySelector('.quantity-increase');
-            const quantityInput = document.getElementById('quantity-input');
 
-            // Khi bấm nút -
-            decreaseBtn.addEventListener('click', () => {
+            if (!quantityInput) return;
+
+            const syncHiddenInputs = () => {
+                quantityAdd.value = quantityInput.value;
+                quantityBuy.value = quantityInput.value;
+            };
+
+            decreaseBtn?.addEventListener('click', () => {
                 let current = parseInt(quantityInput.value);
                 if (current > 1) {
                     quantityInput.value = current - 1;
+                    syncHiddenInputs();
                 }
             });
 
-            // Khi bấm nút +
-            increaseBtn.addEventListener('click', () => {
+            increaseBtn?.addEventListener('click', () => {
                 let current = parseInt(quantityInput.value);
                 quantityInput.value = current + 1;
+                syncHiddenInputs();
             });
 
-            // Chặn nhập số nhỏ hơn 1 hoặc ký tự lạ
             quantityInput.addEventListener('input', () => {
                 let val = parseInt(quantityInput.value);
                 if (isNaN(val) || val < 1) {
                     quantityInput.value = 1;
                 }
+                syncHiddenInputs();
+            });
+
+            // Gọi ngay khi load trang để đồng bộ giá trị ban đầu
+            syncHiddenInputs();
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll('.product-size input[type="radio"][name="size"]').forEach(function (input) {
+                input.addEventListener('change', function () {
+                    const variantId = this.dataset.variantId;
+                    const price = parseInt(this.dataset.price);
+                    const sale = parseInt(this.dataset.sale);
+
+                    // Cập nhật cả hai input product_variant_id
+                    const variantAdd = document.getElementById('product_variant_id_add');
+                    const variantBuy = document.getElementById('product_variant_id_buy');
+                    if (variantAdd) variantAdd.value = variantId;
+                    if (variantBuy) variantBuy.value = variantId;
+
+                    // Cập nhật lại giá hiển thị
+                    const wrapper = this.closest('.product-detail') || document;
+                    const priceEl = wrapper.querySelector('.price-product ins span');
+                    const saleEl = wrapper.querySelector('.price-product del span');
+
+                    if (sale > 0 && sale < price) {
+                        priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
+                        saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        saleEl.parentElement.style.display = 'inline';
+                    } else {
+                        priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        if (saleEl) {
+                            saleEl.textContent = '';
+                            saleEl.parentElement.style.display = 'none';
+                        }
+                    }
+                });
             });
         });
     </script>

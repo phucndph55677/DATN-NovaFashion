@@ -13,9 +13,11 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 use App\Http\Controllers\Admin\Accounts\SellerManageController;
-use App\Http\Controllers\Client\ClientAuthController;
+
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\ClientAuthController;
 use App\Http\Controllers\Client\ClientProductController;
+use App\Http\Controllers\Client\ClientCartController;
 
 
 // ROUTE ADMIN
@@ -95,11 +97,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 // ROUTE CLIENT
-
+// Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('product.show');
+// Product show
+Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('products.show');
 
-// Route cho đăng nhập client
+// Đăng nhập
 Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [ClientAuthController::class, 'login'])->name('login.post');
+
+// Carts
+Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index');
+Route::post('/carts/add', [ClientCartController::class, 'addToCart'])->name('carts.add');
+Route::post('/carts/buy', [ClientCartController::class, 'buyNow'])->name('carts.buy');
+Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('carts.delete');
