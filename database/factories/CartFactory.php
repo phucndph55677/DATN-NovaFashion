@@ -21,16 +21,15 @@ class CartFactory extends Factory
 
     public function definition(): array
     {
-        $subtotal = fake()->randomFloat(2, 100, 1000);
-        $discount = fake()->randomFloat(2, 0, $subtotal * 0.3);
-        $total = $subtotal - $discount;
+        $price = fake()->randomFloat(2, 100, 1000);
+        $quantity = fake()->numberBetween(1, 5);
+        $total = $price;
 
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'voucher_id' => Voucher::inRandomOrder()->first()?->id ?? null,
-            'quantity' => fake()->numberBetween(1, 5),
-            'subtotal' => $subtotal,
-            'discount' => $discount,
+            'quantity' => $quantity,
+            'price' => $price,
             'total_amount' => $total,
         ];
     }

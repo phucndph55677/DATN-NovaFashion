@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id(); // Khóa chính id
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng users
             $table->foreignId('voucher_id')->nullable()->constrained()->onDelete('set null'); // Khóa ngoại liên kết tới bảng vouchers
-            $table->integer('quantity')->default(0); // Tổng số lượng sản phẩm trong giỏ
-            $table->decimal('subtotal', 10, 2)->default(0); // Tổng trước giảm
-            $table->decimal('discount', 10, 2)->default(0); // Số tiền giảm giá
-            $table->decimal('total_amount', 10, 2)->default(0); // Tổng sau giảm
+            $table->unsignedInteger('quantity')->default(0); // Tổng số sản phẩm
+            $table->decimal('price', 10, 2)->default(0);     // Giá sản phẩm
+            $table->decimal('total_amount', 10, 2)->default(0); // Tổng phải trả
             $table->timestamps();
         });
     }

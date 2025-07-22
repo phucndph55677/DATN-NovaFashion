@@ -14,8 +14,7 @@ class Cart extends Model
         'user_id',
         'voucher_id',
         'quantity',
-        'subtotal',
-        'discount',
+        'price',
         'total_amount',
     ];
 
