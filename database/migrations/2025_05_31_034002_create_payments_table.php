@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id(); // Khóa chính id
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng users
             $table->foreignId('order_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng orders
+            $table->foreignId('payment_method_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng payment_methods
             $table->decimal('payment_amount', 10, 2); // Số tiền đã thanh toán
-            $table->string('payment_method'); // Phương thức thanh toán (ví dụ: chuyển khoản, thẻ tín dụng, ví điện tử,...)
-            $table->string('payment_status')->default('pending'); // Trạng thái thanh toán (ví dụ: pending, completed, failed)
-            $table->string('transaction_code')->unique(); // Mã giao dịch do hệ thống hoặc cổng thanh toán cung cấp
+            $table->string('payment_code')->unique(); // Mã giao dịch do hệ thống hoặc cổng thanh toán cung cấp
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending'); // Trạng thái thanh toán (ví dụ: pending, completed, failed)
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }

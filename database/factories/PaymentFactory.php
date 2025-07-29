@@ -4,8 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Payment;
-use App\Models\User;
 use App\Models\Order;
+use App\Models\PaymentMethod;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Payment>
@@ -23,19 +23,15 @@ class PaymentFactory extends Factory
     public function definition(): array
     {
         // Lấy user và order ngẫu nhiên hoặc tạo mới nếu chưa có
-        $user = User::inRandomOrder()->first() ?? User::factory()->create();
         $order = Order::inRandomOrder()->first() ?? Order::factory()->create();
-
-        $methods = ['bank_transfer', 'credit_card', 'momo', 'zalopay'];
-        $statuses = ['pending', 'completed', 'failed'];
+        $method = PaymentMethod::inRandomOrder()->first() ?? PaymentMethod::factory()->create();
 
         return [
-            'user_id' => $user->id,
             'order_id' => $order->id,
+            'payment_method_id' => $method->id,
             'payment_amount' => $this->faker->randomFloat(2, 100, 5000),
-            'payment_method' => $this->faker->randomElement($methods),
-            'payment_status' => $this->faker->randomElement($statuses),
-            'transaction_code' => strtoupper('PAY-' . $this->faker->unique()->bothify('####-???')), // Ví dụ: PAY-5832-ABC
+            'payment_code' => strtoupper('PAY-' . $this->faker->unique()->bothify('####-???')),
+            'status' => $this->faker->randomElement(['pending', 'completed', 'failed']),
         ];
     }
 }
