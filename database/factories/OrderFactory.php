@@ -39,7 +39,6 @@ class OrderFactory extends Factory
             'subtotal' => $subtotal,
             'discount' => $discount,
             'total_amount' => $total_amount,
-            'payment' => $this->faker->randomElement(['Tiền mặt', 'Thẻ tín dụng', 'Chuyển khoản']),
             'note' => $this->faker->optional()->sentence(),
         ];
     }

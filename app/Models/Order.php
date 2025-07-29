@@ -22,7 +22,6 @@ class Order extends Model
         'subtotal',
         'discount',
         'total_amount',
-        'payment',
         'note',
     ];
 
