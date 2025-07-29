@@ -24,7 +24,6 @@ return new class extends Migration
             $table->decimal('subtotal', 10, 2); // Tổng tiền chưa giảm giá
             $table->decimal('discount', 10, 2)->default(0); // Tiền giảm giá (nếu có) 
             $table->decimal('total_amount', 10, 2); // Tổng tiền cuối cùng phải thanh toán
-            $table->string('payment');  // Phương thức thanh toán (ví dụ: tiền mặt, thẻ tín dụng,...)
             $table->text('note')->nullable();   // Ghi chú thêm (nếu có)
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
