@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Category;
 
@@ -13,6 +12,13 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        Category::factory()->count(10)->create(); // tạo 10 danh mục mẫu
+        // Tạo 5 danh mục cha
+        Category::factory()->count(5)->create()->each(function ($parent) {
+            
+                // Mỗi danh mục cha có 2 danh mục con
+                Category::factory()->count(2)->create([
+                        'parent_id' => $parent->id,
+                    ]);
+            });
     }
 }
