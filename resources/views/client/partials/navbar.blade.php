@@ -105,7 +105,7 @@
                                 <h3>Nam</h3>
                                 <ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         </ul>
                             </div>
-        
+
                         </div>
                     </ul>
                 </li>
@@ -204,7 +204,7 @@
                                 <li><a href="https://ivymoda.com/customer/address_list"><i class="icon-ic_placeholder"></i>Sổ địa chỉ</a></li>
                                 <li><a href="https://ivymoda.com/customer/wallet_add"><i class="icon-ic_credit-card-1"></i>Thông tin thanh toán</a></li>
                                 <li><a href="https://ivymoda.com/customer/san-pham-da-xem"><i class="icon-ic_glasses"></i>Sản phẩm đã xem</a></li>
-                                <li><a href="https://ivymoda.com/customer/san-pham-yeu-thich"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
+                                <li><a href="{{ route('favorites.index') }}"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
                                 <li><a href="https://ivymoda.com/customer/question"><i class="icon-ic_headphones"></i>Hỏi đáp sản phẩm</a></li>
                                 <li><a href="https://ivymoda.com/ivy-support/danh-sach"><i class="icon-ic_hand"></i>Hỗ trợ - IVY</a></li>
                                 <li><a href="https://ivymoda.com/customer/wallet_list"><i class="icon-ic_wallet"></i>Ví IVY</a></li>
