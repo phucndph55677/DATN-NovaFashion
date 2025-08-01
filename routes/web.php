@@ -106,6 +106,8 @@ Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('pr
 // Đăng nhập
 Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [ClientAuthController::class, 'login'])->name('login.post');
+// Route cho đăng xuất client
+Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
 
 // Carts
 Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index');
