@@ -133,7 +133,7 @@
                                         </div>
                                     </div>
 
-                                    <p class="mb-1" style="font-size: 13px">Hạn sử dụng:>Hạn sử dụng: 
+                                    <p class="mb-1" style="font-size: 13px">Hạn sử dụng:>Hạn sử dụng:
                                         {{ \Carbon\Carbon::parse($voucher->start_date)->format('d/m/Y') }} -
                                         {{ \Carbon\Carbon::parse($voucher->end_date)->format('d/m/Y') }}
                                     </p>
@@ -171,8 +171,9 @@
                                     @foreach ($products as $product)
                                         @php
                                             $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
+                                            $favorites = $favorites ?? [];
                                         @endphp
-                                        
+
                                         <div class="item-new-prod">
                                             {{-- <div class="product"> --}}
                                             <div class="product" data-product-id="{{ $product->id }}">
@@ -187,8 +188,8 @@
                                                         <ul>
                                                             @foreach ($product->variants->unique('color_id') as $colorVariant)
                                                                 <li class="{{ $loop->first ? 'checked' : '' }} ">
-                                                                    <a href="" 
-                                                                        class="color-picker" 
+                                                                    <a href=""
+                                                                        class="color-picker"
                                                                         data-image="{{ asset('storage/' . $colorVariant->image) }}"
                                                                         data-price="{{ $colorVariant->price }}"
                                                                         data-sale="{{ $colorVariant->sale }}"
@@ -204,8 +205,18 @@
                                                                 </li>
                                                             @endforeach
                                                         </ul>
-                                                        <div class="favourite" data-id="42162">
+                                                        {{-- <div class="favourite" data-id="42162">
                                                             <i class="icon-ic_heart"></i>
+                                                        </div> --}}
+                                                        <div class="my-favorite {{ in_array($product->id, $favorites) ? 'active' : '' }}"
+                                                            data-id="{{ $product->id }}">
+                                                            <svg width="24" height="24" fill="none"
+                                                                stroke="currentColor" stroke-width="1"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                class="feather feather-heart">
+                                                                <path
+                                                                    d="M20.8 4.6c-1.5-1.4-3.9-1.4-5.4 0l-.9.9-.9-.9c-1.5-1.4-3.9-1.4-5.4 0-1.6 1.5-1.6 4 0 5.5l6.3 6.2 6.3-6.2c1.6-1.5 1.6-4 0-5.5z" />
+                                                            </svg>
                                                         </div>
                                                     </div>
                                                     <h3 class="title-product">
@@ -228,7 +239,7 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                </div>               
+                                </div>
                                 <div class="link-product">
                                     <a href="https://ivymoda.com/danh-muc/hang-nu-moi-ve" class="all-product">Xem tất cả1</a>
                                 </div>
@@ -331,7 +342,7 @@
                         </div>
                         <div class="exclusive-content">
                             <div class="exclusive-inner active" id="best-seller-tab-women">
-                                <div class="list-products new-prod-slider owl-carousel">            
+                                <div class="list-products new-prod-slider owl-carousel">
                                     <div class="item-new-prod">
                                         <div class="product">
                                             <div class="info-ticket seller">Best Seller</div>
@@ -554,7 +565,7 @@
                 <!-- End Brand -->
             </div>
         </main>
-        
+
         <!--  -->
         <!-- <div class="modal-gift modal-gift-50k" id="modal-gift-50k">
         <img src="https://ivymoda.com/assets/images/popup/gift50k.png" alt="gift">
@@ -596,7 +607,7 @@
                 </svg>
             </div>
             <p class="notify__add-to-cart--success text-uppercase">Thêm vào giỏ hàng thành công !</p>
-        </div> 
+        </div>
     </body>
 @endsection
 
@@ -673,4 +684,86 @@
         });
     </script>
 
+    {{-- JS xử lý khi click màu thêm sản phẩm yêu thích --}}
+    <script>
+        // Ép kiểu Boolean rõ ràng
+        window.isLoggedIn = {{ Auth::check() ? 'true' : 'false' }} === true;
+
+        // Thêm CSS một lần duy nhất
+        if (!document.getElementById('favorite-style')) {
+            const style = document.createElement('style');
+            style.id = 'favorite-style';
+            style.innerHTML = `
+                .my-favorite { cursor: pointer; }
+                .my-favorite.active svg { fill: red; stroke: red; transition: 0.2s; }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Cập nhật localStorage
+        function updateLocalFavorites(productId, isAdd) {
+            const key = 'favorite_ids';
+            let favorites = JSON.parse(localStorage.getItem(key) || '[]');
+            productId = parseInt(productId);
+
+            if (isAdd) {
+                if (!favorites.includes(productId)) favorites.push(productId);
+            } else {
+                favorites = favorites.filter(id => id !== productId);
+            }
+
+            localStorage.setItem(key, JSON.stringify(favorites));
+        }
+
+        // Khi DOM đã sẵn sàng
+        document.addEventListener('DOMContentLoaded', () => {
+            const favorites = JSON.parse(localStorage.getItem('favorite_ids') || '[]');
+            const favoriteEls = document.querySelectorAll('.my-favorite');
+
+            // Đồng bộ trạng thái trái tim
+            favoriteEls.forEach(el => {
+                const productId = parseInt(el.dataset.id);
+                el.classList.toggle('active', favorites.includes(productId));
+            });
+
+            // Gắn sự kiện click
+            favoriteEls.forEach(el => {
+                el.addEventListener('click', async function(e) {
+                    e.preventDefault();
+
+                    if (!window.isLoggedIn) {
+                        toastr.warning('Bạn cần đăng nhập để sử dụng chức năng yêu thích!');
+                        return;
+                    }
+
+                    const productId = parseInt(this.dataset.id);
+                    const heart = this;
+
+                    try {
+                        const response = await fetch("{{ route('favorites.toggle') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                product_id: productId
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        const isAdd = data.status === 'added';
+                        heart.classList.toggle('active', isAdd);
+                        updateLocalFavorites(productId, isAdd);
+
+                    } catch (err) {
+                        console.error('Lỗi toggle yêu thích:', err);
+                        toastr.error('Đã có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

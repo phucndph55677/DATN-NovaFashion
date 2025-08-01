@@ -9,7 +9,7 @@
 
     @include('client.partials.header')
 </head>
-    <body class="">       
+    <body class="">
 
         @include('client.partials.navbar')
 
@@ -17,7 +17,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        @yield('content') 
+                        @yield('content')
                     </div>
                 </div>
             </div>

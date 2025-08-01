@@ -18,6 +18,7 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ClientAuthController;
 use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\ClientCartController;
+use App\Http\Controllers\Client\ClientFavoriteController;
 
 
 // ROUTE ADMIN
@@ -42,11 +43,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/password/reset', [AdminAuthController::class, 'reset'])->name('password.update');
     });
 
-    // Các route cần đăng nhập 
+    // Các route cần đăng nhập
     Route::middleware('admin.auth')->group(function () {
         // Đăng xuất
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-        
+
         // Dashboards
         Route::resource('dashboards', AdminDashboardController::class);
 
@@ -114,3 +115,7 @@ Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index'
 Route::post('/carts/add', [ClientCartController::class, 'addToCart'])->name('carts.add');
 Route::post('/carts/buy', [ClientCartController::class, 'buyNow'])->name('carts.buy');
 Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('carts.delete');
+
+// Product Farovite
+Route::get('/yeu-thich', [ClientFavoriteController::class, 'index'])->name('favorites.index');
+Route::post('/yeu-thich/toggle', [ClientFavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');
