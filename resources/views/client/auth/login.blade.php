@@ -15,26 +15,21 @@
                             <p class="auth__description">
                                 Nếu bạn đã có tài khoản, hãy đăng nhập để tích lũy điểm thành viên và nhận được những ưu đãi tốt hơn!
                             </p>
-                            @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
+
+                            <!-- Validation Errors -->
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Đóng">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <ul class="mb-0 mt-1">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             @endif
-                            @if ($errors->any() || session('error'))
-                                <div class="alert alert-warning alert-dismissible" role="alert"
-                                    style="background-color: #f3e8e9; color: red; font-size: 14px; line-height: 24px" bis_skin_checked="1">
-                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                    @if ($errors->has('email') && $errors->first('email') == 'Vui lòng nhập đầy đủ thông tin đăng nhập')
-                                        <strong>Lỗi! </strong>Vui lòng nhập đầy đủ thông tin đăng nhập<br>
-                                    @endif
-                                    @if ($errors->has('email') && $errors->first('email') == 'Địa chỉ email không đúng định dạng.')
-                                        <strong>Lỗi! </strong>Địa chỉ email không đúng định dạng<br>
-                                    @endif
-                                    @if (session('error') == 'Tên đăng nhập hoặc mật khẩu không hợp lệ.' || $errors->has('error'))
-                                        <strong>Lỗi! </strong>Tên đăng nhập hoặc mật khẩu không hợp lệ<br>
-                                    @endif
-                                </div>
-                            @endif
+
                             <form id="login-form" class="auth__form login-form" method="POST" action="{{ route('login.post') }}" autocomplete="off">
                                 @csrf
                                 <div class="form-group" bis_skin_checked="1">

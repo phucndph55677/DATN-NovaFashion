@@ -167,10 +167,14 @@
 
             <div class="header-actions">
                 <div class="item wallet">
-                    <a class="icon" href="#"><i class="icon-ic_headphones"></i></a>
-                    <div class="sub-action ">
+                    <div class="avatar-wrapper" onclick="toggleSubAction(event)">
+                        <a class="icon">
+                            <i class="icon-ic_headphones"></i>
+                        </a>
+                    </div>
+                    <div class="sub-action" style="display: none;">
                         <div class="top-action">
-                            <h3>Trợ giúp1</h3>
+                            <h3>Trợ giúp</h3>
                         </div>
                         <ul>
                             <li><a href="tel:02466623434"><i class="icon-ic_phone-call"></i>Hotline3</a></li>
@@ -183,12 +187,45 @@
                     </div>
                 </div>
 
-                 <div class="item wallet">
-                    <a class="icon" href="{{ route('login') }}"
-                        onclick="window.location.href = '{{ route('login') }}';">
-                        <i class="icon-ic_avatar"></i>
-                    </a>
-                </div> 
+                <div class="item wallet">
+                    @if(Auth::check())
+                        <div class="avatar-wrapper" onclick="toggleSubAction(event)">
+                            <a class="icon">
+                                <i class="icon-ic_avatar"></i>
+                            </a>
+                        </div>
+                        <div class="sub-action" style="display: none;">
+                            <div class="top-action">
+                                <a class="icon" href="https://ivymoda.com/customer/login"><h3>Tài khoản của tôi</h3></a>
+                            </div>
+                            <ul>
+                                <li><a href="https://ivymoda.com/customer/info"><i class="icon-ic_avatar-1"></i>Thông tin tài khoản</a></li>
+                                <li><a href="https://ivymoda.com/customer/order_list"><i class="icon-ic_reload"></i>Quản lý đơn hàng</a></li>
+                                <li><a href="https://ivymoda.com/customer/address_list"><i class="icon-ic_placeholder"></i>Sổ địa chỉ</a></li>
+                                <li><a href="https://ivymoda.com/customer/wallet_add"><i class="icon-ic_credit-card-1"></i>Thông tin thanh toán</a></li>
+                                <li><a href="https://ivymoda.com/customer/san-pham-da-xem"><i class="icon-ic_glasses"></i>Sản phẩm đã xem</a></li>
+                                <li><a href="https://ivymoda.com/customer/san-pham-yeu-thich"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
+                                <li><a href="https://ivymoda.com/customer/question"><i class="icon-ic_headphones"></i>Hỏi đáp sản phẩm</a></li>
+                                <li><a href="https://ivymoda.com/ivy-support/danh-sach"><i class="icon-ic_hand"></i>Hỗ trợ - IVY</a></li>
+                                <li><a href="https://ivymoda.com/customer/wallet_list"><i class="icon-ic_wallet"></i>Ví IVY</a></li>
+                                <li>
+                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="icon-logout"></i> Đăng xuất
+                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    @else
+                        <div class="avatar-wrapper">
+                            <a class="icon" href="{{ route('login') }}">
+                                <i class="icon-ic_avatar"></i>
+                            </a>
+                        </div>
+                    @endif
+                </div>
 
                  <div class="item item-cart">
                     <a class="icon" href="#"><i class="icon-ic_shopping-bag"></i>
@@ -216,3 +253,29 @@
     </div>
     <!-- .container -->
 </header>
+
+<script>
+    function toggleSubAction(event) {
+        event.stopPropagation(); // Ngăn chặn lan ra ngoài
+        const wallet = event.currentTarget.closest('.wallet');
+        const subAction = wallet.querySelector('.sub-action');
+
+        // Toggle
+        if (subAction.style.display === 'block') {
+            subAction.style.display = 'none';
+        } else {
+            // Ẩn tất cả dropdown khác (nếu có nhiều tài khoản)
+            document.querySelectorAll('.wallet .sub-action').forEach(el => el.style.display = 'none');
+            subAction.style.display = 'block';
+        }
+    }
+
+    // Ẩn dropdown khi click ra ngoài
+    document.addEventListener('click', function (e) {
+        document.querySelectorAll('.wallet .sub-action').forEach(el => {
+            if (!el.contains(e.target)) {
+                el.style.display = 'none';
+            }
+        });
+    });
+</script>
