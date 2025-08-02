@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             // CartDetailSeeder::class,
             // ChatSeeder::class,
             // ChatDetailSeeder::class,
+            // PaymentStatusSeeder::class,
             // OrderStatusSeeder::class,
             // OrderSeeder::class,
             // OrderDetailSeeder::class,
