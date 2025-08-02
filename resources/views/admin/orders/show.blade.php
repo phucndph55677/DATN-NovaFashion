@@ -21,7 +21,39 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="fw-bold">Chi Tiết Đơn Hàng</h4>
                     <div class="d-flex align-items-center gap-2">
-                        <form action="{{ route('admin.orders.update', $order->id) }}" method="POST" class="d-flex align-items-center">
+                        <form action="{{ route('admin.orders.updatePaymentStatus', $order->id) }}" method="POST" class="d-flex align-items-center">
+
+                            @csrf
+                            @method('PUT')
+
+                            <select name="payment_status_id" class="form-select form-select-sm me-2" style="min-width: 160px;">
+                                @foreach($payment_statuses  as $payment_status)
+                                    @php
+                                        $isDisabled = false;
+
+                                        // Không cho chọn trạng thái trước đó
+                                        if ($payment_status->id < $order->payment_status_id) {
+                                            $isDisabled = true;
+                                        }
+                                    @endphp
+
+                                    <option 
+                                        value="{{ $payment_status->id }}" 
+                                        {{ $order->payment_status_id == $payment_status->id ? 'selected' : '' }}
+                                        {{ $isDisabled ? 'disabled' : '' }} >
+                                        {{ $payment_status->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            
+                            <button type="submit" class="btn btn-outline-primary btn-sm" 
+                                onclick="return confirm('Bạn có chắc chắn muốn cập nhật trạng thái thanh toán không?')">Cập Nhật
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <form action="{{ route('admin.orders.updateOrderStatus', $order->id) }}" method="POST" class="d-flex align-items-center">
                             @csrf
                             @method('PUT')
 
@@ -37,7 +69,7 @@
 
                                         // 2. Không cho HỦY nếu không phải "Chờ xác nhận"
                                         if (
-                                            $order_status->name === 'Hủy đơn' && $order->orderStatus?->name !== 'Chờ xác nhận'
+                                            $order_status->name === 'Hủy đơn' && $order->orderStatus?->name !== 'Chờ xác nhận' && $order->orderStatus?->name !== 'Đã xác nhận'
                                         ) {
                                             $isDisabled = true;
                                         }
@@ -64,13 +96,6 @@
                                 onclick="return confirm('Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng không?')">Cập Nhật
                             </button>
                         </form>
-                        
-                        <a class="btn btn-primary btn-sm" href="">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Tạo Hóa Đơn
-                        </a>
                     </div>
                 </div>
             </div>            
@@ -99,7 +124,7 @@
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Trạng Thái</td>
                                             <td>
-                                                <span class="badge bg-{{ $order->badge_color }}">
+                                                <span class="badge bg-{{ $order->order_badge_color }}">
                                                     {{ $order->orderStatus?->name ?? 'Chưa xác định' }}
                                                 </span>
                                             </td>
@@ -118,16 +143,16 @@
                                             <td>{{ $order->name }}</td>
                                         </tr>
                                         <tr class="white-space-no-wrap">
-                                            <td class="text-muted pl-0">Email</td>
-                                            <td>{{ $order->email }}</td>
-                                        </tr>
-                                        <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Số Điện Thoại</td>
                                             <td>{{ $order->phone }}</td>
                                         </tr>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Địa Chỉ</td>
                                             <td>{{ $order->address }}</td>
+                                        </tr>
+                                        <tr class="white-space-no-wrap">
+                                            <td class="text-muted pl-0">Note</td>
+                                            <td>{{ $order->note }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

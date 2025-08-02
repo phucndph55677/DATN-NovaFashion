@@ -112,7 +112,7 @@
                                                     <td>{{ $order->name }}</td>
                                                     <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
                                                     <td>
-                                                        <span class="badge bg-{{ $order->badge_color }}">
+                                                        <span class="badge bg-{{ $order->order_badge_color }}">
                                                             {{ $order->orderStatus?->name ?? 'Chưa xác định' }}
                                                         </span>
                                                     </td>

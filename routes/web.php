@@ -62,6 +62,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Order
         Route::resource('orders', AdminOrderController::class);
+        Route::put('/orders/{id}/payment-status', [AdminOrderController::class, 'updatePaymentStatus'])->name('orders.updatePaymentStatus');
+        Route::put('/orders/{id}/order-status', [AdminOrderController::class, 'updateOrderStatus'])->name('orders.updateOrderStatus');
 
         // Vouchers
         Route::resource('vouchers', AdminVoucherController::class);
