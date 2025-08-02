@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatus;
+use App\Models\PaymentStatus;
 use Illuminate\Http\Request;
 
 class AdminOrderController extends Controller
@@ -50,8 +51,9 @@ class AdminOrderController extends Controller
 
         // Truyền danh sách trạng thái đơn hàng
         $order_statuses = OrderStatus::all();
+        $payment_statuses = PaymentStatus::all();
         
-        return view('admin.orders.index', compact('orders', 'order_statuses'));
+        return view('admin.orders.index', compact('orders', 'order_statuses', 'payment_statuses'));
     }
 
     /**
@@ -87,8 +89,9 @@ class AdminOrderController extends Controller
 
         // Truyền danh sách trạng thái đơn hàng
         $order_statuses = OrderStatus::all();
+        $payment_statuses = PaymentStatus::all();
 
-        return view('admin.orders.show', compact('order', 'orderDetails', 'order_statuses'));
+        return view('admin.orders.show', compact('order', 'orderDetails', 'order_statuses', 'payment_statuses'));
     }
 
     /**
@@ -102,7 +105,20 @@ class AdminOrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updatePaymentStatus(Request $request, string $id)
+    {
+        $data = $request->validate([
+            'payment_status_id' => 'required|exists:payment_statuses,id',
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->payment_status_id = $data['payment_status_id'];
+        $order->save();
+
+        return redirect()->back();
+    }
+
+    public function updateOrderStatus(Request $request, string $id)
     {
         $data = $request->validate([
             'order_status_id' => 'required|exists:order_statuses,id',

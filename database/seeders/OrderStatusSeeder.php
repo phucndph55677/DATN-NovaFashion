@@ -16,8 +16,6 @@ class OrderStatusSeeder extends Seeder
         $statuses = [
             'Chờ xác nhận',
             'Đã xác nhận',
-            'Chưa thanh toán',
-            'Đã thanh toán',
             'Chuẩn bị hàng',
             'Đang giao hàng',
             'Đã giao hàng',
