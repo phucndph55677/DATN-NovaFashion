@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Voucher;
+use App\Models\PaymentStatus;
 use App\Models\OrderStatus;
 use Illuminate\Support\Str;
 
@@ -29,13 +30,13 @@ class OrderFactory extends Factory
 
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'payment_status_id' => PaymentStatus::inRandomOrder()->first()?->id ?? PaymentStatus::factory(),
             'order_status_id' => OrderStatus::inRandomOrder()->first()?->id ?? OrderStatus::factory(),
             'voucher_id' => Voucher::inRandomOrder()->first()?->id ?? null,
             'order_code' => '#' . strtoupper(Str::random(10)),
             'name' => $this->faker->name(),
             'address' => $this->faker->address(),
             'phone' => $this->faker->phoneNumber(),
-            'email' => $this->faker->safeEmail(),
             'subtotal' => $subtotal,
             'discount' => $discount,
             'total_amount' => $total_amount,

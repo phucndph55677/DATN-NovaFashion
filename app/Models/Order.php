@@ -12,13 +12,13 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'payment_status_id',
         'order_status_id',
         'voucher_id',
         'order_code',
         'name',
         'address',
         'phone',
-        'email',
         'subtotal',
         'discount',
         'total_amount',
@@ -28,6 +28,11 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function paymentStatus()
+    {
+        return $this->belongsTo(paymentStatus::class);
     }
 
     public function orderStatus()
@@ -45,15 +50,16 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 
-    public function getBadgeColorAttribute()
+    // (Tuỳ chọn) Hiển thị màu trạng thái đơn hàng
+    public function getOrderBadgeColorAttribute()
     {
         $status = $this->orderStatus?->name;
 
         return match (true) {
             in_array($status, ['Chờ xác nhận', 'Đã xác nhận']) => 'info',
-            in_array($status, ['Chưa thanh toán', 'Đã thanh toán']) => 'success',
             $status === 'Chuẩn bị hàng' => 'secondary',
-            in_array($status, ['Đang giao hàng', 'Đã giao hàng']) => 'warning',
+            $status === 'Đang giao hàng' => 'warning',
+            $status === 'Đã giao hàng' => 'success',
             $status === 'Thành công' => 'primary',
             $status === 'Hoàn hàng' => 'dark',
             $status === 'Hủy đơn' => 'danger',
@@ -61,4 +67,16 @@ class Order extends Model
         };
     }
 
+    // (Tuỳ chọn) Hiển thị màu trạng thái thanh toán
+    public function getPaymentBadgeColorAttribute()
+    {
+        $status = $this->paymentStatus?->name;
+
+        return match (true) {
+            $status === 'Chưa thanh toán' => 'danger',
+            $status === 'Đã thanh toán' => 'success',
+            $status === 'Hoàn tiền' => 'dark',
+            default => 'light',
+        };
+    }
 }
