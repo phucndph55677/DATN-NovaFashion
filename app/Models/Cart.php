@@ -28,7 +28,7 @@ class Cart extends Model
         return $this->belongsTo(Voucher::class);
     }
 
-    public function cartDetail()
+    public function cartDetails()
     {
         return $this->hasMany(CartDetail::class);
     }

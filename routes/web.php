@@ -19,6 +19,7 @@ use App\Http\Controllers\Client\ClientAuthController;
 use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\ClientCartController;
 use App\Http\Controllers\Client\ClientFavoriteController;
+use App\Http\Controllers\Client\ClientCheckoutController;
 
 
 // ROUTE ADMIN
@@ -117,6 +118,11 @@ Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index'
 Route::post('/carts/add', [ClientCartController::class, 'addToCart'])->name('carts.add');
 Route::post('/carts/buy', [ClientCartController::class, 'buyNow'])->name('carts.buy');
 Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('carts.delete');
+
+// Checkouts
+Route::get('/checkouts', [ClientCheckoutController::class, 'index'])->name('checkouts.index');
+Route::post('/checkouts', [ClientCheckoutController::class, 'store'])->name('checkouts.store');
+Route::get('checkouts/success', [ClientCheckoutController::class, 'success'])->name('checkouts.success');
 
 // Product Farovite
 Route::get('/yeu-thich', [ClientFavoriteController::class, 'index'])->name('favorites.index');

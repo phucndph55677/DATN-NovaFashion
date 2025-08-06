@@ -44,7 +44,7 @@
 
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" class="form-check-input" style="width: 16px; height: 16px;" {{ $checked }}>
+                                                    <input type="checkbox" class="form-check-input" style="width: 16px; height: 16px;" data-id="{{ $cartDetail->id }}" {{ $checked }}>
                                                 </td>
                                                 <td>
                                                     <div class="cart__product-item">
@@ -139,9 +139,7 @@
                         </div>
 
                         <div class="cart-summary__button">
-                            <a href="#" class="btn btn--large" id="">Đặt hàng</a>
-                        </div>
-                        <div class="cart-summary__vouchers">
+                            <a href="#" class="btn btn--large" id="btn-checkout">Đặt hàng</a>
                         </div>
                     </div>
                 </div>
@@ -240,6 +238,25 @@
 
             // Gọi lần đầu để đảm bảo đồng bộ
             updateTotals();
+        });
+    </script>
+
+    {{-- JS xử lý sự kiện click nút "Đặt hàng" --}}
+    <script>
+        document.getElementById('btn-checkout')?.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const selectedIds = Array.from(document.querySelectorAll('tbody input[type="checkbox"]:checked'))
+                .map(cb => cb.dataset.id);
+
+            if (selectedIds.length === 0) {
+                alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
+                return;
+            }
+
+            // Điều hướng sang trang checkouts với query: ?ids=1,2,3
+            const url = `{{ route('checkouts.index') }}?ids=${selectedIds.join(',')}`;
+            window.location.href = url;
         });
     </script>
 @endsection
