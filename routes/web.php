@@ -20,6 +20,7 @@ use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\ClientCartController;
 use App\Http\Controllers\Client\ClientFavoriteController;
 use App\Http\Controllers\Client\ClientCheckoutController;
+use App\Http\Controllers\Client\ClientPaymentController;
 
 
 // ROUTE ADMIN
@@ -123,6 +124,10 @@ Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('cart
 Route::get('/checkouts', [ClientCheckoutController::class, 'index'])->name('checkouts.index');
 Route::post('/checkouts', [ClientCheckoutController::class, 'store'])->name('checkouts.store');
 Route::get('checkouts/success', [ClientCheckoutController::class, 'success'])->name('checkouts.success');
+
+// Payments
+Route::get('/payments/momo', [ClientPaymentController::class, 'momo'])->name('payments.momo');
+Route::match(['get', 'post'], '/payments/momo/callback', [ClientPaymentController::class, 'momoCallback'])->name('payments.momo.callback');
 
 // Product Farovite
 Route::get('/yeu-thich', [ClientFavoriteController::class, 'index'])->name('favorites.index');

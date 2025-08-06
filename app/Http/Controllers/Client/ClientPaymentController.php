@@ -1,0 +1,179 @@
+<?php
+
+namespace App\Http\Controllers\Client;
+
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\CartDetail;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class ClientPaymentController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function momo(Request $request)
+    {
+        $order = session('checkout_data');
+        if (!$order) {
+            return redirect()->route('checkouts.index')->withErrors(['Không tìm thấy dữ liệu đặt hàng.']);
+        }
+
+        $endpoint = env('MOMO_ENDPOINT');
+        $partnerCode = env('MOMO_PARTNER_CODE');
+        $accessKey = env('MOMO_ACCESS_KEY');
+        $secretKey = env('MOMO_SECRET_KEY');
+        $orderInfo = "Thanh toán đơn hàng" . $order['order_code'];
+        $amount = (string)$order['total_amount'];
+        $orderId = $order['order_code'];
+        $redirectUrl = env('MOMO_REDIRECT_URL');
+        $ipnUrl = env('MOMO_IPN_URL');
+        $requestId = time() . "";
+        $extraData = ""; // có thể truyền user_id nếu muốn
+
+        // B1. Tạo raw signature
+        $rawHash = "accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=captureWallet";
+        $signature = hash_hmac("sha256", $rawHash, $secretKey);
+
+        // B2. Tạo body gửi đi
+        $body = [
+            'partnerCode' => $partnerCode,
+            'partnerName' => "NovaFashion",
+            'storeId' => "NovaStore",
+            'requestId' => $requestId,
+            'amount' => $amount,
+            'orderId' => $orderId,
+            'orderInfo' => $orderInfo,
+            'redirectUrl' => $redirectUrl,
+            'ipnUrl' => $ipnUrl,
+            'lang' => 'vi',
+            'extraData' => $extraData,
+            'requestType' => "captureWallet",
+            'signature' => $signature,
+        ];
+
+        $response = Http::withoutVerifying()->post($endpoint, $body)->json();
+
+        if (!empty($response['payUrl'])) {
+            return redirect($response['payUrl']);
+        } else {
+            return redirect()->route('checkouts.index')->withErrors(['Không thể kết nối Momo: ' . ($response['message'] ?? 'Lỗi không xác định')]);
+        }
+    }
+
+    public function momoCallback(Request $request)
+    {        
+        $resultCode = $request->input('resultCode');
+        $orderCode = $request->input('orderId');
+
+        // Trường hợp thanh toán thất bại
+        if ($resultCode != 0) {
+            return redirect()->route('checkouts.index')->withErrors(['Thanh toán thất bại hoặc bị hủy.']);
+        }
+
+        $checkout = session('checkout_data');
+        if (!$checkout || $checkout['order_code'] !== $orderCode) {
+            return redirect()->route('checkouts.index')->withErrors(['Không tìm thấy dữ liệu phiên thanh toán.']);
+        }
+
+        // Tạo đơn hàng sau khi thanh toán thành công
+        $order = Order::create([
+            'user_id' => $checkout['user_id'],
+            'name' => $checkout['name'],
+            'phone' => $checkout['phone'],
+            'address' => $checkout['address'],
+            'note' => $checkout['note'],
+            'payment_method_id' => $checkout['payment_method_id'],
+            'payment_status_id' => 2, // paid
+            'order_status_id' => 1,   // pending
+            'order_code'      => $checkout['order_code'],
+            'subtotal'        => $checkout['subtotal'],
+            'discount'        => $checkout['discount'],
+            'shipping_fee'    => $checkout['shipping_fee'],
+            'total_amount'    => $checkout['total_amount'],
+        ]);
+
+        // Tạo chi tiết đơn hàng
+        $cartDetails = CartDetail::with('productVariant')
+            ->whereIn('id', $checkout['cart_detail_ids'])
+            ->whereHas('cart', function ($q) use ($checkout) {
+                $q->where('user_id', $checkout['user_id']);
+            })
+            ->get();
+
+        foreach ($cartDetails as $item) {
+            OrderDetail::create([
+                'order_id'           => $order->id,
+                'product_variant_id' => $item->product_variant_id,
+                'price'              => $item->price,
+                'quantity'           => $item->quantity,
+                'total_amount'       => $item->price * $item->quantity,
+                'status'             => 1,
+            ]);
+        }
+
+        // Xoá giỏ hàng đã đặt
+        CartDetail::whereIn('id', $checkout['cart_detail_ids'])->delete();
+
+        // Xoá session
+        session()->forget('checkout_data');
+
+        return redirect()->route('checkouts.success')->with('order_id', $order->id);
+    }
+
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}
