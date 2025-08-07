@@ -3,27 +3,30 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Models\User;
 use App\Mail\ClientVerifyEmail;
 use App\Mail\ClientWelcomeEmail;
 use App\Mail\ClientRequestEmail;
 use App\Mail\ClientPasswordReset;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\User;
 
 class ClientAuthController extends AdminAuthController
 {
+    // Điều hướng đếm form Đăng nhập
     public function showLoginForm()
     {
         return view('client.auth.login');
     }
 
+    // Đăng nhập
     public function login(Request $request)
     {
+        // Validate
         $data = $request->validate(
             [
                 'email' => 'required|email',
@@ -38,22 +41,26 @@ class ClientAuthController extends AdminAuthController
             ]
         );
 
+        // Tìm user theo email
         $user = User::where('email', $data['email'])->first();
 
+        // Nếu user không tồn tại hoặc chưa xác minh email
         if (!$user || !$user->is_verified) {
             return back()->withErrors([
                 'error' => 'Tài khoản chưa được xác minh email hoặc không tồn tại.',
             ])->withInput($request->only('email'));
         }
 
+        // Đăng nhập nếu xác minh rồi
         if (Auth::attempt($data)) {
             $request->session()->regenerate();
             return redirect()->route('home');
         }
 
+        // Sai mật khẩu
         return back()->withErrors([
             'error' => 'Email hoặc mật khẩu không đúng.',
-        ])->withInput($request->only('email'));
+        ])->withInput($request->only('email')); // giữ lại email người dùng đã nhập
     }
 
     public function logout(Request $request)
