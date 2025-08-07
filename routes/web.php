@@ -109,9 +109,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('products.show');
 
 // Đăng nhập
-Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [ClientAuthController::class, 'login'])->name('login.post');
-// Route cho đăng xuất client
+Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login.show');
+Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
+// Đăng xuất
 Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
 
 // Carts
