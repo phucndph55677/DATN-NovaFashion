@@ -102,12 +102,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 // ROUTE CLIENT
-// Home
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Product show
-Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('products.show');
-
 // Đăng nhập
 Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login.show');
 Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
@@ -115,21 +109,24 @@ Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
 // Đăng xuất
 Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
 
-// Route cho đăng ký client
-Route::get('/register', [ClientAuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [ClientAuthController::class, 'register'])->name('register.post');
-Route::get('/reload-captcha', function () {
-    return response()->json(['captcha'=> captcha_img('flat')]);
-})->name('reload.captcha');
+// Đăng ký
+Route::get('/register', [ClientAuthController::class, 'showRegisterForm'])->name('register.show');
+Route::post('/register', [ClientAuthController::class, 'register'])->name('register');
 
-// Route cho xác minh email
+// Xác minh email
 Route::get('/verify-email/{token}', [ClientAuthController::class, 'verifyEmail'])->name('verify.email');
 
-// Route cho quên mật khẩu
-Route::get('/password/reset', [ClientAuthController::class, 'showRequestForm'])->name('password.request');
-Route::post('/password/email', [ClientAuthController::class, 'request'])->name('password.email');
+// Quên mật khẩu
+Route::get('/password/reset', [ClientAuthController::class, 'showRequestForm'])->name('password.show');
+Route::post('/password/reset', [ClientAuthController::class, 'request'])->name('password.email');
 Route::get('/password/reset/{token}', [ClientAuthController::class, 'showResetForm'])->name('password.reset');
-Route::post('/password/reset', [ClientAuthController::class, 'reset'])->name('password.update');
+Route::post('/password/update', [ClientAuthController::class, 'reset'])->name('password.update');
+
+// Home
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Product show
+Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('products.show');
 
 // Carts
 Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index');

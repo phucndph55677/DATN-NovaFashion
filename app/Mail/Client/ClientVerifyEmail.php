@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Client;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ClientWelcomeEmail extends Mailable
+class ClientVerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * Create a new message instance.
+     */
     public $user;
 
     public function __construct($user)
@@ -19,7 +22,7 @@ class ClientWelcomeEmail extends Mailable
 
     public function build()
     {
-        return $this->subject('Chào mừng bạn đến với NovaFashion!')
-            ->view('client.emails.welcome');
+        return $this->subject('Xác minh địa chỉ email')
+            ->view('client.emails.verify');
     }
 }

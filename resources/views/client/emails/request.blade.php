@@ -1,25 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đặt lại mật khẩu NovaFashion</title>
+    <title>Đặt lại mật khẩu</title>
 </head>
 <body>
-    <h2>Xin chào {{ $user->name }}</h2>
-    <p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản NovaFashion.</p>
-    <p>Nhấn vào nút bên dưới để đặt lại mật khẩu:</p>
-    <p>
-        <a href="{{ route('password.reset', ['token' => $token, 'email' => $user->email]) }}"
-           style="display: inline-block; padding: 10px 18px; background: #3490dc; color: #fff; border-radius: 4px; text-decoration: none;">
-            Đặt lại mật khẩu
-        </a>
-    </p>
-    <p>Nếu nút trên không hoạt động, hãy copy đường link sau và dán vào trình duyệt:</p>
-    <p style="word-break: break-all;">
-        {{ route('password.reset', ['token' => $token, 'email' => $user->email]) }}
-    </p>
-    <hr>
-    <p>Nếu bạn không thực hiện yêu cầu này, hãy bỏ qua email này.</p>
-    <p>Trân trọng,<br>NovaFashion Team</p>
+    <h2>Xin chào {{ $user->name }},</h2>
+
+    <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình tại <strong>NovaFashion</strong>.</p>
+
+    <p>Nhấn vào nút bên dưới để thiết lập lại mật khẩu:</p>
+
+    <a href="{{ route('password.reset', ['token' => $token, 'email' => $user->email]) }}">
+        Đặt lại mật khẩu
+    </a>
+
+    <p>Nếu bạn không yêu cầu thay đổi này, vui lòng bỏ qua email này.</p>
+
+    <p>Trân trọng,<br>NovaFashion</p>
 </body>
 </html>
