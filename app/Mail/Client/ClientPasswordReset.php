@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Client;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailable;;
 use Illuminate\Queue\SerializesModels;
 
 class ClientPasswordReset extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * Create a new message instance.
+     */
     public $user;
 
     public function __construct($user)
@@ -19,10 +22,7 @@ class ClientPasswordReset extends Mailable
 
     public function build()
     {
-        return $this->subject('Mật khẩu của bạn đã được đổi')
-            ->view('client.emails.password_reset')
-            ->with([
-                'user' => $this->user,
-            ]);
+        return $this->subject('Thông báo đổi mật khẩu thành công')
+                    ->view('client.emails.reset'); 
     }
 }

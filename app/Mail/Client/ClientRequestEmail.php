@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Client;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -10,7 +10,11 @@ class ClientRequestEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * Create a new message instance.
+     */
     public $user;
+
     public $token;
 
     public function __construct($user, $token)
@@ -22,10 +26,6 @@ class ClientRequestEmail extends Mailable
     public function build()
     {
         return $this->subject('Đặt lại mật khẩu NovaFashion')
-            ->view('client.emails.request') // KHÔNG PHẢI LÀ GIAO DIỆN TRANG CLIENT!
-            ->with([
-                'user' => $this->user,
-                'token' => $this->token
-            ]);
+            ->view('client.emails.request');
     }
 }
