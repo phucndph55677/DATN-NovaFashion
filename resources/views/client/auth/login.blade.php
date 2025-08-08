@@ -42,7 +42,7 @@
                                                 <span style="margin-left: 5px"> Ghi nhớ đăng nhập</span>
                                             </label>
                                         </div>
-                                        <a class="auth__form__link" href="https://ivymoda.com/customer/forgotpass">Quên mật khẩu? </a>
+                                        <a class="auth__form__link" href="{{ route('password.request') }}">Quên mật khẩu? </a>
                                     </div>
                                     <div class="auth__form__buttons">
                                         <div><div class="grecaptcha-badge" data-style="bottomright" style="width: 256px; height: 60px; display: block; transition: right 0.3s; position: fixed; bottom: 14px; right: -186px; box-shadow: gray 0px 0px 5px; border-radius: 2px; overflow: hidden;"><div class="grecaptcha-logo"><iframe title="reCAPTCHA" width="256" height="60" role="presentation" name="a-ohjffnxib42s" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" src="https://www.google.com/recaptcha/api2/anchor?ar=1&amp;k=6Lcy5uEmAAAAADhosFdXQK6Em8axmw6Um7m4mnU5&amp;co=aHR0cHM6Ly9pdnltb2RhLmNvbTo0NDM.&amp;hl=vi&amp;v=07cvpCr3Xe3g2ttJNUkC6W0J&amp;size=invisible&amp;anchor-ms=20000&amp;execute-ms=15000&amp;cb=lwk1euomryf2"></iframe></div><div class="grecaptcha-error"></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea></div><iframe style="display: none;"></iframe></div><button id="but_login_email" name="but_login_email" class="btn btn--large g-recaptcha" data-sitekey="6Lcy5uEmAAAAADhosFdXQK6Em8axmw6Um7m4mnU5" data-callback="onSubmitLogin">Đăng nhập</button>
@@ -61,7 +61,7 @@
                                     Bằng cách cung cấp cho IVY moda thông tin chi tiết của bạn, quá trình mua hàng trên ivymoda.com sẽ là một trải nghiệm thú vị và nhanh chóng hơn!
                                 </p>
                                 <div class="auth__form__buttons">
-                                    <a href="https://ivymoda.com/customer/register"> <button class="btn btn--large">Đăng ký</button></a>
+                                    <a href="{{ route('register') }}"> <button class="btn btn--large">Đăng ký</button></a>
                                 </div>
                             </div>
                         </div>

@@ -111,8 +111,25 @@ Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('pr
 // Đăng nhập
 Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login.show');
 Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
+
 // Đăng xuất
 Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
+
+// Route cho đăng ký client
+Route::get('/register', [ClientAuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [ClientAuthController::class, 'register'])->name('register.post');
+Route::get('/reload-captcha', function () {
+    return response()->json(['captcha'=> captcha_img('flat')]);
+})->name('reload.captcha');
+
+// Route cho xác minh email
+Route::get('/verify-email/{token}', [ClientAuthController::class, 'verifyEmail'])->name('verify.email');
+
+// Route cho quên mật khẩu
+Route::get('/password/reset', [ClientAuthController::class, 'showRequestForm'])->name('password.request');
+Route::post('/password/email', [ClientAuthController::class, 'request'])->name('password.email');
+Route::get('/password/reset/{token}', [ClientAuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [ClientAuthController::class, 'reset'])->name('password.update');
 
 // Carts
 Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index');
