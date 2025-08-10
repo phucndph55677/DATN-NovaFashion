@@ -78,8 +78,8 @@ class AdminOrderController extends Controller
     public function show(string $id)
     {
         // Lấy đơn hàng + trạng thái
-        $order = Order::with('orderStatus')->findOrFail($id); // lấy 1 đơn hàng theo ID
-
+        $order = Order::with(['orderStatus', 'payment.paymentMethod'])->findOrFail($id); // lấy 1 đơn hàng theo ID
+        
         // Lấy danh sách sản phẩm trong đơn hàng
         $orderDetails = $order->orderDetails()->with([
             'productVariant.product',
