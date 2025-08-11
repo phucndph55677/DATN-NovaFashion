@@ -21,6 +21,7 @@ use App\Http\Controllers\Client\ClientCartController;
 use App\Http\Controllers\Client\ClientFavoriteController;
 use App\Http\Controllers\Client\ClientCheckoutController;
 use App\Http\Controllers\Client\ClientPaymentController;
+use App\Http\Controllers\Client\ClientAccountController;
 
 
 // ROUTE ADMIN
@@ -142,6 +143,12 @@ Route::get('checkouts/success', [ClientCheckoutController::class, 'success'])->n
 // Payments
 Route::get('/payments/momo', [ClientPaymentController::class, 'momo'])->name('payments.momo');
 Route::match(['get', 'post'], '/payments/momo/callback', [ClientPaymentController::class, 'momoCallback'])->name('payments.momo.callback');
+
+// Account
+Route::prefix('account')->name('account.')->group(function () {
+    // Info
+    Route::get('/info', [ClientAccountController::class, 'info'])->name('info');
+});
 
 // Product Farovite
 Route::get('/yeu-thich', [ClientFavoriteController::class, 'index'])->name('favorites.index');

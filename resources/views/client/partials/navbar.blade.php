@@ -196,18 +196,15 @@
                         </div>
                         <div class="sub-action" style="display: none;">
                             <div class="top-action">
-                                <a class="icon" href="https://ivymoda.com/customer/login"><h3>Tài khoản của tôi</h3></a>
+                                <a class="icon" href="{{ route('account.info') }}"><h3>Tài khoản của tôi</h3></a>
                             </div>
                             <ul>
-                                <li><a href="https://ivymoda.com/customer/info"><i class="icon-ic_avatar-1"></i>Thông tin tài khoản</a></li>
+                                <li><a href="{{ route('account.info') }}"><i class="icon-ic_avatar-1"></i>Thông tin tài khoản</a></li>
                                 <li><a href="https://ivymoda.com/customer/order_list"><i class="icon-ic_reload"></i>Quản lý đơn hàng</a></li>
-                                <li><a href="https://ivymoda.com/customer/address_list"><i class="icon-ic_placeholder"></i>Sổ địa chỉ</a></li>
-                                <li><a href="https://ivymoda.com/customer/wallet_add"><i class="icon-ic_credit-card-1"></i>Thông tin thanh toán</a></li>
-                                <li><a href="https://ivymoda.com/customer/san-pham-da-xem"><i class="icon-ic_glasses"></i>Sản phẩm đã xem</a></li>
                                 <li><a href="{{ route('favorites.index') }}"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
+                                <li><a href="https://ivymoda.com/customer/login_log"><i class="icon-ic_padlock"></i>Lịch sử đăng nhập</a></li>
                                 <li><a href="https://ivymoda.com/customer/question"><i class="icon-ic_headphones"></i>Hỏi đáp sản phẩm</a></li>
                                 <li><a href="https://ivymoda.com/ivy-support/danh-sach"><i class="icon-ic_hand"></i>Hỗ trợ - IVY</a></li>
-                                <li><a href="https://ivymoda.com/customer/wallet_list"><i class="icon-ic_wallet"></i>Ví IVY</a></li>
                                 <li>
                                     <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="icon-logout"></i> Đăng xuất
