@@ -29,8 +29,30 @@ class Category extends Model
         return $this->hasMany(Category::class, 'parent_id');
     }
 
+    public function childrenRecursive()
+    {
+        return $this->hasMany(Category::class, 'parent_id')->with('childrenRecursive');
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function hasProductsInTree()
+    {
+        // Kiểm tra sản phẩm của chính danh mục này
+        if ($this->products()->exists()) {
+            return true;
+        }
+
+        // Đệ quy kiểm tra con cháu
+        foreach ($this->childrenRecursive as $child) {
+            if ($child->hasProductsInTree()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
