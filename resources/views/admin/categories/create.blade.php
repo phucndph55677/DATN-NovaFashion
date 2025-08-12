@@ -50,6 +50,37 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+                            
+                            <!-- Parent Category -->
+                            <div class="mb-3">
+                                <label for="parent_id" class="form-label fw-bold text-muted text-uppercase">Danh Mục Cha</label>
+                                <select id="parent_id" name="parent_id" class="form-select form-control">
+                                    <option value="">— — Chọn Danh Mục Cha — —</option>
+
+                                    @php
+                                        // Hàm đệ quy hiển thị option
+                                        $renderCategoryOptions = function($cat, $prefix = '') use (&$renderCategoryOptions) {
+                                            echo '<option value="' . $cat->id . '" ' . (old('parent_id') == $cat->id ? 'selected' : '') . '>';
+                                            echo $prefix . e($cat->name);
+                                            echo '</option>';
+
+                                            if ($cat->childrenRecursive && $cat->childrenRecursive->count()) {
+                                                foreach ($cat->childrenRecursive as $child) {
+                                                    $renderCategoryOptions($child, $prefix . '— ');
+                                                }
+                                            }
+                                        };
+                                    @endphp
+
+                                    @foreach ($categories as $cat)
+                                        {!! $renderCategoryOptions($cat) !!}
+                                    @endforeach
+
+                                </select>
+                                @error('parent_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
 
                             <!-- Description -->
                             <div class="col-md-12 mb-3">
