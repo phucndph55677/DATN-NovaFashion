@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\CartDetail;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -94,6 +95,21 @@ class ClientPaymentController extends Controller
             'discount'        => $checkout['discount'],
             'shipping_fee'    => $checkout['shipping_fee'],
             'total_amount'    => $checkout['total_amount'],
+        ]);
+
+        // Random mã thanh toán và không trùng mã đã có
+        do {
+            // Kết hợp tiền tố + thời gian + số ngẫu nhiên
+            $randomCodePayment = 'PAY' . now()->format('YmdHis') . random_int(100, 999);
+        } while (Payment::where('payment_code', $randomCodePayment)->exists());
+
+        // Tạo payment record cho MOMO
+        Payment::create([
+            'order_id' => $order->id,
+            'payment_method_id' => $checkout['payment_method_id'],
+            'payment_amount' => $checkout['total_amount'],
+            'payment_code' => $randomCodePayment,
+            'status' => 'pending', // hoặc trạng thái bạn định nghĩa
         ]);
 
         // Tạo chi tiết đơn hàng
