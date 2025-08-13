@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\CartDetail;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
@@ -110,14 +111,22 @@ class ClientCheckoutController extends Controller
         }
 
         $subtotal = $selectedCartDetails->sum(fn($item) => $item->price * $item->quantity);
-        $shippingFee = 5000; // tạm thời
+        $shippingFee = 30000; // tạm thời
         $discount = 0;        // sau này xử lý voucher
         $totalAmount = $subtotal + $shippingFee - $discount;
 
         // Random mã đơn hàng và không trùng mã đã có
         do {
-            $randomCode = (string) random_int(1000000000, 9999999999); // 10 chữ số ngẫu nhiên
-        } while (Order::where('order_code', $randomCode)->exists());
+            // Kết hợp tiền tố + thời gian + số ngẫu nhiên
+            $randomCodeOrder = 'ORD' . now()->format('YmdHis') . random_int(100, 999);
+
+        } while (Order::where('order_code', $randomCodeOrder)->exists());
+
+        // Random mã thanh toán và không trùng mã đã có
+        do {
+            // Kết hợp tiền tố + thời gian + số ngẫu nhiên
+            $randomCodePayment = 'PAY' . now()->format('YmdHis') . random_int(100, 999);
+        } while (Payment::where('payment_code', $randomCodePayment)->exists());
 
         // Lấy phương thức thanh toán
         $paymentMethod = DB::table('payment_methods')->where('id', $data['payment_method_id'])->first();
@@ -133,11 +142,20 @@ class ClientCheckoutController extends Controller
                 'payment_method_id' => $data['payment_method_id'],
                 'payment_status_id' => 1, // unpaid
                 'order_status_id' => 1,   // pending
-                'order_code'      => 'NOVA' . $randomCode,
+                'order_code'      => $randomCodeOrder,
                 'subtotal'        => $subtotal,
                 'discount'        => $discount,
                 'shipping_fee'    => $shippingFee,
                 'total_amount'    => $totalAmount,
+            ]);
+
+            // Tạo payment record cho COD
+            Payment::create([
+                'order_id' => $order->id,
+                'payment_method_id' => $data['payment_method_id'],
+                'payment_amount' => $totalAmount,
+                'payment_code' => 'PAY' . $randomCodePayment,
+                'status' => 'pending', // hoặc trạng thái bạn định nghĩa
             ]);
 
             // Tạo chi tiết đơn hàng
@@ -167,7 +185,7 @@ class ClientCheckoutController extends Controller
             'address' => $fullAddress,
             'note' => $data['note'] ?? null,
             'payment_method_id' => $data['payment_method_id'],
-            'order_code'      => 'NOVA' . $randomCode,
+            'order_code'      => $randomCodeOrder,
             'subtotal'        => $subtotal,
             'discount'        => $discount,
             'shipping_fee'    => $shippingFee,

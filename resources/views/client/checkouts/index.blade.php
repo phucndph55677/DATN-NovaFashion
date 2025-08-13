@@ -186,7 +186,7 @@
                         @php
                             $totalQuantity = $cartDetails->sum('quantity');
                             $totalAmount = $cartDetails->sum(fn($item) => $item->quantity * $item->price);
-                            $shipping = 5000;
+                            $shipping = 30000;
                             $discountAmount = 0; // Tạm thời, sẽ cập nhật khi có áp mã giảm giá
                             $finalAmount = max($totalAmount + $discountAmount + $shipping, 0);
                         @endphp
