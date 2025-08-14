@@ -148,6 +148,13 @@ Route::match(['get', 'post'], '/payments/momo/callback', [ClientPaymentControlle
 Route::prefix('account')->name('account.')->group(function () {
     // Info
     Route::get('/info', [ClientAccountController::class, 'info'])->name('info');
+
+    // Order
+    Route::get('/orders', [ClientAccountController::class, 'index'])->name('orders.index');
+    Route::get('orders/show/{id}', [ClientAccountController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/cancel', [ClientAccountController::class, 'cancel'])->name('orders.cancel');
+    Route::post('/orders/{id}/return', [ClientAccountController::class, 'return'])->name('orders.return');
+
 });
 
 // Product Farovite
