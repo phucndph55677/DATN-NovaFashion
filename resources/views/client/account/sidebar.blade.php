@@ -11,11 +11,15 @@
 
         <div class="order-sidemenu__menu">
             <ul>
-                <li class="active">
-                    <a href="{{ route('account.info') }}"><span class="icon-ic_avatar-1"></span>Thông tin tài khoản</a>
+                <li>
+                    <a href="{{ route('account.info') }}" style="{{ request()->routeIs('account.info') ? 'color:black;' : '' }}">
+                        <span class="icon-ic_avatar-1"></span>Thông tin tài khoản
+                    </a>
                 </li>
-                <li class="">
-                    <a href="https://ivymoda.com/customer/order_list"><span class="icon-ic_reload"></span>Quản lý đơn hàng</a>
+                <li>
+                    <a href="{{ route('account.orders.index') }}" style="{{ request()->routeIs('account.orders.index') ? 'color:black;' : '' }}">
+                        <span class="icon-ic_reload"></span>Quản lý đơn hàng
+                    </a>
                 </li>
                 <li class="">
                     <a href="https://ivymoda.com/customer/san-pham-yeu-thich"><span class="icon-ic_heart"></span>Sản phẩm yêu thích</a>
