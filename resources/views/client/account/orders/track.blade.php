@@ -1,6 +1,6 @@
 @extends('client.layouts.app')
 
-@section('title', 'Chi Tiết Đơn Hàng')
+@section('title', 'Theo Dõi Đơn Hàng')
 
 @section('content')
     <main id="main" class="site-main">
@@ -10,16 +10,17 @@
                     <li class="breadcrumb__item"><a class="breadcrumb__link" href="{{ route('home') }}">Trang chủ</a></li>
                     <li class="breadcrumb__item"><a href="{{ route('account.orders.index') }}" class="breadcrumb__link" title="Quản Lý Đơn Hàng">Quản Lý Đơn Hàng</a></li>
                     <li class="breadcrumb__item"><a href="{{ route('account.orders.show', $order->id) }}" class="breadcrumb__link" title="'Chi Tiết Đơn Hàng">Chi Tiết Đơn Hàng</a></li>
+                    <li class="breadcrumb__item"><a href="{{ route('account.orders.track', $order->id) }}" class="breadcrumb__link" title="Theo Dõi Đơn Hàng">Theo Dõi Đơn Hàng</a></li>
                 </ol>
             </div>
 
-            <div class="order-wrapper mt-40 order-detail">
+            <div class="order-wrapper mt-40 order-subscribe order-follow">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg col-account-content">
+                        <div class="col-lg-12 col-xl">
                             <div class="order-block__title">
                                 <h2>
-                                    <span class="icon-ic_back"></span>CHI TIẾT ĐƠN HÀNG<b>{{ $order->order_code }}</b>
+                                    <span class="icon-ic_back"></span>THEO DÕI ĐƠN HÀNG<b>{{ $order->order_code }}</b>
                                 </h2>
                                 <div class="order__status order--{{ Str::slug($order->orderStatus->name, '-') }}">
                                     <div style="margin-right: 15px">
@@ -57,7 +58,48 @@
                             </div>
 
                             <div class="order-block row">
-                                <div class="col-xl">
+                                <div class="col-md-8">
+                                    @php
+                                        $steps = [
+                                            3 => 'Chuẩn bị hàng',
+                                            4 => 'Đang giao',
+                                            5 => 'Đã giao hàng',
+                                            6 => 'Thành công',
+                                            7 => 'Hoàn hàng',
+                                            8 => 'Đã hủy',
+                                        ];
+
+                                        $currentStatusId = $order->order_status_id;
+
+                                        // Nếu đơn bị hủy, chỉ highlight bước đầu + bước hủy
+                                        $highlightSteps = $currentStatusId == 8
+                                            ? [8]
+                                            : range(1, $currentStatusId);
+                                    @endphp
+
+                                    <div class="checkout-process-bar block-border">
+                                        <ul>
+                                            @foreach ($steps as $id => $label)
+                                                <li class="{{ in_array($id, $highlightSteps) ? 'active' : '' }}">
+                                                    <span>{{ $label }}</span>
+                                                    <br><br>
+                                                    <small>
+                                                        @if ($id == $currentStatusId)
+                                                            {{ $order->updated_at->format('d-m-Y H:i:s') }}
+                                                        @elseif ($id == 1) {{-- Bước đầu tiên trong $steps --}}
+                                                            {{ $order->created_at->format('d-m-Y H:i:s') }}
+                                                        @endif
+                                                    </small>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                        
+                                        <p class="checkout-process-bar__title">
+                                            {{ $steps[$currentStatusId] ?? '' }}
+                                            <small>({{ $order->updated_at->format('d/m/Y H:i') }})</small>
+                                        </p>
+                                    </div><br><hr>
+
                                     <div class="order-block__products checkout-my-cart">
                                         <table class="cart__tables">
                                             <tbody>
@@ -137,7 +179,7 @@
                                             </div>
                                             <div class="cart-summary__overview__item">
                                                 <p>Tiền thanh toán</p>
-                                                <p><b>{{ number_format($order->total_amount, 0, ',', '.') }} VND</b></p>
+                                                <p><b>{{ number_format($order->total_amount, 0, ',', '.') }} VND</b>
                                             </div>
                                         </div>
 
@@ -172,10 +214,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="order-buttons">
-                                <a class="btn btn--large btn--view-order-detail" href="{{ route('account.orders.track', $order->id) }}">Theo dõi đơn hàng</a>
                             </div>
                         </div>
                     </div>

@@ -61,6 +61,40 @@ class ClientAccountController extends Controller
     {
         //
     }
+    
+    /**
+     * Display the specified resource.
+     */
+    public function track(string $id)
+    {
+        if (!Auth::check()) {
+                return redirect()->route('login');
+            }
+        $userId = Auth::id(); // Lấy ID người dùng hiện tại
+
+        // Lấy đơn hàng theo ID
+        $order = Order::with(['orderStatus', 'payment.paymentMethod']) // load quan hệ trạng thái đơn, phương thức thanh toán
+            ->where('id', $id)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+
+        // Lấy chi tiết đơn hàng, kèm thông tin biến thể, màu, size
+        $orderDetail = $order->orderDetails()->with([
+            'productVariant.product',
+            'productVariant.color',
+            'productVariant.size',
+        ])->get();
+
+        // Tính tổng số lượng
+        $order->total_quantity = $orderDetail->sum('quantity');
+
+        // Nếu chưa có shipping_fee trong DB, gán cố định
+        if (is_null($order->shipping_fee)) {
+            $order->shipping_fee = 30000;
+        }
+
+        return view('client.account.orders.track', compact('order', 'orderDetail'));
+    }
 
     /**
      * Display the specified resource.

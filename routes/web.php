@@ -151,6 +151,7 @@ Route::prefix('account')->name('account.')->group(function () {
 
     // Order
     Route::get('/orders', [ClientAccountController::class, 'index'])->name('orders.index');
+    Route::get('/orders/track/{id}', [ClientAccountController::class, 'track'])->name('orders.track');
     Route::get('orders/show/{id}', [ClientAccountController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/cancel', [ClientAccountController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{id}/return', [ClientAccountController::class, 'return'])->name('orders.return');
