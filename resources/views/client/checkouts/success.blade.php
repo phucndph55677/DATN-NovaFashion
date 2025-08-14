@@ -22,7 +22,7 @@
 
                     <div class="thank-you__button">
                         <a class="btn btn--large" href="http://127.0.0.1:8000/"> Tiếp tục mua sắm</a>
-                        <a class="btn btn--large btn--outline" href=""> Theo dõi đơn hàng</a>
+                        <a class="btn btn--large btn--outline" href="{{ route('account.orders.track', $order->id) }}">Theo dõi đơn hàng</a>
                     </div>
                 </div>
             </div>
