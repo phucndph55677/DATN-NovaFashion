@@ -171,7 +171,9 @@
                                     @foreach ($products as $product)
                                         @php
                                             $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
-                                            $favorites = $favorites ?? [];
+                                            
+                                            $favorites = Auth::check() ? Auth::user()->favorites->pluck('product_id')->toArray() : [];
+                                            $isFavorite = in_array($product->id, $favorites);
                                         @endphp
 
                                         <div class="item-new-prod">
@@ -205,18 +207,50 @@
                                                                 </li>
                                                             @endforeach
                                                         </ul>
-                                                        {{-- <div class="favourite" data-id="42162">
-                                                            <i class="icon-ic_heart"></i>
-                                                        </div> --}}
-                                                        <div class="my-favorite {{ in_array($product->id, $favorites) ? 'active' : '' }}"
-                                                            data-id="{{ $product->id }}">
-                                                            <svg width="24" height="24" fill="none"
-                                                                stroke="currentColor" stroke-width="1"
-                                                                stroke-linecap="round" stroke-linejoin="round"
-                                                                class="feather feather-heart">
-                                                                <path
-                                                                    d="M20.8 4.6c-1.5-1.4-3.9-1.4-5.4 0l-.9.9-.9-.9c-1.5-1.4-3.9-1.4-5.4 0-1.6 1.5-1.6 4 0 5.5l6.3 6.2 6.3-6.2c1.6-1.5 1.6-4 0-5.5z" />
+
+                                                        <div style="display:inline-block; cursor:pointer;">
+                                                            <svg
+                                                                id="favorite-icon-{{ $product->id }}"
+                                                                width="24" height="24"
+                                                                fill="{{ $isFavorite ? 'red' : 'none' }}"
+                                                                stroke="{{ $isFavorite ? 'white' : 'currentColor' }}"
+                                                                stroke-width="1"
+                                                                onclick="
+                                                                    event.preventDefault();
+                                                                    let userLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+                                                                    const toast = document.getElementById('toast');
+                                                                    if(!userLoggedIn){
+                                                                        document.getElementById('toast-message').innerText = 'Vui lòng đăng nhập để thêm sản phẩm yêu thích.';
+                                                                        toast.style.display = 'flex';
+                                                                        toast.style.opacity = '1';
+                                                                        setTimeout(()=> {
+                                                                            toast.style.opacity = '0';
+                                                                            setTimeout(()=>{ toast.style.display='none'; }, 400);
+                                                                        }, 3000);
+                                                                        return;
+                                                                    }
+
+                                                                    // Toggle màu icon
+                                                                    let icon = this;
+                                                                    if(icon.getAttribute('fill') === 'red'){
+                                                                        icon.setAttribute('fill', 'none');
+                                                                        icon.setAttribute('stroke', 'currentColor');
+                                                                    } else {
+                                                                        icon.setAttribute('fill', 'red');
+                                                                        icon.setAttribute('stroke', 'white');
+                                                                    }
+
+                                                                    // Submit form ẩn
+                                                                    document.getElementById('favorite-form-{{ $product->id }}').submit();
+                                                                "
+                                                            >
+                                                                <path d="M20.8 4.6c-1.5-1.4-3.9-1.4-5.4 0l-.9.9-.9-.9c-1.5-1.4-3.9-1.4-5.4 0-1.6 1.5-1.6 4 0 5.5l6.3 6.2 6.3-6.2c1.6-1.5 1.6-4 0-5.5z" />
                                                             </svg>
+
+                                                            <form id="favorite-form-{{ $product->id }}" action="{{ route('account.favorites.toggle') }}" method="POST" class="d-none">
+                                                                @csrf
+                                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                            </form>
                                                         </div>
                                                     </div>
                                                     <h3 class="title-product">
@@ -684,86 +718,28 @@
         });
     </script>
 
-    {{-- JS xử lý khi click màu thêm sản phẩm yêu thích --}}
+    {{-- JS xử lý khi ĐĂNG NHẬP thực hiển thểm/bỏ sản phẩm yêu thích --}}
     <script>
-        // Ép kiểu Boolean rõ ràng
-        window.isLoggedIn = {{ Auth::check() ? 'true' : 'false' }} === true;
-
-        // Thêm CSS một lần duy nhất
-        if (!document.getElementById('favorite-style')) {
-            const style = document.createElement('style');
-            style.id = 'favorite-style';
-            style.innerHTML = `
-                .my-favorite { cursor: pointer; }
-                .my-favorite.active svg { fill: red; stroke: red; transition: 0.2s; }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // Cập nhật localStorage
-        function updateLocalFavorites(productId, isAdd) {
-            const key = 'favorite_ids';
-            let favorites = JSON.parse(localStorage.getItem(key) || '[]');
-            productId = parseInt(productId);
-
-            if (isAdd) {
-                if (!favorites.includes(productId)) favorites.push(productId);
-            } else {
-                favorites = favorites.filter(id => id !== productId);
-            }
-
-            localStorage.setItem(key, JSON.stringify(favorites));
-        }
-
-        // Khi DOM đã sẵn sàng
         document.addEventListener('DOMContentLoaded', () => {
-            const favorites = JSON.parse(localStorage.getItem('favorite_ids') || '[]');
-            const favoriteEls = document.querySelectorAll('.my-favorite');
-
-            // Đồng bộ trạng thái trái tim
-            favoriteEls.forEach(el => {
-                const productId = parseInt(el.dataset.id);
-                el.classList.toggle('active', favorites.includes(productId));
-            });
-
-            // Gắn sự kiện click
-            favoriteEls.forEach(el => {
-                el.addEventListener('click', async function(e) {
-                    e.preventDefault();
-
-                    if (!window.isLoggedIn) {
-                        toastr.warning('Bạn cần đăng nhập để sử dụng chức năng yêu thích!');
-                        return;
-                    }
-
-                    const productId = parseInt(this.dataset.id);
-                    const heart = this;
-
-                    try {
-                        const response = await fetch("{{ route('favorites.toggle') }}", {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({
-                                product_id: productId
-                            })
-                        });
-
-                        const data = await response.json();
-
-                        const isAdd = data.status === 'added';
-                        heart.classList.toggle('active', isAdd);
-                        updateLocalFavorites(productId, isAdd);
-
-                    } catch (err) {
-                        console.error('Lỗi toggle yêu thích:', err);
-                        toastr.error('Đã có lỗi xảy ra. Vui lòng thử lại.');
-                    }
-                });
-            });
+            @if(session('success'))
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-message').innerText = "{{ session('success') }}";
+                toast.style.display = 'flex';
+                toast.style.opacity = '1';
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => { toast.style.display = 'none'; }, 400);
+                }, 3000);
+            @elseif(session('error'))
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-message').innerText = "{{ session('error') }}";
+                toast.style.display = 'flex';
+                toast.style.opacity = '1';
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => { toast.style.display = 'none'; }, 400);
+                }, 3000);
+            @endif
         });
     </script>
 @endsection

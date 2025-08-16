@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\ProductFavorite;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class ClientAccountController extends Controller
             return redirect()->route('login');
         }
         $userId = Auth::id(); // Lấy ID người dùng hiện tại
-        
+
         $user = Auth::user();
 
         return view('client.account.info', compact('user'));
@@ -30,7 +31,7 @@ class ClientAccountController extends Controller
             return redirect()->route('login');
         }
         $userId = Auth::id(); // Lấy ID người dùng hiện tại
-        
+
         $user = Auth::user(); // Lấy user đang đăng nhập
 
         $ordersQuery = Order::with('orderDetails.productVariant.product', 'orderStatus')
@@ -61,7 +62,7 @@ class ClientAccountController extends Controller
     {
         //
     }
-    
+
     /**
      * Display the specified resource.
      */
@@ -160,6 +161,62 @@ class ClientAccountController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function favorite(Request $request)
+    {
+        if (!Auth::check()) {
+                return redirect()->route('login');
+            }
+        $userId = Auth::id(); // Lấy ID người dùng hiện tại
+
+        // Lấy danh sách sản phẩm yêu thích của user
+        $favorites = ProductFavorite::with([
+            'product.variants.color',
+            'product.variants.size'
+        ])->where('user_id', $userId)->get();
+
+        // Lấy giá trị sắp xếp từ query string
+        $sort = $request->query('sort', 'newest');
+
+        // Sắp xếp theo yêu cầu
+        $favorites = match ($sort) {
+            'price_asc' => $favorites->sortBy(fn($f) => optional($f->product->variants->first())->sale ?? optional($f->product->variants->first())->price ?? 0),
+            'price_desc' => $favorites->sortByDesc(fn($f) => optional($f->product->variants->first())->sale ?? optional($f->product->variants->first())->price ?? 0),
+            'name_asc' => $favorites->sortBy(fn($f) => $f->product->name),
+            'name_desc' => $favorites->sortByDesc(fn($f) => $f->product->name),
+            default => $favorites->sortByDesc('created_at'),
+        };
+
+        return view('client.account.favorite', compact('favorites', 'sort'));
+    }
+
+    public function toggleFavorite(Request $request)
+    {
+        $userId = Auth::id();
+        $productId = $request->input('product_id');
+
+        if (!$userId) {
+            return redirect()->back()->with('error', 'Vui lòng đăng nhập để thêm sản phẩm yêu thích.');
+        }
+
+        if (!$productId) {
+            return redirect()->back()->with('error', 'Thông tin sản phẩm không hợp lệ.');
+        }
+
+        $favorite = ProductFavorite::where('user_id', $userId)->where('product_id', $productId)->first();
+
+        if ($favorite) {
+            $favorite->delete();
+            return redirect()->back()->with('success', 'Đã bỏ thích sản phẩm.');
+        }
+
+        ProductFavorite::create([
+            'user_id' => $userId,
+            'product_id' => $productId,
+        ]);
+
+        return redirect()->back()->with('success', 'Đã thêm sản phẩm vào yêu thích.');
     }
 
     /**
