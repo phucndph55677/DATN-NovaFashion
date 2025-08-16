@@ -156,8 +156,7 @@ Route::prefix('account')->name('account.')->group(function () {
     Route::post('/orders/{id}/cancel', [ClientAccountController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{id}/return', [ClientAccountController::class, 'return'])->name('orders.return');
 
+    // Favorites
+    Route::get('/favorites', [ClientAccountController::class, 'favorite'])->name('favorites.index');
+    Route::post('/favorites/toggle', [ClientAccountController::class, 'toggleFavorite'])->name('favorites.toggle');
 });
-
-// Product Farovite
-Route::get('/yeu-thich', [ClientFavoriteController::class, 'index'])->name('favorites.index');
-Route::post('/yeu-thich/toggle', [ClientFavoriteController::class, 'toggleFavorite'])->name('favorites.toggle');

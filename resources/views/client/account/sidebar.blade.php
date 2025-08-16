@@ -21,8 +21,10 @@
                         <span class="icon-ic_reload"></span>Quản lý đơn hàng
                     </a>
                 </li>
-                <li class="">
-                    <a href="https://ivymoda.com/customer/san-pham-yeu-thich"><span class="icon-ic_heart"></span>Sản phẩm yêu thích</a>
+                <li>
+                    <a href="{{ route('account.favorites.index') }}" style="{{ request()->routeIs('account.favorites.index') ? 'color:black;' : '' }}">
+                        <span class="icon-ic_heart"></span>Sản phẩm yêu thích
+                    </a>
                 </li>
                 <li class="">
                     <a href="https://ivymoda.com/customer/login_log"><span class="icon-ic_padlock"></span>Lịch sử đăng nhập</a>

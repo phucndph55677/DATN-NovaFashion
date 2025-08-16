@@ -201,7 +201,7 @@
                             <ul>
                                 <li><a href="{{ route('account.info') }}"><i class="icon-ic_avatar-1"></i>Thông tin tài khoản</a></li>
                                 <li><a href="{{ route('account.orders.index') }}"><i class="icon-ic_reload"></i>Quản lý đơn hàng</a></li>
-                                <li><a href="{{ route('favorites.index') }}"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
+                                <li><a href="{{ route('account.favorites.index') }}"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
                                 <li><a href="https://ivymoda.com/customer/login_log"><i class="icon-ic_padlock"></i>Lịch sử đăng nhập</a></li>
                                 <li><a href="https://ivymoda.com/customer/question"><i class="icon-ic_headphones"></i>Hỏi đáp sản phẩm</a></li>
                                 <li><a href="https://ivymoda.com/ivy-support/danh-sach"><i class="icon-ic_hand"></i>Hỗ trợ - IVY</a></li>
