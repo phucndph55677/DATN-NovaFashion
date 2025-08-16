@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_favorites', function (Blueprint $table) {
             $table->id(); // Khóa chính id
-            $table->foreignId('product_variant_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng product_variants
+            $table->foreignId('product_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng products
             $table->foreignId('user_id')->constrained()->onDelete('cascade');    // Khóa ngoại liên kết tới bảng users
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
