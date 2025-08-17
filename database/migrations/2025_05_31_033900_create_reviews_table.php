@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id(); // Khóa chính id
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');    // Khóa ngoại liên kết tới bảng users
             $table->foreignId('order_id')->constrained()->onDelete('cascade');   // Khóa ngoại liên kết tới bảng orders
             $table->foreignId('product_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng products
-            $table->tinyInteger('rating')->unsigned(); // Đánh giá (1-5), kiểu số nguyên nhỏ không dấu
+            $table->tinyInteger('rating')->unsigned()->nullable(); // Đánh giá (1-5), kiểu số nguyên nhỏ không dấu
             $table->text('content')->nullable();       // Nội dung đánh giá, có thể để trống
             $table->tinyInteger('status')->default(1); // 0 = chưa duyệt, 1 = hiển thị
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
