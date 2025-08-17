@@ -27,7 +27,7 @@
                                         <div class="product-gallery__slide">
                                             <div class="product-gallery__slide--big">
                                                 <div class="thumb-product">
-                                                    <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" style="width: 550px; height: 550px">
+                                                    <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
                                                 </div>     
                                             </div>
                                             
@@ -176,7 +176,35 @@
                             </div>
                         </div>
                     </div>
-        
+
+                    <div class="viewed-products">
+                        <h1>ĐÁNH GIÁ SẢN PHẨM ({{ $reviews->count() }} đánh giá)</h1>
+                        <div class="product-reviews block-border">
+                            @foreach($reviews as $review)
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div class="review-user">
+                                            <strong>{{ $review->order->user->name ?? 'Người dùng ẩn danh' }}</strong>
+                                            <span class="review-date">{{ $review->created_at->format('d/m/Y H:i:s') }}</span>
+                                        </div>
+                                        <div class="review-rating">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= $review->rating)
+                                                    <span style="color: gold; font-size: 20px;">&#9733;</span>
+                                                @else
+                                                    <span style="color: #ccc; font-size: 20px;">&#9733;</span>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        <p>{{ $review->content }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>              
+                    </div>
+                    
                     <!-- Trending -->
                     <a href="https://ivymoda.com/danh-muc/dress-day-hoa-tiet-110725">
                         <section class="home-trending box-border bg-before bg-before_02">
@@ -364,4 +392,76 @@
             });
         });
     </script>
+
+    {{-- CSS xử lý giao diện Đánh giá sản phẩm --}}
+    <style>
+        h1{
+            color: black;
+            /* text-align: center;  */
+            margin-bottom: 20px
+        }
+
+        .viewed-products {
+            margin-top: 30px;
+            font-family: Arial, sans-serif;
+        }
+
+        .viewed-products--title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            /* border-left: 4px solid #ff4d4f; */
+            padding-left: 10px;
+        }
+
+        .product-reviews {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #eee;
+        }
+
+        .review-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            margin-bottom: 8px;
+        }
+
+        .review-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-user strong {
+            font-size: 16px;
+            color: #222;
+        }
+
+        .review-date {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .review-rating {
+            font-size: 14px;
+            color: #ffb400;
+            margin-top: 3px;
+        }
+
+        .review-content p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+        }
+    </style>
 @endsection

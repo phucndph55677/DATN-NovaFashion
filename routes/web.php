@@ -156,6 +156,10 @@ Route::prefix('account')->name('account.')->group(function () {
     Route::post('/orders/{id}/cancel', [ClientAccountController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{id}/return', [ClientAccountController::class, 'return'])->name('orders.return');
 
+    // Reviews
+    Route::get('/reviews', [ClientAccountController::class, 'review'])->name('reviews.index');
+    Route::post('/reviews', [ClientAccountController::class, 'store'])->name('reviews.store');
+
     // Favorites
     Route::get('/favorites', [ClientAccountController::class, 'favorite'])->name('favorites.index');
     Route::post('/favorites/toggle', [ClientAccountController::class, 'toggleFavorite'])->name('favorites.toggle');

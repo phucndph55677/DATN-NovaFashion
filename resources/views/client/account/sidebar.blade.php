@@ -22,6 +22,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('account.reviews.index') }}" style="{{ request()->routeIs('account.reviews.index') ? 'color:black;' : '' }}">
+                        <span class="icon-ic_glasses"></span>Đánh giá sản phẩm
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('account.favorites.index') }}" style="{{ request()->routeIs('account.favorites.index') ? 'color:black;' : '' }}">
                         <span class="icon-ic_heart"></span>Sản phẩm yêu thích
                     </a>

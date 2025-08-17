@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\ProductFavorite;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -58,10 +60,10 @@ class ClientAccountController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    // public function store(Request $request)
+    // {
+    //     //
+    // }
 
     /**
      * Display the specified resource.
@@ -219,6 +221,69 @@ class ClientAccountController extends Controller
         return redirect()->back()->with('success', 'Đã thêm sản phẩm vào yêu thích.');
     }
 
+    // Reviews
+    public function review(Request $request)
+    {
+        if (!Auth::check()) {
+                return redirect()->route('login');
+            }
+        $userId = Auth::id(); // Lấy ID người dùng hiện tại
+
+        // Lấy các đơn hàng đã hoàn thành
+        $reviews = Order::with(['orderDetails.productVariant.product', 'orderStatus'])
+            ->where('user_id', $userId)
+            ->where('order_status_id', 6)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Lấy tất cả order_id và product_id mà user đã review 
+        $reviewedProducts = Review::whereIn('order_id', function($query) use ($userId) {
+            $query->select('id')
+                ->from('orders')
+                ->where('user_id', $userId);
+        })->get()->mapWithKeys(function($review) {
+            return [$review->order_id.'-'.$review->product_id => true];
+        });
+
+        return view('client.account.review', compact('reviews', 'reviewedProducts'));
+    }
+
+    public function store(Request $request)
+    {
+        $orderDetailIds = $request->input('order_detail_id', []);
+        $ratings = $request->input('rating', []);
+        $contents = $request->input('content', []);
+
+        foreach ($orderDetailIds as $index => $orderDetailId) {
+            $orderDetail = OrderDetail::with('order.reviews', 'productVariant.product')->find($orderDetailId);
+
+            if (!$orderDetail) continue;
+
+            $productId = $orderDetail->productVariant->product_id;
+
+            // Kiểm tra sản phẩm này trong đơn này đã đánh giá chưa
+            $hasReviewed = $orderDetail->order->reviews->contains(function($review) use ($productId) {
+                return $review->product_id == $productId;
+            });
+
+            // Nếu đã đánh giá thì bỏ qua
+            if ($hasReviewed) continue;
+
+            // Nếu người dùng đã chọn số sao (rating) mới lưu
+            if (isset($ratings[$index]) && $ratings[$index] != '') {
+                Review::create([
+                    'order_id' => $orderDetail->order_id,
+                    'product_id' => $productId,
+                    'rating' => $ratings[$index],
+                    'content' => $contents[$index] ?? '',
+                    'status' => 1,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Đánh giá đã được gửi!');
+    }
+    
     /**
      * Show the form for editing the specified resource.
      */
