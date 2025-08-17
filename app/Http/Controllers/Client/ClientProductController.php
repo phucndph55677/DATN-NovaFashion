@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;;
+use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class ClientProductController extends Controller
@@ -39,7 +40,17 @@ class ClientProductController extends Controller
     {
         $product = Product::with(['variants.color', 'variants.size'])->findOrFail($id);
 
-        return view('client.products.show', compact('product'));
+        // Lấy reviews đã duyệt, đơn hàng thành công
+        $reviews = Review::with('user')
+            ->where('product_id', $id)
+            ->where('status', 1)
+            ->whereHas('order', function($q) {
+                $q->where('order_status_id', 6); // trạng thái "Thành công"
+            })
+            ->latest()
+            ->get();
+
+        return view('client.products.show', compact('product', 'reviews'));
     }
 
     /**
