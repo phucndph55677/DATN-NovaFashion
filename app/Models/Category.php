@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
@@ -27,6 +28,18 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function getAllDescendantIds()
+    {
+        $ids = [];
+
+        foreach ($this->children as $child) {
+            $ids[] = $child->id;
+            $ids = array_merge($ids, $child->getAllDescendantIds());
+        }
+
+        return $ids;
     }
 
     public function childrenRecursive()
@@ -54,5 +67,31 @@ class Category extends Model
         }
 
         return false;
+    }
+
+    // 🔥 Auto tạo slug khi lưu
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($category) {
+            // Nếu slug chưa có hoặc thay đổi parent_id/name thì cập nhật lại
+            if (
+                empty($category->slug) ||
+                $category->isDirty('parent_id') ||
+                $category->isDirty('name')
+            ) {
+                $slug = Str::slug($category->name);
+
+                if ($category->parent_id) {
+                    $parent = Category::find($category->parent_id);
+                    if ($parent) {
+                        $slug = $parent->slug . '/' . $slug;
+                    }
+                }
+
+                $category->slug = $slug;
+            }
+        });
     }
 }
