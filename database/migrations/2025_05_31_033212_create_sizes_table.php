@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sizes', function (Blueprint $table) {
             $table->id(); // Khóa chính id
             $table->string('name'); // Tên kích cỡ (ví dụ: S, M, L, XL)
+            $table->string('size_code');  // Mã size (ví dụ: "S", "M")
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }

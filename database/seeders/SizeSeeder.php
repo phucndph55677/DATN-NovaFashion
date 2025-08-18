@@ -14,10 +14,21 @@ class SizeSeeder extends Seeder
     public function run(): void
     {
         // Bạn có thể seed chính xác những size cố định
-        $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
+        $sizes = [
+            ['name' => 'XS', 'code' => 'XS'],
+            ['name' => 'S', 'code' => 'S'],
+            ['name' => 'M', 'code' => 'M'],
+            ['name' => 'L', 'code' => 'L'],
+            ['name' => 'XL', 'code' => 'XL'],
+            ['name' => 'XXL', 'code' => 'XXL'],
+            ['name' => '3XL', 'code' => '3XL'],
+        ];
 
         foreach ($sizes as $size) {
-            Size::firstOrCreate(['name' => $size]);
+            Size::firstOrCreate([
+                'name' => $size['name'],
+                'size_code' => $size['code'],
+            ]);
         }
     }
 }

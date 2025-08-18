@@ -16,7 +16,6 @@ class ClientUserSeeder extends Seeder
     {
         DB::table('users')->insert([
             'role_id'        => 3, // role client
-            'ranking_id'     => null, // hoặc số id ranking nếu bạn có
             'image'          => null,
             'name'           => 'Client',
             'phone'          => '0987654321',
