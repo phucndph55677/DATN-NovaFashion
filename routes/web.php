@@ -16,9 +16,9 @@ use App\Http\Controllers\Admin\Accounts\SellerManageController;
 
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ClientAuthController;
+use App\Http\Controllers\Client\ClientCategoryController;
 use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\ClientCartController;
-use App\Http\Controllers\Client\ClientFavoriteController;
 use App\Http\Controllers\Client\ClientCheckoutController;
 use App\Http\Controllers\Client\ClientPaymentController;
 use App\Http\Controllers\Client\ClientAccountController;
@@ -125,6 +125,9 @@ Route::post('/password/update', [ClientAuthController::class, 'reset'])->name('p
 
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Category
+Route::get('/categories/{slug}/{subslug?}/{childslug?}', [ClientCategoryController::class, 'index'])->name('categories.index');
 
 // Product show
 Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('products.show');
