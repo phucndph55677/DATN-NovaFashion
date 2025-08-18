@@ -21,6 +21,7 @@ class SizeFactory extends Factory
 
         return [
             'name' => fake()->unique()->randomElement($sizes),
+            'size_code' => fake()->unique()->randomElement($sizes),
         ];
     }
 }

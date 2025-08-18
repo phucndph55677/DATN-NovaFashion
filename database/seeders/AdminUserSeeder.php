@@ -17,7 +17,6 @@ class AdminUserSeeder extends Seeder
     {
         DB::table('users')->insert([
             'role_id'       => 1, // bạn thay theo id role Admin nếu có
-            'ranking_id'    => 1, // hoặc null nếu không cần
             'image'         => null,
             'name'          => 'Admin',
             'phone'         => '0123456789',
