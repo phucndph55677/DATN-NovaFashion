@@ -45,7 +45,6 @@ class DatabaseSeeder extends Seeder
             // PaymentSeeder::class,
             // InvoiceSeeder::class,
             // NotificationSeeder::class,
-            // PointSeeder::class,
             // LocationSeeder::class,
             // BannerSeeder::class,
             // AdminUserSeeder::class,
