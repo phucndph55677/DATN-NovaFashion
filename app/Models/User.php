@@ -19,7 +19,6 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'role_id',
-        'ranking_id',
         'image',
         'name',
         'phone',
@@ -57,11 +56,6 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
-    }
-
-    public function ranking()
-    {
-        return $this->belongsTo(Ranking::class);
     }
 
     public function reviews()

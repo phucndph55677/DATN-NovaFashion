@@ -5,7 +5,6 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Role;
-use App\Models\Ranking;
 use Illuminate\Support\Str;
 
 /**
@@ -27,7 +26,6 @@ class UserFactory extends Factory
     {
         return [
             'role_id' => Role::inRandomOrder()->first()?->id ?? Role::factory(),
-            'ranking_id' => Ranking::inRandomOrder()->first()?->id, // Có thể null nếu chưa có dữ liệu
             'image' => fake()->imageUrl(200, 200, 'people'),
             'name' => fake()->name(),
             'phone' => fake()->unique()->numerify('+84 9## ### ###'),
