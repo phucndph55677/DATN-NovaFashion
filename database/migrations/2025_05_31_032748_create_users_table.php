@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id(); // Khóa chính id
             $table->foreignId('role_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng roles
-            $table->foreignId('ranking_id')->nullable()->constrained('rankings')->onDelete('set null'); // Khóa ngoại liên kết tới bảng rankings, có thể null
             $table->string('image')->nullable(); // Ảnh đại diện người dùng (có thể null)
             $table->string('name'); // Họ tên đầy đủ người dùng
             $table->string('phone')->unique(); // Số điện thoại, yêu cầu duy nhất
