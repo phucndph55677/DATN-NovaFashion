@@ -51,25 +51,17 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="sale_price" class="form-label fw-bold text-muted text-uppercase">Giảm Giá (%)</label>
-                                <input type="number" class="form-control" id="sale_price" name="sale_price" placeholder="Nhập Giảm Giá (%)" value="{{ $voucher->sale_price }}">
+                                <label for="sale_price" class="form-label fw-bold text-muted text-uppercase">Giảm Giá (VND)</label>
+                                <input type="number" class="form-control" id="sale_price" name="sale_price" placeholder="Nhập Giảm Giá (VND)" value="{{ $voucher->sale_price }}">
                                 @error('sale_price')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="max_discount" class="form-label fw-bold text-muted text-uppercase">Giảm Tối Đa (VND)</label>
-                                <input type="number" class="form-control" id="max_discount" name="max_discount" placeholder="Nhập Giảm Tối Đa (VND)" Value="{{ $voucher->max_discount }}">
-                                @error('max_discount')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="min_price" class="form-label fw-bold text-muted text-uppercase">Giảm Tối Thiểu (VNĐ)</label>
-                                <input type="number" class="form-control" id="min_price" name="min_price" placeholder="Nhập Giảm Tối Thiểu (VND)" value="{{ $voucher->min_price }}">
-                                @error('min_price')
+                                <label for="min_order_value" class="form-label fw-bold text-muted text-uppercase">Giá Trị Đơn Hàng Tối Thiểu (VND)</label>
+                                <input type="number" class="form-control" id="min_order_value" name="min_order_value" placeholder="Nhập Giá Trị Đơn Hàng Tối Thiểu (VND)" value="{{ $voucher->min_order_value }}">
+                                @error('min_order_value')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -83,10 +75,26 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="user_limit" class="form-label fw-bold text-muted text-uppercase">Số Lượt</label>
-                                <input type="number" class="form-control" id="user_limit" name="user_limit" placeholder="Nhập Số Lượt" value="{{ $voucher->user_limit }}">
+                                <label for="user_limit" class="form-label fw-bold text-muted text-uppercase">Số Lượt Mỗi Người Dùng</label>
+                                <input type="number" class="form-control" id="user_limit" name="user_limit" placeholder="Nhập Số Lượt Mỗi Người Dùng" value="{{ $voucher->user_limit }}">
                                 @error('user_limit')
                                        <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label fw-bold text-muted text-uppercase">Trạng Thái</label>
+                                <select id="status" name="status" class="form-select form-control choicesjs">
+                                    <option value="">Chọn Trạng Thái</option>
+                                        @foreach ($statuses as $status)
+                                            <option value="{{ $status->id }}"
+                                                @selected($status->id == $voucher->status)>
+                                                {{ $status->name }}</option>      
+                                        @endforeach
+                                    </option>
+                                </select>
+                                @error('status')
+                                    <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
  
@@ -110,22 +118,6 @@
                                 <label for="description" class="form-label fw-bold text-muted text-uppercase">Mô Tả</label>
                                 <textarea class="form-control" name="description" id="description" rows="4" placeholder="Nhập Mô Tả">{{ $voucher->description }}</textarea>
                                 @error('description')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="status" class="form-label fw-bold text-muted text-uppercase">Trạng Thái</label>
-                                <select id="status" name="status" class="form-select form-control choicesjs">
-                                    <option value="">Chọn Trạng Thái</option>
-                                        @foreach ($statuses as $status)
-                                            <option value="{{ $status->id }}"
-                                                @selected($status->id == $voucher->status)>
-                                                {{ $status->name }}</option>      
-                                        @endforeach
-                                    </option>
-                                </select>
-                                @error('status')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
