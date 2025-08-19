@@ -19,8 +19,7 @@ return new class extends Migration
             $table->integer('total_used')->default(0); // Số lượng voucher đã sử dụng
             $table->integer('user_limit')->default(1); // Số lần 1 user được sử dụng
             $table->decimal('sale_price', 10, 2);     // Giá trị giảm giá
-            $table->decimal('max_discount', 10, 2); // Giảm giá tối đa
-            $table->decimal('min_price', 10, 2);      // Giá tối thiểu đơn hàng được áp dụng voucher
+            $table->decimal('min_order_value', 10, 2);      // Giá tối thiểu đơn hàng được áp dụng voucher
             $table->tinyInteger('status')->default(1); // 1: active, 0: inactive
             $table->text('description')->nullable();   // Mô tả chi tiết voucher
             $table->dateTime('start_date');      // Ngày bắt đầu áp dụng voucher (có giờ)
