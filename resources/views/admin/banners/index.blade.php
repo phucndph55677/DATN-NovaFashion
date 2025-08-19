@@ -92,8 +92,8 @@
                                                             </label>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $banner->start_date->format('d/m/Y') }}</td>
-                                                    <td>{{ $banner->end_date->format('d/m/Y') }}</td>
+                                                    <td>{{ $banner->start_date ? $banner->start_date->format('d/m/Y H:i') : '' }}</td>
+                                                    <td>{{ $banner->dend_date ? $banner->end_date->format('d/m/Y H:i') : '' }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-start align-items-center gap-2">
 

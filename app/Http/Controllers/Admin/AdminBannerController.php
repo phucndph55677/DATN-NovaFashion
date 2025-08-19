@@ -16,7 +16,7 @@ class AdminBannerController extends Controller
      */
     public function index()
     {
-        $banners = Banner::all();
+        $banners = Banner::orderBy('created_at', 'desc')->get();
 
         return view('admin.banners.index', compact('banners'));
     }
@@ -42,8 +42,8 @@ class AdminBannerController extends Controller
                 'location_id' => 'required|exists:locations,id',
                 'product_link' => 'required|url',
                 'status' => 'required',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
+                'start_date' => 'nullable|date|required_with:end_date',
+                'end_date'   => 'nullable|date|required_with:start_date|after_or_equal:start_date',
                 'image' => 'required|image|max:2048',
             ],
             [
@@ -55,10 +55,10 @@ class AdminBannerController extends Controller
                 'product_link.required' => 'Liên kết sản phẩm không được để trống.',
                 'product_link.url' => 'Liên kết sản phẩm phải là một đường dẫn hợp lệ.',
                 'status.required' => 'Vui lòng chọn trạng thái.',
-                'start_date.required' => 'Ngày bắt đầu không được để trống.',
                 'start_date.date' => 'Ngày bắt đầu không hợp lệ.',
-                'end_date.required' => 'Ngày kết thúc không được để trống.',
+                'start_date.required_with' => 'Ngày bắt đầu không được để trống.',
                 'end_date.date' => 'Ngày kết thúc không hợp lệ.',
+                'end_date.required_with' => 'Ngày kết thúc không được để trống.',
                 'end_date.after_or_equal' => 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.',
                 'image.required' => 'Hình ảnh không được để trống.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
@@ -104,8 +104,8 @@ class AdminBannerController extends Controller
                 'location_id' => 'required|exists:locations,id',
                 'product_link' => 'required|url',
                 'status' => 'required',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
+                'start_date' => 'nullable|date|required_with:end_date',
+                'end_date'   => 'nullable|date|required_with:start_date|after_or_equal:start_date',
                 'image' => 'nullable|image|max:2048',
             ],
             [
@@ -117,10 +117,10 @@ class AdminBannerController extends Controller
                 'product_link.required' => 'Liên kết sản phẩm không được để trống.',
                 'product_link.url' => 'Liên kết sản phẩm phải là một đường dẫn hợp lệ.',
                 'status.required' => 'Vui lòng chọn trạng thái.',
-                'start_date.required' => 'Ngày bắt đầu không được để trống.',
                 'start_date.date' => 'Ngày bắt đầu không hợp lệ.',
-                'end_date.required' => 'Ngày kết thúc không được để trống.',
+                'start_date.required_with' => 'Ngày bắt đầu không được để trống.',
                 'end_date.date' => 'Ngày kết thúc không hợp lệ.',
+                'end_date.required_with' => 'Ngày kết thúc không được để trống.',
                 'end_date.after_or_equal' => 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
                 'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
