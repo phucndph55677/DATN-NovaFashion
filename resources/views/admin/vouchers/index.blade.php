@@ -59,10 +59,10 @@
                                             <tr class="text-light">
                                                 <th><label class="text-muted m-0">ID</label></th>
                                                 <th><label class="text-muted mb-0">Mã Voucher</label></th>
-                                                <th><label class="text-muted mb-0">Giảm Giá(%)</label></th>
-                                                <th><label class="text-muted mb-0">Giảm Tối Đa(VND)</label></th>
+                                                <th><label class="text-muted mb-0">Giảm Giá(VND)</label></th>
+                                                <th><label class="text-muted mb-0">GTĐHTT(VND)</label></th>
                                                 <th><label class="text-muted mb-0">Số Lượng</label></th>
-                                                <th><label class="text-muted mb-0">Số Lượt</label></th>
+                                                <th><label class="text-muted mb-0">Số Lượt Dùng</label></th>
                                                 <th><label class="text-muted mb-0">Trạng Thái</label></th>
                                                 <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
@@ -73,7 +73,7 @@
                                                     <td>{{ $voucher->id }}</td>
                                                     <td>{{ $voucher->voucher_code }}</td>
                                                     <td>{{ $voucher->sale_price }}</td>
-                                                    <td>{{ $voucher->max_discount }}</td>
+                                                    <td>{{ $voucher->min_order_value  }}</td>
                                                     <td>{{ $voucher->quantity }}</td>
                                                     <td>{{ $voucher->total_used }}</td>
                                                     <td>
