@@ -18,13 +18,7 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->randomElement([
-                'Trang chủ - Đầu trang',
-                'Trang chủ - Giữa trang',
-                'Danh mục nam - Đầu trang',
-                'Danh mục nữ - Giữa trang',
-                'Chi tiết sản phẩm'
-            ]),
+            'name' => $this->faker->randomElement(),
         ];
     }
 }
