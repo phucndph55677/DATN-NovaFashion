@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Size;
@@ -64,6 +65,20 @@ class ClientCategoryController extends Controller
             $currentCategory = $currentCategory->parent;
         }
 
+        // Brand Danh mục - Cuối trang
+        $banners_bottom_category = Banner::where('status', 1)
+            ->where('location_id', 4) // Danh mục - Cuối trang
+            ->where(function ($q) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->orderByRaw("CASE WHEN start_date IS NULL THEN 1 ELSE 0 END") // banner có thời gian -> ưu tiên
+            ->orderBy('start_date', 'asc') // banner có ngày bắt đầu thì sort tăng dần
+            ->orderBy('created_at', 'desc') // fallback sort mới nhất
+            ->get();
+
         return view('client.categories.index', [
             'slug' => $slug,
             'subslug' => $subslug,
@@ -72,6 +87,7 @@ class ClientCategoryController extends Controller
             'products' => $products,
             'sizes' => Size::all(),
             'colors' => Color::all(),
+            'banners_bottom_category' => $banners_bottom_category,
             'breadcrumbs' => $breadcrumbs,
         ]);
     }

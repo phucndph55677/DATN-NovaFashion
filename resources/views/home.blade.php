@@ -26,29 +26,28 @@
                 </div>
                 <!-- End Promotion -->
 
-                <!--Slider-->
-                <section class="home-banner bg-before bg-before_02">
-                    <div class="slider-banner owl-carousel">
-                        <div class="item-banner">
-                            <a href="https://ivymoda.com/danh-muc/latte-in-summer-lb-t6-2025">
-                                <img data-src="https://cotton4u.vn/files/news/2025/06/25/fe731be98a6cffcf815840d34f760324.webp"
-                                    alt="slide image" class="banner-pc owl-lazy">
-                            </a>
+                <!--Slider Trang chủ - Đầu trang-->
+                @if ($banners_top_home->count() > 0)
+                    <section class="home-banner bg-before">
+                        <div id="banner-top-home" class="slider-banner owl-carousel">
+                            @foreach ($banners_top_home as $banner)
+                                <div class="item-banner">
+                                    <a href="{{ $banner->product_link ?? '#' }}">
+                                        <img src="{{ asset('storage/' . $banner->image) }}" style="height: 529px;"  alt="{{ $banner->name }}">
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="item-banner">
-                            <a href="https://ivymoda.com/lookbook/charming-notes-198">
-                                <img data-src="https://cotton4u.vn/files/news/2025/06/13/8d5d7812b3858c859b88c63383ce65bd.webp"
-                                    alt="slide image" class="banner-pc owl-lazy">
-                            </a>
+                        <!-- Trending Box -->
+                        <div class="trending-content">
+                            <div class="box-trending">
+                                <h3 style="text-transform: capitalize;">Trending</h3>
+                                <h2>NovaFashion</h2>
+                                <p>Thời trang - Phong cách - Dẫn đầu xu hướng</p>
+                            </div>
                         </div>
-                        <div class="item-banner">
-                            <a href="https://ivymoda.com/danh-muc/deal-t5-060525">
-                                <img data-src="https://cotton4u.vn/files/news/2025/06/03/1709a21e8e1c7b0f2fdc03f43c3471b0.webp"
-                                    alt="slide image" class="banner-pc owl-lazy">
-                            </a>
-                        </div>
-                    </div>
-                </section>
+                    </section>
+                @endif
                 <!--/Slider-->
 
                 <!-- Ưu đãi Voucher -->
@@ -171,7 +170,7 @@
                                     @foreach ($products as $product)
                                         @php
                                             $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
-                                            
+
                                             $favorites = Auth::check() ? Auth::user()->favorites->pluck('product_id')->toArray() : [];
                                             $isFavorite = in_array($product->id, $favorites);
                                         @endphp
@@ -549,70 +548,41 @@
                 </section>
                 <!-- End Best Seller -->
 
-                <!-- Trending -->
-                <a href="https://ivymoda.com/danh-muc/hang-nu-moi-ve">
-                    <section class="home-trending box-border bg-before bg-before_02">
-                        <div class="img-trending-desktop">
-                            <img data-original="https://cotton4u.vn/files/news/2025/06/09/bd4035a3c5af805739dc1055cf4a15ec.webp"
-                                alt="BANNER TRENDING" class="lazy" loading="lazy" />
-                        </div>
-                        <div class="trending-content">
-                            <div class="box-trending">
-                                <!--<h3 style="text-transform: capitalize;">trending</h3>-->
-                                <!--<h2>BANNER TRENDING</h2>-->
-                                <!--<p></p>-->
-                            </div>
+                <!--Slider Trang chủ - Giữa trang-->
+                @if ($banners_mid_home->count() > 0)
+                    <section class="home-banner bg-before">
+                        <div id="banner-mid-home" class="slider-banner owl-carousel">
+                            @foreach ($banners_mid_home as $banner)
+                                <div class="item-banner">
+                                    <a href="{{ $banner->product_link ?? '#' }}">
+                                        <img src="{{ asset('storage/' . $banner->image) }}" style="height: 529px;"  alt="{{ $banner->name }}">
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
                     </section>
-                </a>
-                <!-- End Trending -->
+                @endif
+                <!--/Slider-->
 
-                <!-- Brand -->
-                <section class="list-ads-brand">
-                    <div class="slider-ads-brand owl-carousel">
-                        <div class="item-slider-ads">
-                            <a href="https://ivymoda.com/lookbook/she-moves-196">
-                                <img data-src="https://cotton4u.vn/files/news/2025/05/20/0f2a946ec41995fedf32b904a3c8175b.webp"
-                                    alt="" class="banner-pc owl-lazy" />
-                                <img data-src="https://cotton4u.vn/files/news/2025/05/20/0f2a946ec41995fedf32b904a3c8175b.webp"
-                                    alt="" class="banner-mb owl-lazy" />
-                            </a>
+                <!-- Brand Trang chủ - Cuối trang-->
+                @if ($banners_bottom_home->count() > 0)
+                    <section class="list-ads-brand">
+                        <div id="banner-bottom-home" class="slider-ads-brand owl-carousel">
+                            @foreach ($banners_bottom_home as $banner)
+                                <div class="item-slider-ads">
+                                    <a href="{{ $banner->product_link ?? '#' }}">
+                                        <img src="{{ asset('storage/' . $banner->image) }}"  style="width: 666px; height: 280px;" alt="{{ $banner->name }}"/>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="item-slider-ads">
-                            <a href="https://ivymoda.com/lookbook/summer-tint-195">
-                                <img data-src="https://cotton4u.vn/files/news/2025/04/23/0cd827900f8d75840487982c44506798.webp"
-                                    alt="" class="banner-pc owl-lazy" />
-                                <img data-src="https://cotton4u.vn/files/news/2025/04/23/0cd827900f8d75840487982c44506798.webp"
-                                    alt="" class="banner-mb owl-lazy" />
-                            </a>
-                        </div>
-                        <div class="item-slider-ads">
-                            <a href="https://ivymoda.com/lookbook/leafline-194">
-                                <img data-src="https://cotton4u.vn/files/news/2025/04/15/63fbae2cbd8adde79d504aafcfe92eee.webp"
-                                    alt="" class="banner-pc owl-lazy" />
-                                <img data-src="https://cotton4u.vn/files/news/2025/04/15/63fbae2cbd8adde79d504aafcfe92eee.webp"
-                                    alt="" class="banner-mb owl-lazy" />
-                            </a>
-                        </div>
-                    </div>
-                </section>
+                    </section>
+                @endif
                 <!-- End Brand -->
             </div>
         </main>
 
-        <!--  -->
-        <!-- <div class="modal-gift modal-gift-50k" id="modal-gift-50k">
-        <img src="https://ivymoda.com/assets/images/popup/gift50k.png" alt="gift">
-        <div class="modal-gift--content">
-            <input type="text" name="email_subscribe" placeholder="NHẬP ĐỊA CHỈ EMAIL">
-            <button type="button" id="popup_btn_subscribe" class="btn-subscribe">ĐĂNG KÝ</button>
-        </div>
-        </div>
-            <div class="modal-gift" id="modal-gift-0k">
-            <img src="https://ivymoda.com/assets/images/popup/gift0k.png" alt="gift">
-        </div>
-        -->
-            <!--     <div class="modal-gift" id="modal-gift-ctsales">
+        {{-- <div class="modal-gift" id="modal-gift-ctsales">
             <a href="https://ivymoda.com/danh-muc/sale-up-to-50" class="d-block">
                 <img src="https://ivymoda.com/assets/images/popup/popup_25_08.jpg" alt="gift">
             </a>
@@ -621,31 +591,86 @@
             $('#modal-gift-ctsales a').on('click', function() {
                 window.location.href = $(this).attr('href');
             });
-        </script>
-        -->
-            <!-- <div class="modal-gift" id="modal-gift-ao-nam">
-            <a href="javascript:void(0);">
-                <img onclick="document.location.href='https://ivymoda.com/danh-muc/quoc-te-gia-dinh-hang-tang'" src="https://ivymoda.com/assets/images/popup/popup-c.jpg" alt="gift">
-            </a>
-        </div> -->
-        <!---->
-        <div class="add-card-size" id="fancybox-add-to-cart">
-            <div class="thank-you__icon"><svg width="160" height="160" viewBox="0 0 160 160" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M56.7833 20.1167C62.9408 13.9592 71.2921 10.5 80 10.5C84.3117 10.5 88.5812 11.3493 92.5648 12.9993C96.5483 14.6493 100.168 17.0678 103.217 20.1167C106.266 23.1655 108.684 26.785 110.334 30.7686C111.984 34.7521 112.833 39.0216 112.833 43.3333V62.8333H47.1667V43.3333C47.1667 34.6254 50.6259 26.2741 56.7833 20.1167ZM46.1667 62.8333V43.3333C46.1667 34.3602 49.7312 25.7545 56.0762 19.4096C62.4212 13.0646 71.0268 9.5 80 9.5C84.4431 9.5 88.8426 10.3751 92.9474 12.0754C97.0523 13.7757 100.782 16.2678 103.924 19.4096C107.065 22.5513 109.558 26.281 111.258 30.3859C112.958 34.4907 113.833 38.8903 113.833 43.3333V62.8333H133.333C133.582 62.8333 133.793 63.0163 133.828 63.2626L147.162 156.596C147.182 156.739 147.139 156.885 147.044 156.994C146.949 157.104 146.812 157.167 146.667 157.167H13.3333C13.1884 157.167 13.0506 157.104 12.9556 156.994C12.8606 156.885 12.8179 156.739 12.8384 156.596L26.1717 63.2626C26.2069 63.0163 26.4178 62.8333 26.6667 62.8333H46.1667ZM113.333 63.8333H46.6667H27.1003L13.9098 156.167H146.09L132.9 63.8333H113.333Z"
-                        fill="#212121"></path>
-                    <path
-                        d="M107.205 91.3663L80.4451 121.251L64.5853 106.174L62 108.893L80.6618 126.634L110 93.8694L107.205 91.3663Z"
-                        fill="black"></path>
-                </svg>
-            </div>
-            <p class="notify__add-to-cart--success text-uppercase">Thêm vào giỏ hàng thành công !</p>
-        </div>
+        </script> --}}
     </body>
 @endsection
 
 @section('scripts')
+    {{-- JS xử lý Banner, Slider --}}
+    <script>
+        $(document).ready(function() {
+            // Đợi DOM load xong
+            setTimeout(function() {
+                // Danh sách các slider cần khởi tạo
+                const sliders = ['#banner-top-home', '#banner-mid-home', '#banner-bottom-home'];
+
+                sliders.forEach(function(selector) {
+                    var $banner = $(selector);
+                    if (!$banner.length) return;
+
+                // Kiểm tra xem Owl đã được khởi tạo chưa
+                if ($banner.hasClass('owl-loaded')) {
+
+                    // Cố gắng bật autoplay nếu đang tắt
+                    var owlData = $banner.data('owl.carousel');
+                    if (owlData) {
+                        if (!owlData.settings.autoplay) {
+                            $banner.trigger('stop.owl.autoplay');
+                            $banner.trigger('play.owl.autoplay', [3000]);
+                        }
+                    }
+
+                    // Fallback: tự động next slide mỗi 3s nếu vì lý do nào đó autoplay không chạy
+                    if (!$banner.data('manualAutoplay')) {
+                        var manualId = setInterval(function () {
+                            $banner.trigger('next.owl.carousel');
+                        }, 3000);
+                        $banner.data('manualAutoplay', manualId);
+
+                        $banner.on('mouseenter', function () {
+                            var id = $banner.data('manualAutoplay');
+                            if (id) clearInterval(id);
+                        });
+                        $banner.on('mouseleave', function () {
+                            var id = setInterval(function () {
+                                $banner.trigger('next.owl.carousel');
+                            }, 3000);
+                            $banner.data('manualAutoplay', id);
+                        });
+                    }
+                    return;
+                }
+
+                // Nếu chưa có Owl, khởi tạo mới
+                var slideCount = $banner.find('.item-banner').length;
+
+                if (slideCount > 1) {
+                    $banner.owlCarousel({
+                        items: 1,
+                        loop: true,
+                        margin: 0,
+                        dots: true,
+                        nav: true,
+                        autoplay: true,
+                        autoplayTimeout: 3000,
+                        autoplayHoverPause: true,
+                        smartSpeed: 600,
+                        navText: [
+                            '<i class="bi bi-chevron-left"></i>',
+                            '<i class="bi bi-chevron-right"></i>'
+                        ],
+                        responsive: {
+                            0: { items: 1 },
+                            600: { items: 1 },
+                            1000: { items: 1 }
+                        }
+                    });
+                }
+                });
+            }, 1000);
+        });
+    </script>
+
     <!--Copy Voucher -->
     <script>
         function copyVoucherCode(id) {

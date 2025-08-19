@@ -68,15 +68,15 @@
                                                         <div class="value-range" style="display: flex; gap: 10px; align-items: center;">
                                                             <div style="flex: 1;">
                                                                 <label style="display: block; font-size: 13px; margin-bottom: 5px;">Giá từ:</label>
-                                                                <input type="text" name="product_price_from" 
-                                                                    value="{{ request('product_price_from') ? number_format(request('product_price_from'), 0, '', '.') : '' }}" 
+                                                                <input type="text" name="product_price_from"
+                                                                    value="{{ request('product_price_from') ? number_format(request('product_price_from'), 0, '', '.') : '' }}"
                                                                     oninput="this.value = this.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.')"
                                                                     style="width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
                                                             </div>
                                                             <div style="flex: 1;">
                                                                 <label style="display: block; font-size: 13px; margin-bottom: 5px;">Đến:</label>
-                                                                <input type="text" name="product_price_to" 
-                                                                    value="{{ request('product_price_to') ? number_format(request('product_price_to'), 0, '', '.') : '' }}" 
+                                                                <input type="text" name="product_price_to"
+                                                                    value="{{ request('product_price_to') ? number_format(request('product_price_to'), 0, '', '.') : '' }}"
                                                                     oninput="this.value = this.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.')"
                                                                     style="width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
                                                             </div>
@@ -133,11 +133,11 @@
                                     </div>
 
                                     <div class="sub-main-prod">
-                                        <div class="list-products list-products-cat d-flex">                                            
+                                        <div class="list-products list-products-cat d-flex">
                                             @foreach ($products as $product)
                                                 @php
                                                     $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
-                                                    
+
                                                     $favorites = Auth::check() ? Auth::user()->favorites->pluck('product_id')->toArray() : [];
                                                     $isFavorite = in_array($product->id, $favorites);
                                                 @endphp
@@ -253,7 +253,23 @@
                                     </div>
                                 </div>
                             </div>
-                        </section>
+                        </section><br><hr><br>
+
+                        <!-- Brand Danh mục - Cuối trang-->
+                        @if ($banners_bottom_category->count() > 0)
+                            <section class="list-ads-brand">
+                                <div id="banner-bottom-category" class="slider-ads-brand owl-carousel">
+                                    @foreach ($banners_bottom_category as $banner)
+                                        <div class="item-slider-ads">
+                                            <a href="{{ $banner->product_link ?? '#' }}">
+                                                <img src="{{ asset('storage/' . $banner->image) }}"  style="width: 666px; height: 280px;" alt="{{ $banner->name }}"/>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endif
+                        <!-- End Brand -->
                     </div>
                 </div>
             </form>
