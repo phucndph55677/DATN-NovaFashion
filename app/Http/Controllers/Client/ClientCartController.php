@@ -46,6 +46,53 @@ class ClientCartController extends Controller
         return view('client.carts.index', compact('cart', 'cartDetails'));
     }
 
+    /**
+     * Update quantity of cart item via AJAX
+     */
+    public function updateQuantity(Request $request)
+    {
+        $request->validate([
+            'cart_detail_id' => 'required|exists:cart_details,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $cartDetail = CartDetail::findOrFail($request->cart_detail_id);
+            $cartDetail->quantity = $request->quantity;
+            $cartDetail->total_amount = $cartDetail->price * $request->quantity;
+            $cartDetail->save();
+
+            // Cập nhật cart tổng
+            $cart = Cart::find($cartDetail->cart_id);
+            if ($cart) {
+                $cartDetails = CartDetail::where('cart_id', $cart->id)->get();
+                $totalQuantity = $cartDetails->sum('quantity');
+                $totalAmount = $cartDetails->sum('total_amount');
+
+                $cart->update([
+                    'quantity' => $totalQuantity,
+                    'total_amount' => $totalAmount,
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật số lượng thành công',
+                'data' => [
+                    'quantity' => $cartDetail->quantity,
+                    'total_amount' => $cartDetail->total_amount,
+                    'cart_total_amount' => $cart ? $cart->total_amount : 0,
+                    'cart_total_quantity' => $cart ? $cart->quantity : 0,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function addToCart(Request $request)
     {
         $data = $request->validate([

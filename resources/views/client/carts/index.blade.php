@@ -204,10 +204,14 @@
                 const decreaseBtn = wrapper.querySelector(".quantity-decrease");
                 const increaseBtn = wrapper.querySelector(".quantity-increase");
                 const quantityInput = wrapper.querySelector(".quantity-input");
+                const cartDetailId = wrapper.closest('tr').querySelector('input[type="checkbox"]').dataset.id;
 
                 decreaseBtn?.addEventListener("click", () => {
                     let val = parseInt(quantityInput.value);
-                    if (val > 1) quantityInput.value = val - 1;
+                    if (val > 1) {
+                        quantityInput.value = val - 1;
+                        updateQuantityInDatabase(cartDetailId, val - 1);
+                    }
 
                     const checkbox = wrapper.closest('tr').querySelector('input[type="checkbox"]');
                     if (checkbox && !checkbox.checked) checkbox.checked = true;
@@ -218,6 +222,7 @@
                 increaseBtn?.addEventListener("click", () => {
                     let val = parseInt(quantityInput.value);
                     quantityInput.value = val + 1;
+                    updateQuantityInDatabase(cartDetailId, val + 1);
 
                     const checkbox = wrapper.closest('tr').querySelector('input[type="checkbox"]');
                     if (checkbox && !checkbox.checked) checkbox.checked = true;
@@ -227,14 +232,70 @@
 
                 quantityInput?.addEventListener("input", () => {
                     let val = parseInt(quantityInput.value);
-                    if (isNaN(val) || val < 1) quantityInput.value = 1;
+                    if (isNaN(val) || val < 1) {
+                        quantityInput.value = 1;
+                        val = 1;
+                    }
 
                     const checkbox = wrapper.closest('tr').querySelector('input[type="checkbox"]');
                     if (checkbox && !checkbox.checked) checkbox.checked = true;
 
+                    updateQuantityInDatabase(cartDetailId, val);
                     updateTotals();
                 });
             });
+
+            // Hàm cập nhật số lượng trong database
+            function updateQuantityInDatabase(cartDetailId, quantity) {
+                // Hiển thị loading nếu cần
+                const row = document.querySelector(`input[data-id="${cartDetailId}"]`).closest('tr');
+                const quantityInput = row.querySelector('.quantity-input');
+                const originalValue = quantityInput.value;
+
+                quantityInput.disabled = true; // Disable input trong khi chờ server
+
+                fetch('{{ route("carts.updateQuantity") }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        cart_detail_id: cartDetailId,
+                        quantity: quantity
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // ✅ Cập nhật tổng tiền của dòng này từ server
+                        const lineTotalCell = row.querySelector(".product-total-amount p");
+                        if (lineTotalCell) {
+                            lineTotalCell.textContent = data.data.total_amount.toLocaleString('vi-VN') + " VND";
+                        }
+
+                        // ✅ Gọi lại tính tổng theo checkbox đã chọn
+                        updateTotals();
+
+                        showToast('Cập nhật số lượng thành công!');
+                    } else {
+                        console.error('Lỗi:', data.message);
+                        showToast('Có lỗi xảy ra: ' + data.message, 'error');
+                        quantityInput.value = originalValue; // Khôi phục giá trị cũ
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    showToast('Có lỗi xảy ra khi cập nhật số lượng', 'error');
+                    quantityInput.value = originalValue; // Khôi phục giá trị cũ
+                })
+                .finally(() => {
+                    quantityInput.disabled = false; // Enable lại input
+                });
+            }
 
             // Gọi lần đầu để đảm bảo đồng bộ
             updateTotals();

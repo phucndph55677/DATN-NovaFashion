@@ -43,6 +43,7 @@ Route::get('/san-pham/{id}', [ClientProductController::class, 'show'])->name('pr
 
 // Carts
 Route::get('/carts', [ClientCartController::class, 'index'])->name('carts.index');
+Route::patch('/carts/update-quantity', [ClientCartController::class, 'updateQuantity'])->name('carts.updateQuantity');
 Route::post('/carts/add', [ClientCartController::class, 'addToCart'])->name('carts.add');
 Route::post('/carts/buy', [ClientCartController::class, 'buyNow'])->name('carts.buy');
 Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('carts.delete');
