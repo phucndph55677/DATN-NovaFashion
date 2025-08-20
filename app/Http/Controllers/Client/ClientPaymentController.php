@@ -9,7 +9,7 @@ use App\Models\CartDetail;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ClientPaymentController extends Controller
 {
@@ -43,7 +43,7 @@ class ClientPaymentController extends Controller
         $body = [
             'partnerCode' => $partnerCode,
             'partnerName' => "NovaFashion",
-            'storeId' => "NovaStore",
+            'storeId' => "NovaFashion",
             'requestId' => $requestId,
             'amount' => $amount,
             'orderId' => $orderId,
@@ -82,20 +82,55 @@ class ClientPaymentController extends Controller
 
         // Tạo đơn hàng sau khi thanh toán thành công
         $order = Order::create([
-            'user_id' => $checkout['user_id'],
-            'name' => $checkout['name'],
-            'phone' => $checkout['phone'],
-            'address' => $checkout['address'],
-            'note' => $checkout['note'],
+            'user_id'           => $checkout['user_id'],
+            'name'              => $checkout['name'],
+            'phone'             => $checkout['phone'],
+            'address'           => $checkout['address'],
+            'note'              => $checkout['note'],
+            'voucher_id'        => $checkout['voucher_id'] ?? null,
             'payment_method_id' => $checkout['payment_method_id'],
-            'payment_status_id' => 2, // paid
-            'order_status_id' => 1,   // pending
-            'order_code'      => $checkout['order_code'],
-            'subtotal'        => $checkout['subtotal'],
-            'discount'        => $checkout['discount'],
-            'shipping_fee'    => $checkout['shipping_fee'],
-            'total_amount'    => $checkout['total_amount'],
+            'payment_status_id' => 2,
+            'order_status_id'   => 2,
+            'order_code'        => $checkout['order_code'],
+            'subtotal'          => $checkout['subtotal'],
+            'discount'          => $checkout['discount'],
+            'shipping_fee'      => $checkout['shipping_fee'],
+            'total_amount'      => $checkout['total_amount'],
         ]);
+
+        // Voucher
+        if (!empty($checkout['voucher_id']) && $checkout['discount'] > 0) {
+            $voucherId = $checkout['voucher_id'];
+            $userId    = $checkout['user_id'];
+
+            // Lấy thông tin voucher
+            $voucher = DB::table('vouchers')->where('id', $voucherId)->first();
+
+            if ($voucher) {
+                // Kiểm tra số lần user đã dùng
+                $usedCount = DB::table('order_vouchers')
+                    ->where('user_id', $userId)
+                    ->where('voucher_id', $voucherId)
+                    ->count();
+
+                if ($usedCount < (int)$voucher->user_limit) {
+                    // Nếu còn hạn mức, lưu vào order_vouchers
+                    DB::table('order_vouchers')->insert([
+                        'user_id'    => $userId,
+                        'voucher_id' => $voucherId,
+                        'order_id'   => $order->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    // Tăng total_used
+                    DB::table('vouchers')->where('id', $voucherId)->increment('total_used');
+                } else {
+                    // Vượt hạn mức, không áp dụng voucher
+                    // Có thể ghi log hoặc thông báo nếu muốn
+                }
+            }
+        }
 
         // Random mã thanh toán và không trùng mã đã có
         do {
@@ -105,11 +140,11 @@ class ClientPaymentController extends Controller
 
         // Tạo payment record cho MOMO
         Payment::create([
-            'order_id' => $order->id,
+            'order_id'          => $order->id,
             'payment_method_id' => $checkout['payment_method_id'],
-            'payment_amount' => $checkout['total_amount'],
-            'payment_code' => $randomCodePayment,
-            'status' => 'pending', // hoặc trạng thái bạn định nghĩa
+            'payment_amount'    => $checkout['total_amount'],
+            'payment_code'      => $randomCodePayment,
+            'status'            => 'pending', // hoặc trạng thái bạn định nghĩa
         ]);
 
         // Tạo chi tiết đơn hàng
