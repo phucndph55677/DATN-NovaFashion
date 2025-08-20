@@ -51,7 +51,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="sale_price" class="form-label fw-bold text-muted text-uppercase">Giảm Giá (VND)</label>
-                                <input type="number" class="form-control" id="sale_price" name="sale_price" placeholder="Nhập Giảm Giá (VND)" value="{{ old('sale_price') }}">
+                                <input type="text" class="form-control" id="sale_price" name="sale_price" placeholder="Nhập Giảm Giá (VND)" value="{{ old('sale_price') }}">
                                 @error('sale_price')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -59,7 +59,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="min_order_value" class="form-label fw-bold text-muted text-uppercase">Giá Trị Đơn Hàng Tối Thiểu (VND)</label>
-                                <input type="number" class="form-control" id="min_order_value" name="min_order_value" placeholder="Giá Trị Đơn Hàng Tối Thiểu (VND)" value="{{ old('min_order_value') }}">
+                                <input type="text" class="form-control" id="min_order_value" name="min_order_value" placeholder="Giá Trị Đơn Hàng Tối Thiểu (VND)" value="{{ old('min_order_value') }}">
                                 @error('min_order_value')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -67,7 +67,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="quantity" class="form-label fw-bold text-muted text-uppercase">Số Lượng</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Nhập Số Lượng" value="{{ old('quantity') }}" min="1">
+                                <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Nhập Số Lượng" value="{{ old('quantity') }}" min="1">
                                 @error('quantity')
                                        <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -75,7 +75,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="user_limit" class="form-label fw-bold text-muted text-uppercase">Số Lượt Mỗi Người Dùng</label>
-                                <input type="number" class="form-control" id="user_limit" name="user_limit" placeholder="Nhập Số Lượt Mỗi Người Dùng" value="{{ old('user_limit') }}" min="1">
+                                <input type="text" class="form-control" id="user_limit" name="user_limit" placeholder="Nhập Số Lượt Mỗi Người Dùng" value="{{ old('user_limit') }}" min="1">
                                 @error('user_limit')
                                        <div class="text-danger">{{ $message }}</div>
                                 @enderror
