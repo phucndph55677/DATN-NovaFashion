@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('vouchers', function (Blueprint $table) {
             $table->id(); // Khóa chính id
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('voucher_code')->unique(); // Mã voucher, duy nhất
             $table->integer('quantity')->default(0);  // Số lượng voucher được tung ra
             $table->integer('total_used')->default(0); // Số lượng voucher đã sử dụng
