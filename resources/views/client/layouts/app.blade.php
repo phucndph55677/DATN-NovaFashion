@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'NovaFashion')</title>
 
@@ -59,3 +60,49 @@
     </div>
 </body>
 </html>
+
+<script>
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        if (toast && toastMessage) {
+            toastMessage.textContent = message;
+            toast.style.display = 'flex';
+
+            let bgColor = '#333'; // default
+            let duration = 3000; // default 3s
+
+            switch (type) {
+                case 'success':
+                    bgColor = '#4caf50';
+                    duration = 2000;
+                    break;
+                case 'error':
+                    bgColor = '#f44336';
+                    duration = 4000;
+                    break;
+                case 'warning':
+                    bgColor = '#ff9800';
+                    duration = 4000;
+                    break;
+            }
+            toast.style.backgroundColor = bgColor;
+
+            // Show
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateY(0)';
+            }, 10);
+
+            // Auto hide
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 400);
+            }, duration);
+        }
+    }
+</script>
