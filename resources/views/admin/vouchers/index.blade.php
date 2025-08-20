@@ -72,8 +72,8 @@
                                                 <tr class="white-space-no-wrap">
                                                     <td>{{ $voucher->id }}</td>
                                                     <td>{{ $voucher->voucher_code }}</td>
-                                                    <td>{{ $voucher->sale_price }}</td>
-                                                    <td>{{ $voucher->min_order_value  }}</td>
+                                                    <td>{{ number_format($voucher->sale_price, 0, ',', '.') }}</td>
+                                                    <td>{{ number_format($voucher->min_order_value, 0, ',', '.') }}</td>
                                                     <td>{{ $voucher->quantity }}</td>
                                                     <td>{{ $voucher->total_used }}</td>
                                                     <td>
