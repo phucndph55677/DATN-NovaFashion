@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             // OrderStatusSeeder::class,
             // OrderSeeder::class,
             // OrderDetailSeeder::class,
+            // OrderVoucherSeeder::class,
             // ReviewSeeder::class,
             // PaymentMethodSeeder::class,
             // PaymentSeeder::class,

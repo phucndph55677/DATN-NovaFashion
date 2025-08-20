@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProductFavorite::class);
     }
+
+    public function orderVouchers()
+    {
+        return $this->hasMany(OrderVoucher::class);
+    }
 }
