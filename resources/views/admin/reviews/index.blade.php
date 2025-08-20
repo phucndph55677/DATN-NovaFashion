@@ -66,7 +66,7 @@
                                                     <td style="white-space: normal; word-break: break-word;">
                                                         {{ $review->product->name }}
                                                     </td>                                                         
-                                                    <td>{{ $review->user->name ?? 'N/A' }}</td> 
+                                                    <td>{{ $review->order->user->name ?? 'N/A' }}</td>
                                                     <td>
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             @if ($i <= $review->rating)
