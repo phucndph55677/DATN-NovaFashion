@@ -52,6 +52,10 @@ Route::get('/checkouts', [ClientCheckoutController::class, 'index'])->name('chec
 Route::post('/checkouts', [ClientCheckoutController::class, 'store'])->name('checkouts.store');
 Route::get('checkouts/success', [ClientCheckoutController::class, 'success'])->name('checkouts.success');
 
+// Vouchers
+Route::post('/vouchers/apply', [ClientCheckoutController::class, 'applyVoucher'])->name('vouchers.apply');
+Route::post('/vouchers/clear', [ClientCheckoutController::class, 'clearVoucher'])->name('vouchers.clear');
+
 // Payments
 Route::get('/payments/momo', [ClientPaymentController::class, 'momo'])->name('payments.momo');
 Route::match(['get', 'post'], '/payments/momo/callback', [ClientPaymentController::class, 'momoCallback'])->name('payments.momo.callback');

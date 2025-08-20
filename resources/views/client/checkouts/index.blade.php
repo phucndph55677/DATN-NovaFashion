@@ -186,9 +186,10 @@
                         @php
                             $totalQuantity = $cartDetails->sum('quantity');
                             $totalAmount = $cartDetails->sum(fn($item) => $item->quantity * $item->price);
-                            $shipping = 30000;
-                            $discountAmount = 0; // Tạm thời, sẽ cập nhật khi có áp mã giảm giá
-                            $finalAmount = max($totalAmount + $discountAmount + $shipping, 0);
+                            $shippingFee = 30000;
+                            $appliedVoucher = session('applied_voucher');
+                            $discountAmount = $appliedVoucher['discount'] ?? 0;
+                            $finalAmount = $totalAmount - $discountAmount + $shippingFee;
                         @endphp
 
                         <div class="col-lg-4 col-2xl-3 cart-page__col-summary">  
@@ -198,23 +199,23 @@
                                         <h3>Tóm tắt đơn hàng</h3>
                                         <div class="cart-summary__overview__item">
                                             <p>Tổng sản phẩm</p>
-                                            <p>{{ $totalQuantity }}</p>
+                                            <p id="total_quantity">{{ $totalQuantity }}</p>
                                         </div>
                                         <div class="cart-summary__overview__item">
                                             <p>Tổng tiền hàng</p>
-                                            <p>{{ number_format($totalAmount, 0, ',', '.') }} VND</p>
+                                            <p id="total_amount">{{ number_format($totalAmount, 0, ',', '.') }} VND</p>
                                         </div>
                                         <div class="cart-summary__overview__item">
                                             <p>Giảm giá</p>
-                                            <p>{{ number_format($discountAmount, 0, ',', '.') }} VND</p>
+                                            <p id="discount_amount">{{ number_format($discountAmount, 0, ',', '.') }} VND</p>   
                                         </div>
                                         <div class="cart-summary__overview__item">
                                             <p>Phí vận chuyển</p>
-                                            <p>{{ number_format($shipping, 0, ',', '.') }} VND</p>
+                                            <p>{{ number_format($shippingFee, 0, ',', '.') }} VND</p>
                                         </div>
                                         <div class="cart-summary__overview__item">
                                             <p>Tiền thanh toán</p>
-                                            <p><b>{{ number_format($finalAmount, 0, ',', '.') }} VND</b></p>
+                                            <p><b id="final_amount">{{ number_format($finalAmount, 0, ',', '.') }} VND</b></p>
                                         </div>
                                     </div>
                                 </div>
@@ -222,7 +223,7 @@
                                 <div class="cart-summary__voucher-form">
                                     <div class="cart-summary__voucher-form__title">
                                         <h4 class="active">Mã phiếu giảm giá</h4>
-                                        <span> </span>
+                                        {{-- <span> </span>
                                         <h4 data-toggle="modal" data-target="#myVoucherWallet">Mã của tôi</h4>
                                         <div class="modal fade voucher-wallet" id="myVoucherWallet" tabindex="-1"
                                             role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -239,13 +240,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <p class="" id="p_coupon" style="padding-top: 5px; display: none; text-align: center"></p>
+
+                                    <!-- Các trường ẩn để gửi thông tin phiếu giảm giá đã áp dụng -->
+                                    <input type="hidden" name="voucher_id" id="voucher_id" value="{{ $appliedVoucher['id'] ?? '' }}">
+                                    <input type="hidden" name="voucher_discount" id="voucher_discount" value="{{ $appliedVoucher['discount'] ?? '' }}">
+
                                     <div class="form-group">
-                                        <input class="form-control" type="text" placeholder="Mã giảm giá" name="coupon_code_text" id="coupon_code_text" value="">
-                                        <button type="button" class="btn btn--large btn--outline" id="but_coupon_code">Áp dụng</button>
-                                        <button type="button" class="btn btn--large" id="but_coupon_delete" style="display: none;">Bỏ Mã</button>
+                                        <input class="form-control" type="text" placeholder="Mã giảm giá" name="voucher_code" id="voucher_code_text">
+                                        <button type="button" class="btn btn--large btn--outline" id="voucher_apply" style="{{ $appliedVoucher ? 'display:none;' : '' }}">Áp dụng</button>
+                                        <button type="button" class="btn btn--large" id="but_coupon_delete" style="{{ $appliedVoucher ? '' : 'display:none;' }}">Bỏ Mã</button>
                                     </div>
                                 </div>
                             </div>
@@ -266,6 +272,7 @@
 @endsection
 
 @section('scripts')
+    {{-- JS xử lý load danh sách địa chỉ --}}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const provinceSelect = document.getElementById("province");
@@ -329,6 +336,80 @@
                         });
                     });
             }
+        });
+    </script>
+
+    {{-- JS xử lý Voucher --}}
+    <script>
+        function formatVND(amount) {
+            return amount.toLocaleString('vi-VN') + " VND";
+        }
+
+        const totalAmount = Number({{ $totalAmount }});
+        const shipping    = Number({{ $shippingFee }});
+
+        function updateCouponUI({ message = '', color = '', discount = 0, final = null, voucherId = '' }) {
+            
+            $('#p_coupon').text(message).css("color", color).toggle(!!message);
+
+            $('#discount_amount').text((discount > 0 ? "-" : "") + formatVND(discount));
+
+            // final là subtotal sau giảm (chưa bao gồm ship) => cộng ship khi hiển thị
+            const payable = (final ?? totalAmount) + shipping;
+            $('#final_amount').text(formatVND(payable));
+
+            $('#voucher_id').val(voucherId);
+            $('#voucher_discount').val(discount);
+
+            $('#voucher_apply').toggle(!voucherId);
+            $('#but_coupon_delete').toggle(!!voucherId);
+        }
+
+        // Áp dụng voucher
+        $(document).on('click', '#voucher_apply', function () {
+            const code = $('#voucher_code_text').val();
+
+            $.ajax({
+                url: "{{ route('vouchers.apply') }}",
+                method: "POST",
+                dataType: "json",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    voucher_code: code,
+                    total_amount: totalAmount
+                },
+                success: function (res) {
+                    updateCouponUI({
+                        message: res.message,
+                        color: res.success ? "green" : "red",
+                        discount: res.discount ?? 0,
+                        final: res.final_amount ?? null,
+                        voucherId: res.voucher?.id ?? ''
+                    });
+                },
+                error: function (xhr) {
+                    const err = xhr.responseJSON;
+                    const msg = err?.errors?.voucher_code?.[0] || err?.error || 'Có lỗi xảy ra, vui lòng thử lại!';
+                    updateCouponUI({ message: msg, color: "red" });
+                }
+            });
+        });
+
+        // Bỏ voucher
+        $(document).on('click', '#but_coupon_delete', function () {
+            $.ajax({
+                url: "{{ route('vouchers.clear') }}",
+                method: "POST",
+                data: { _token: "{{ csrf_token() }}" },
+                success: function(res) {
+                    // reset UI
+                    updateCouponUI({});
+                    $('#voucher_code_text').val('');
+                },
+                error: function() {
+                    alert('Không thể xóa voucher, vui lòng thử lại!');
+                }
+            });
         });
     </script>
 @endsection
