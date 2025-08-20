@@ -25,7 +25,6 @@ class VoucherFactory extends Factory
         $endDate = $this->faker->dateTimeBetween('now', '+1 month');
 
         return [
-            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'voucher_code' => strtoupper($this->faker->unique()->bothify('VOUCHER##??')),
             'quantity' => $this->faker->numberBetween(1, 100),
             'total_used' => 0,
