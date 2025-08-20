@@ -52,24 +52,36 @@
 
                 <!-- Ưu đãi Voucher -->
                 <section class="home-new-prod my-5">
-                    <h2 class="title-section text-center fw-bold mb-4">ƯU ĐÃI NỔI BẬT</h2>
+                    <h2 class="title-section">Deal hot hôm nay / Săn deal liền tay</h2>
 
                     <div class="swiper mySwiper px-3">
                         <div class="swiper-wrapper">
                             @foreach ($vouchers as $voucher)
+                                @php
+                                    $percent = $voucher->quantity > 0 
+                                        ? round(($voucher->total_used / $voucher->quantity) * 100, 2) 
+                                        : 0;
+                                @endphp
+
                                 <div class="swiper-slide">
-                                    <div class="border rounded-3 p-4 bg-light h-100 d-flex flex-column justify-content-between"
-                                        style="min-width: 250px;">
+                                    <div class="border rounded-3 p-4 bg-light h-100 d-flex flex-column justify-content-between" style="min-width: 250px;">
                                         <div>
-                                            <h5 class="fw-bold mb-2" style="font-weight: 900; font-size: 20px;">Giảm {{ number_format($voucher->sale_price) }}%</h5>
-                                            <p class="mb-1" style="font-size: 12px;">Tối đa ₫{{ number_format($voucher->max_discount) }}k</p>
-                                            <p class="mb-1">Đơn từ ₫{{ number_format($voucher->min_price) }}k</p>
-                                            <p class="text-danger small mb-0" style="font-size: 11px;">HSD:
-                                                {{ \Carbon\Carbon::parse($voucher->end_date)->format('d-m-Y') }}
+                                            <h5 class="fw-bold mb-2" style="font-weight: 600; font-size: 18px;">Giảm {{ number_format($voucher->sale_price, 0, ',', '.') }} VND</h5>
+                                            <p class="mb-1">Đơn Tối Thiểu {{ number_format($voucher->min_order_value, 0, ',', '.') }} VND</p>
+                                            <p class="mb-1 text-danger">HSD: {{ ($voucher->end_date)->format('d-m-Y H:i') }}</p>
+                                            <p class="mb-1 d-flex justify-content-between">
+                                                <span>Đã Dùng: {{ $voucher->total_used }}/{{ $voucher->quantity }}</span>
+                                                <span class="text-success fw-bold">{{ $percent }}%</span>
                                             </p>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success" role="progressbar"
+                                                    style="width: {{ $percent }}%;"
+                                                    aria-valuenow="{{ $percent }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div><hr>                                 
                                         </div>
-                                        <div class="mt-3 d-flex justify-content-between align-items-center">
-                                            <button class="btn btn-link p-0 text-decoration-underline fw-bold"
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <button class="btn btn-link p-0 text-decoration-underline fw-bold" 
                                                 style="font-size: 14px;" data-bs-toggle="modal"
                                                 data-bs-target="#voucherModal{{ $voucher->id }}">Điều kiện</button>
                                             <a href="#" class="btn btn-dark btn-sm">Dùng mã</a>
@@ -87,16 +99,13 @@
 
                 <!--  Modal -->
                 @foreach ($vouchers as $voucher)
-                    <div class="modal fade" id="voucherModal{{ $voucher->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+                    <div class="modal" id="voucherModal{{ $voucher->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content rounded-4 border border-light-subtle shadow-sm">
                                 <div class="modal-header border-0 align-items-center justify-content-between px-4 pt-4 pb-0">
-                                    <h5 class="modal-title text-uppercase fs-5 fw-bold m-0">
-                                        CHI TIẾT MÃ ƯU ĐÃI
-                                    </h5>
+                                    <h5 class="modal-title text-uppercase fs-5 fw-bold m-0">CHI TIẾT MÃ ƯU ĐÃI</h5>
                                     <!-- Nút X bên phải, ngang hàng -->
-                                    <button type="button" class="btn border-0 bg-transparent p-0" data-bs-dismiss="modal"
-                                        aria-label="Đóng"
+                                    <button type="button" class="btn border-0 bg-transparent p-0" data-bs-dismiss="modal" aria-label="Đóng"
                                         style="font-size: 2rem; line-height: 1; color: #7e7e7e; font-weight: 390;">
                                         &times;
                                     </button>
@@ -105,14 +114,8 @@
                                 <!-- Body -->
                                 <div class="modal-body px-4 py-3">
                                     <div class="border rounded-4 text-center px-3 py-4 mb-4">
-                                        <h4 class="text-uppercase mb-2 fw-bold" style="font-weight: 900; font-size: 18px;">Voucher
-                                            {{ number_format($voucher->sale_price) }}%
-                                        </h4>
-                                        <p class="mb-3 text-muted" style="font-size: 12px; font-weight: 500;">
-                                            Giảm tối đa ₫{{ number_format($voucher->max_discount) }}k cho đơn từ
-                                            ₫{{ number_format($voucher->min_price) }}k
-                                        </p>
-
+                                        <h5 class="fw-bold mb-2" style="font-weight: 600; font-size: 18px;">Giảm {{ number_format($voucher->sale_price, 0, ',', '.') }} VND</h5>
+                                        <p class="mb-1" style="font-size: 12px; font-weight: 500;">Đơn Tối Thiểu {{ number_format($voucher->min_order_value, 0, ',', '.') }} VND</p>
                                         <!-- Mã và Copy -->
                                         <div class="d-flex justify-content-center align-items-center gap-2">
                                             <div class="border rounded px-4 py-2 fw-bold fs-6 bg-light"
@@ -132,15 +135,13 @@
                                         </div>
                                     </div>
 
-                                    <p class="mb-1" style="font-size: 13px">Hạn sử dụng:>Hạn sử dụng:
-                                        {{ \Carbon\Carbon::parse($voucher->start_date)->format('d/m/Y') }} -
-                                        {{ \Carbon\Carbon::parse($voucher->end_date)->format('d/m/Y') }}
+                                    <p class="mb-1" style="font-size: 13px">- Thời gian:
+                                        {{ $voucher->start_date->format('d/m/Y H:i') }} - {{ $voucher->end_date->format('d/m/Y H:i') }}
                                     </p>
 
-                                    <p class="mt-3 mb-1">Điều kiện áp dụng:</p>
                                     <ul class="ps-3 mb-0" style="font-size: 13px;">
-                                        <li>- Địa điểm áp dụng: Web, App</li>
-                                        <li>- {{ $voucher->description }}</li>
+                                        <li>- Địa điểm áp dụng: NovaFashion</li>
+                                        <li>- Mô tả: {{ $voucher->description }}</li>
                                     </ul>
                                 </div>
                             </div>
