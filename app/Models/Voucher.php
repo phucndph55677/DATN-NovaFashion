@@ -28,8 +28,8 @@ class Voucher extends Model
         'end_date' => 'datetime',
     ];
 
-    public function user()
+    public function orderVouchers()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(OrderVoucher::class);
     }
 }

@@ -60,6 +60,11 @@ class Order extends Model
         return $this->hasMany(Review::class, 'order_id', 'id');
     }
 
+    public function orderVouchers()
+    {
+        return $this->hasMany(OrderVoucher::class);
+    }
+
     // (Tuỳ chọn) Hiển thị màu trạng thái đơn hàng
     public function getOrderBadgeColorAttribute()
     {
