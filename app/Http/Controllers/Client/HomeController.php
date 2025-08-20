@@ -7,7 +7,6 @@ use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -16,11 +15,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $today = Carbon::now()->startOfDay();
         $vouchers = Voucher::where('status', 1) // chỉ lấy voucher đang hiện
-        ->whereDate('end_date', '>=', $today) // còn hạn
-        ->orderBy('created_at', 'desc') // ưu tiên mới nhất
-        ->get();
+            ->whereDate('start_date', '<=', now()) // đã tới ngày bắt đầu
+            ->whereDate('end_date', '>=', now())   // chưa hết hạn
+            ->orderBy('created_at', 'desc')        // voucher mới nhất hiển thị trước
+            ->get();
 
         // Lấy banner theo từng vị trí
         $banners_top_home = Banner::where('status', 1)
