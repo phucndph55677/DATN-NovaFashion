@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Product;;
+use App\Models\Product;
+use App\Models\ProductPhotoAlbum;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -43,9 +44,10 @@ class AdminProductController extends Controller
                 'name' => 'required|string|unique:products,name',
                 'category_id' => 'required|exists:categories,id',
                 'material' => 'nullable|string',
-                'description' => 'nullable|string|max:255',
+                'description' => 'nullable|string|max:1000',
                 'onpage' => 'required',
                 'image' => 'required|image|max:2048',
+                'album.*' => 'nullable|image|max:2048', // validate từng ảnh trong album
             ],
             [
                 'product_code.required' => 'Mã sản phẩm không được để trống.',
@@ -58,20 +60,34 @@ class AdminProductController extends Controller
                 'category_id.required' => 'Vui lòng chọn danh mục.',
                 'material.string' => 'Chất liệu sản phẩm phải là chuỗi.',
                 'description.string' => 'Mô tả phải là chuỗi.',
-                'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
+                'description.max' => 'Mô tả không được vượt quá 1000 ký tự.',
                 'onpage.required' => 'Vui lòng chọn onpage.',
                 'image.required' => 'Hình ảnh không được để trống.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
                 'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+                'album.*.image' => 'Ảnh trong album không hợp lệ.',
+                'album.*.max' => 'Ảnh trong album không vượt quá 2MB.',
             ]
         );          
             
-
+        // Upload ảnh chính
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
         }
         
-        Product::query()->create($data);
+        // Tạo sản phẩm trước
+        $product = Product::query()->create($data);
+
+        // Upload album nếu có
+        if ($request->hasFile('album')) {
+            foreach ($request->file('album') as $file) {
+                $path = $file->store('albums', 'public');
+                ProductPhotoAlbum::create([
+                    'product_id' => $product->id,
+                    'image' => $path,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products.index');
     }
@@ -95,8 +111,8 @@ class AdminProductController extends Controller
         $product = Product::findOrFail($id);
         $categories = Category::all();
         $onpages = [
-            (object)['id' => 1, 'name' => 'On'],
-            (object)['id' => 0, 'name' => 'Off'],
+            (object)['id' => 1, 'name' => 'Có'],
+            (object)['id' => 0, 'name' => 'Không'],
         ];
         return view('admin.products.edit', compact('product', 'categories', 'onpages'));
     }
@@ -123,9 +139,10 @@ class AdminProductController extends Controller
                 ],
                 'category_id' => 'required|exists:categories,id',
                 'material' => 'nullable|string',
-                'description' => 'nullable|string|max:255',
+                'description' => 'nullable|string|max:1000',
                 'onpage' => 'required',
                 'image' => 'nullable|image|max:2048',
+                'album.*' => 'nullable|image|max:2048', // validate từng ảnh trong album
             ],
             [
                 'product_code.required' => 'Mã sản phẩm không được để trống.',
@@ -138,10 +155,12 @@ class AdminProductController extends Controller
                 'category_id.required' => 'Vui lòng chọn danh mục.',
                 'material.string' => 'Chất liệu sản phẩm phải là chuỗi.',
                 'description.string' => 'Mô tả phải là chuỗi.',
-                'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
+                'description.max' => 'Mô tả không được vượt quá 1000 ký tự.',
                 'onpage.required' => 'Vui lòng chọn onpage.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
                 'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
+                'album.*.image' => 'Ảnh trong album không hợp lệ.',
+                'album.*.max' => 'Ảnh trong album không vượt quá 2MB.',
             ]
         );          
 
@@ -156,6 +175,48 @@ class AdminProductController extends Controller
         $product->update($data);
 
         return redirect()->route('admin.products.index');
+    }
+
+    public function updateAlbum(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        // Nếu có file upload mới cho các ảnh cũ
+        if ($request->has('existing_ids')) {
+            foreach ($request->existing_ids as $albumId) {
+                if ($request->hasFile("img_array_existing.$albumId")) {
+                    $album = $product->photoAlbums()->find($albumId);
+                    if ($album) {
+                        // Xóa file cũ
+                        Storage::disk('public')->delete($album->image);
+                        // Upload file mới
+                        $path = $request->file("img_array_existing.$albumId")->store('products/album', 'public');
+                        $album->update(['image' => $path]);
+                    }
+                }
+            }
+        }
+
+        // Nếu có thêm file mới
+        if ($request->hasFile('img_array')) {
+            foreach ($request->file('img_array') as $file) {
+                $path = $file->store('products/album', 'public');
+                $product->photoAlbums()->create(['image' => $path]);
+            }
+        }
+
+        // Nếu có ảnh bị xóa
+        if ($request->has('delete_ids')) {
+            foreach ($request->delete_ids as $deleteId) {
+                $album = $product->photoAlbums()->find($deleteId);
+                if ($album) {
+                    Storage::disk('public')->delete($album->image);
+                    $album->delete();
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Cập nhật album thành công!');
     }
 
     /**

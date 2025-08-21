@@ -40,4 +40,8 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+    public function photoAlbums()
+    {
+        return $this->hasMany(ProductPhotoAlbum::class, 'product_id');
+    }
 }

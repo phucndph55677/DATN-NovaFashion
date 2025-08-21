@@ -45,14 +45,13 @@
                                 <div class="col-12">
                                     <img style="width: 450px; height: 450px" class="avatar rounded" alt="user-icon" src="{{ asset('storage/' . $product->image) }}">
                                 </div>
-                                <div class="col-12 product-image-thumbs mt-3">
-                                    <img style="width: 100px; height: 100px; margin-right: 10px;" class="avatar rounded" alt="user-icon" src="{{ asset('storage/' . $product->image) }}">
-                                    <img style="width: 100px; height: 100px; margin-right: 10px;" class="avatar rounded" alt="user-icon" src="{{ asset('storage/' . $product->image) }}">
-                                    <img style="width: 100px; height: 100px; margin-right: 10px;" class="avatar rounded" alt="user-icon" src="{{ asset('storage/' . $product->image) }}">
-                                    <img style="width: 100px; height: 100px;" class="avatar rounded" alt="user-icon" src="{{ asset('storage/' . $product->image) }}">
+
+                                {{-- Album ảnh --}}
+                                <div class="col-12 product-image-thumbs mt-3 d-flex flex-wrap">
+                                    @foreach ($product->photoAlbums as $album)
+                                        <img style="width: 100px; height: 100px; margin-right: 10px; margin-bottom:10px; object-fit:cover;" class="avatar rounded" alt="album-thumb" src="{{ asset('storage/' . $album->image) }}">
+                                    @endforeach
                                 </div>
-
-
                             </div>
 
                             <div class="col-12 col-sm-7">
