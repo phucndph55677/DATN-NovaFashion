@@ -36,14 +36,33 @@
                 <!-- Form -->
                 <div class="row">
                     <!-- Form bên trái -->
-                    <div class="col-lg-7">
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="fw-bold mb-3">Thông Tin Cơ Bản</h5>
                                 <form class="row g-3" action="{{ route('admin.products.store') }}" method="post" enctype="multipart/form-data">
                                     @csrf
 
-                                    <div class="mb-3">
+                                    @php
+                                        if (!function_exists('renderCategoryOptions')) {
+                                            function renderCategoryOptions($categories, $parent_id = null, $prefix = '', $selected = null) {
+                                                foreach ($categories->where('parent_id', $parent_id) as $category) {
+                                                    $hasChildren = $categories->where('parent_id', $category->id)->count() > 0;
+
+                                                    echo '<option value="'.$category->id.'" '
+                                                        .($hasChildren ? 'disabled' : '').' '
+                                                        .($selected == $category->id ? 'selected' : '').'>'
+                                                        .$prefix.$category->name
+                                                        .'</option>';
+
+                                                    // đệ quy cho danh mục con
+                                                    renderCategoryOptions($categories, $category->id, $prefix.'— ', $selected);
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+                                    <div class="col-md-6 mb-3">
                                         <label for="product_code" class="form-label fw-bold text-muted text-uppercase">Mã Sản Phẩm</label>
                                         <input type="text" class="form-control" id="product_code" name="product_code" placeholder="Nhập Mã Sản Phẩm" value="{{ old('product_code') }}">
                                         @error('product_code')
@@ -51,7 +70,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label fw-bold text-muted text-uppercase">Tên Sản Phẩm</label>
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Nhập Tên Sản Phẩm" value="{{ old('name') }}">
                                         @error('name')
@@ -59,20 +78,20 @@
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label for="category_id" class="form-label fw-bold text-muted text-uppercase">Danh Mục</label>
-                                        <select id="category_id" name="category_id" class="form-select form-control choicesjs">
-                                            <option value="">Chọn Danh Mục</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                            @endforeach
+                                        <select id="category_id" name="category_id" class="form-select form-control">
+                                            <option value="">— — Chọn Danh Mục — —</option>
+                                            @php
+                                                renderCategoryOptions($categories, null, '', old('category_id'));
+                                            @endphp
                                         </select>
                                         @error('category_id')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label for="material" class="form-label fw-bold text-muted text-uppercase">Chất Liệu</label>
                                         <input type="text" class="form-control" id="material" name="material" placeholder="Nhập Chất Liệu" value="{{ old('material') }}">
                                         @error('material')
@@ -80,18 +99,18 @@
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="description" class="form-label fw-bold text-muted text-uppercase">Mô Tả</label>
-                                        <textarea class="form-control" name="description" id="description" rows="4" placeholder="Nhập Mô Tả">{{ old('description') }}</textarea>
-                                        @error('description')
+                                    <div class="col-md-6 mb-3">
+                                        <label for="album" class="form-label fw-bold text-muted text-uppercase">Album Ảnh</label>
+                                        <input type="file" class="form-control" id="album" name="album[]" multiple>
+                                        @error('album.*')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label for="onpage" class="form-label fw-bold text-muted text-uppercase">Trang</label>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="onpage" class="form-label fw-bold text-muted text-uppercase">Hiển Thị</label>
                                         <select id="onpage" name="onpage" class="form-select form-control choicesjs">
-                                            <option value="">Chọn Trang</option>
+                                            <option value="">Chọn Hiển Thị</option>
                                                 <option value="1" {{ old('onpage') == '1' ? 'selected' : '' }}>Có</option>
                                                 <option value="0" {{ old('onpage') == '0' ? 'selected' : '' }}>Không
                                             </option>
@@ -101,10 +120,18 @@
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label for="image" class="form-label fw-bold text-muted text-uppercase">Hình Ảnh Sản Phẩm</label>
                                         <input type="file" class="form-control" id="image" name="image">
                                         @error('image')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="description" class="form-label fw-bold text-muted text-uppercase">Mô Tả</label>
+                                        <textarea class="form-control" name="description" id="description" rows="4" placeholder="Nhập Mô Tả">{{ old('description') }}</textarea>
+                                        @error('description')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -117,76 +144,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Thông tin phụ hoặc album bên phải -->
-                    <div class="col-lg-5">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between">
-                                <div class="header-title">
-                                    <h5 class="fw-bold mb-3">Album Ảnh Sản Phẩm</h5>
-                                </div>
-                                <span class="float-end mb-3 me-2">
-                                    <button onclick="addfaqs();" type="button" class="btn btn-sm bg-primary"><i
-                                            class="ri-add-fill">
-                                            <span class="pl-1">Thêm Mới</span></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <div class="card-body">
-                                <div id="faqs" class="table-editable">
-                                    <table class="table table-bordered table-responsive-md table-striped text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>Hình Ảnh</th>
-                                                <th>Tệp</th>
-                                                <th>Xóa</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="hide">
-                                                {{-- <td contenteditable="true">Oregon</td>
-                                                <td contenteditable="true">Oregon</td>
-                                                <td>
-                                                    <span class="">
-                                                        <button type="button" class="btn btn-danger-subtle rounded btn-sm my-0">Remove</button>
-                                                    </span>
-                                                </td> --}}
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <!-- Submit -->
-                                <div class="card-footer text-center">
-                                    <button type="submit" class="btn btn-primary">Thêm Album</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
-
-@section('scripts')
-    <script>
-        let faqs_row = 0;
-
-        function addfaqs() {
-            html = '<tr id="faqs-row-' + faqs_row + '">';
-            html +=
-                '<td><img src="https://i.pinimg.com/564x/59/36/69/5936698bace4c5852463a2581e890bec.jpg" style="width: 50px; height: 50px;" alt=""></td>';
-            html += '<td><input type="file" name="img_array[]" class="form-control"></td>';
-            // html += '<td class="mt-10"><button type="button" class="badge badge-danger" onclick="removeRow('+ faqs_row + ', null);">Delete</button></td>';
-            html +=
-                '<td class="mt-10"><button type="button" class="btn btn-danger-subtle rounded btn-sm my-0">Remove</button></td>';
-
-            html += '</tr>';
-
-            $('#faqs tbody').append(html);
-
-            faqs_row++;
-        }
-    </script>
 @endsection

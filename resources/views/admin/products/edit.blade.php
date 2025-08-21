@@ -44,6 +44,28 @@
                                     @csrf
                                     @method('PUT')
 
+                                    @php
+                                        if (!function_exists('renderCategoryOptions')) {
+                                            function renderCategoryOptions($categories, $parent_id = null, $prefix = '', $selected = null) {
+                                                foreach ($categories->where('parent_id', $parent_id) as $category) {
+                                                    $hasChildren = $categories->where('parent_id', $category->id)->count() > 0;
+
+                                                    // Chỉ disable nếu có con VÀ không phải danh mục đang chọn
+                                                    $disabled = ($hasChildren && $selected != $category->id) ? 'disabled' : '';
+
+                                                    echo '<option value="'.$category->id.'" '
+                                                        .$disabled.' '
+                                                        .($selected == $category->id ? 'selected' : '').'>'
+                                                        .$prefix.$category->name
+                                                        .'</option>';
+
+                                                    // đệ quy cho danh mục con
+                                                    renderCategoryOptions($categories, $category->id, $prefix.'— ', $selected);
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
                                     <div class="mb-3">
                                         <label for="product_code" class="form-label fw-bold text-muted text-uppercase">Mã Sản Phẩm</label>
                                         <input type="text" class="form-control" id="product_code" name="product_code" placeholder="Nhập Mã Sản Phẩm" value="{{ $product->product_code }}">
@@ -62,13 +84,12 @@
 
                                     <div class="mb-3">
                                         <label for="category_id" class="form-label fw-bold text-muted text-uppercase">Danh Mục</label>
-                                        <select id="category_id" name="category_id" class="form-select form-control choicesjs">
-                                            <option value="">Chọn Danh Mục</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}"
-                                                    @selected($category->id == $product->category_id)>
-                                                    {{ $category->name }}</option>                        
-                                            @endforeach
+                                        <select id="category_id" name="category_id" class="form-select form-control">
+                                            <option value="">— — Chọn Danh Mục — —</option>
+                                            @php
+                                                // dùng lại hàm render giống create nhưng truyền thêm $product->category_id
+                                                renderCategoryOptions($categories, null, '', $product->category_id);
+                                            @endphp
                                         </select>
                                         @error('category_id')
                                             <div class="text-danger">{{ $message }}</div>
@@ -142,33 +163,48 @@
                                 </span>
                             </div>
                             <div class="card-body">
-                                <div id="faqs" class="table-editable">
-                                    <table class="table table-bordered table-responsive-md table-striped text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>Hình Ảnh</th>
-                                                <th>Tệp</th>
-                                                <th>Xóa</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="hide">
-                                                {{-- <td contenteditable="true">Oregon</td>
-                                                <td contenteditable="true">Oregon</td>
-                                                <td>
-                                                    <span class="">
-                                                        <button type="button" class="btn btn-danger-subtle rounded btn-sm my-0">Remove</button>
-                                                    </span>
-                                                </td> --}}
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <form method="POST" action="{{ route('admin.products.updateAlbum', $product->id) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
 
-                                <!-- Submit -->
-                                <div class="card-footer text-center">
-                                    <button type="submit" class="btn btn-primary">Cập Nhật Album</button>
-                                </div>
+                                    <div id="faqs" class="table-editable">
+                                        <table class="table table-bordered table-responsive-md table-striped text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th>Hình Ảnh</th>
+                                                    <th>Tệp</th>
+                                                    <th>Xóa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($product->photoAlbums as $key => $album)
+                                                    <tr id="faqs-row-{{ $key }}">
+                                                        <td>
+                                                            <img src="{{ asset('storage/'.$album->image) }}" 
+                                                                style="width: 50px; height: 50px; object-fit: cover;" alt="">
+                                                        </td>
+                                                        <td>
+                                                            <input type="file" name="img_array_existing[{{ $album->id }}]" class="form-control">
+                                                            <input type="hidden" name="existing_ids[]" value="{{ $album->id }}">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" 
+                                                                    class="btn btn-danger-subtle rounded btn-sm my-0" 
+                                                                    onclick="removeRow({{ $key }}, {{ $album->id }});">
+                                                                Remove
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <div class="card-footer text-center">
+                                        <button type="submit" class="btn btn-primary">Cập Nhật Album</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -184,18 +220,23 @@
 
         function addfaqs() {
             html = '<tr id="faqs-row-' + faqs_row + '">';
-            html +=
-                '<td><img src="https://i.pinimg.com/564x/59/36/69/5936698bace4c5852463a2581e890bec.jpg" style="width: 50px; height: 50px;" alt=""></td>';
+            html += '<td><img src="https://i.pinimg.com/564x/59/36/69/5936698bace4c5852463a2581e890bec.jpg" style="width: 50px; height: 50px;" alt=""></td>';
             html += '<td><input type="file" name="img_array[]" class="form-control"></td>';
-            // html += '<td class="mt-10"><button type="button" class="badge badge-danger" onclick="removeRow('+ faqs_row + ', null);">Delete</button></td>';
-            html +=
-                '<td class="mt-10"><button type="button" class="btn btn-danger-subtle rounded btn-sm my-0">Remove</button></td>';
-
+            html += '<td class="mt-10"><button type="button" class="btn btn-danger-subtle rounded btn-sm my-0" onclick="removeRow(' + faqs_row + ');">Remove</button></td>';
             html += '</tr>';
 
             $('#faqs tbody').append(html);
 
             faqs_row++;
         }
+
+        function removeRow(rowId, albumId = null) {
+            if (albumId) {
+                // Nếu là ảnh cũ thì thêm hidden input để controller biết xoá
+                $('#faqs').append('<input type="hidden" name="delete_ids[]" value="' + albumId + '">');
+            }
+            // Nếu là ảnh mới thì chỉ cần xoá <tr> (không có input file gửi đi)
+            $('#faqs-row-' + rowId).remove();
+}
     </script>
 @endsection

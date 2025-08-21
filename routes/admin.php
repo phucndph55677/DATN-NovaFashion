@@ -51,6 +51,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Products
         Route::resource('products', AdminProductController::class);
 
+        // Album ảnh
+        Route::put('products/{id}/album', [AdminProductController::class, 'updateAlbum'])->name('products.updateAlbum');
+
         // Banners
         Route::resource('banners', AdminBannerController::class);
 
