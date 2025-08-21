@@ -98,8 +98,8 @@
                                 <label for="is_active" class="form-label fw-bold text-muted text-uppercase">Trạng Thái</label>
                                 <select id="is_active" name="is_active" class="form-select form-control choicesjs">
                                     <option value="">Chọn Trạng Thái</option>
-                                    <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Hiện</option>
-                                    <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Ẩn</option>
+                                    <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Cho Phép Kinh Doanh</option>
+                                    <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Ngừng Kinh Doanh</option>
                                 </select>
                                 @error('is_active')
                                     <div class="text-danger">{{ $message }}</div>
