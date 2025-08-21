@@ -146,22 +146,71 @@
                 </div>
 
                  <div class="item item-cart">
-                    <a class="icon" href="#"><i class="icon-ic_shopping-bag"></i>
-                        <span class="number-cart"></span>
+                    <a class="icon" href="#">
+                        <i class="icon-ic_shopping-bag"></i>
+                        @if(Auth::check() && $miniCart)
+                            <span class="number-cart">{{ $miniCart->cartDetails->sum('quantity') }}</span>
+                        @endif
                     </a>
+
                     <div class="sub-action sub-action-cart">
                         <div class="top-action">
-                            <h3>Giỏ hànggg <span class="number-cart"></span></h3>
+                            <h3>Giỏ hàng 
+                                @auth
+                                    <span class="number-cart">{{ $miniCart ? $miniCart->cartDetails->sum('quantity') : 0 }}</span>
+                                @endauth
+                            </h3>
                         </div>
-                        <div class="main-action"></div>
+
+                        <div class="main-action">
+                            @guest
+                                <p class="text-center p-3 text-muted">Vui lòng <a href="{{ route('login') }}">đăng nhập</a> để xem giỏ hàng.</p>
+                            @else
+                                @if($miniCart && $miniCart->cartDetails->count() > 0) 
+                                    @foreach($miniCart->cartDetails as $item)
+                                        <div class="item-product-cart d-flex">
+                                            <div class="thumb-product-cart">
+                                                <img src="{{ asset('storage/' . ($item->productVariant->image ?? 'default.png')) }}">
+                                            </div>
+                                            <div class="info-product-cart">
+                                                <h3><a href="">{{ $item->productVariant->product->name ?? 'Sản phẩm' }}</a></h3>
+                                                <div class="info-properties d-flex">
+                                                    <p class="properties-color">Màu sắc: <strong>{{ $item->productVariant->color->name ?? 'Màu sắc' }}</strong></p>
+                                                    <p>Size: <strong style="text-transform: uppercase">{{ $item->productVariant->size->name ?? 'Size' }}</strong></p>
+                                                </div>
+                                                <div class="info-price-mini d-flex">
+                                                    <div>
+                                                        <span>
+                                                            {{ number_format($item->price, 0, ',', '.') }} x {{ $item->quantity }} =
+                                                            {{ number_format($item->price * $item->quantity, 0, ',', '.') }} VND
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <p class="text-center p-3">Giỏ hàng trống.</p>
+                                @endif
+                            @endguest
+                        </div>
+
                         <div class="bottom-action">
-                            <input type="hidden" name="total_price_not_format" value="" />
-                            <div class="total-price">Tổng cộng: <strong></strong></div>
-                            <div class="box-action">
-                                <a href="https://ivymoda.com/thanhtoan/giohang" class="action-view-cart">Xem giỏ hàng</a>
-                                <a href="https://ivymoda.com/customer/login" class="action-login">Đăng nhậppp</a>
-                            </div>
+                            @auth
+                                <div class="total-price">
+                                    Tổng cộng: 
+                                    <strong>{{ $miniCart ? number_format($miniCart->cartDetails->sum(fn($i) => $i->price * $i->quantity), 0, ',', '.') : '0' }} VND</strong>
+                                </div>
+                                <div class="box-action">
+                                    <a href="{{ route('carts.index') }}" class="action-view-cart" style="display: block;">Xem giỏ hàng</a>
+                                </div>
+                            @else
+                                <div class="box-action">
+                                    <a href="{{ route('login') }}" class="action-login">Đăng nhập để mua sắm</a>
+                                </div>
+                            @endauth
                         </div>
+
                         <div class="action-close"><i class="icon-ic_close"></i></div>
                     </div>
                 </div>

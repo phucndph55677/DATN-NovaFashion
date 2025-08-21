@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Cart;
 use Illuminate\Support\ServiceProvider;
 // use Illuminate\Pagination\Paginator;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,7 +33,18 @@ class AppServiceProvider extends ServiceProvider
                 ->whereNull('parent_id')
                 ->get();
 
-            $view->with('menuCategories', $menuCategories);
+            $miniCart = null;
+            
+            if (Auth::check()) {
+               $miniCart = Cart::with(['cartDetails.productVariant.product'])
+                ->where('user_id', Auth::id())
+                ->first();
+            }
+
+            $view->with([
+                'menuCategories' => $menuCategories,
+                'miniCart' => $miniCart,
+            ]);
         });
     }
 }
