@@ -48,6 +48,9 @@ Route::post('/carts/add', [ClientCartController::class, 'addToCart'])->name('car
 Route::post('/carts/buy', [ClientCartController::class, 'buyNow'])->name('carts.buy');
 Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('carts.delete');
 
+// Mini Cart
+Route::get('/mini-cart', [ClientCartController::class, 'miniCart'])->name('miniCart');
+
 // Checkouts
 Route::get('/checkouts', [ClientCheckoutController::class, 'index'])->name('checkouts.index');
 Route::post('/checkouts', [ClientCheckoutController::class, 'store'])->name('checkouts.store');

@@ -189,6 +189,20 @@ class ClientCartController extends Controller
         return redirect()->route('carts.index');
     }
 
+    public function miniCart()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+        $userId = Auth::id(); // Lấy ID người dùng hiện tại
+
+        $miniCart = Cart::with(['cartDetails.productVariant.product'])
+            ->where('user_id', $userId)
+            ->first();
+
+        return view('client.partials.navbar', compact('miniCart'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
