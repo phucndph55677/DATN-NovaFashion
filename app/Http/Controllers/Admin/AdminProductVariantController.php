@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Color;
+use App\Models\Size;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\Size;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class AdminProductVariantController extends Controller
 {
@@ -31,8 +33,8 @@ class AdminProductVariantController extends Controller
         $colors = Color::all();
         $sizes = Size::all();
         $is_actives = [
-            (object)['id' => 1, 'name' => 'Hiện'],
-            (object)['id' => 0, 'name' => 'Ẩn'],
+            (object)['id' => 1, 'name' => 'Cho Phép Kinh Doanh'],
+            (object)['id' => 0, 'name' => 'Ngừng Kinh Doanh'],
         ];
 
         return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id', 'is_actives'));
@@ -48,8 +50,20 @@ class AdminProductVariantController extends Controller
         $data = $request->validate(
             [
                 'product_id' => 'required|exists:products,id',
-                'color_id' => 'required|exists:colors,id',
-                'size_id' => 'required|exists:sizes,id',
+                'color_id' => [
+                    'required',
+                    'exists:colors,id',
+                    Rule::unique('product_variants')
+                        ->where('product_id', $request->product_id)
+                        ->where('size_id', $request->size_id),
+                ],
+                'size_id'    => [
+                    'required',
+                    'exists:sizes,id',
+                    Rule::unique('product_variants')
+                        ->where('product_id', $request->product_id)
+                        ->where('color_id', $request->color_id),
+                ],
                 'price' => 'required|numeric|min:0',
                 'sale' => 'nullable|numeric|min:0|lt:price',
                 'quantity' => 'required|numeric|min:0',
@@ -58,7 +72,9 @@ class AdminProductVariantController extends Controller
             ],
             [
                 'color_id.required' => 'Vui lòng chọn màu.',
+                'color_id.unique' => 'Biến thể với màu & size này đã tồn tại.',
                 'size_id.required' => 'Vui lòng chọn size.',
+                'size_id.unique'    => 'Biến thể với màu & size này đã tồn tại.',
                 'price.required' => 'Giá không được để trống.',
                 'price.numeric' => 'Giá phải là số.',
                 'price.min' => 'Giá phải >= 0.',
@@ -102,8 +118,8 @@ class AdminProductVariantController extends Controller
         $colors = Color::all();
         $sizes = Size::all();
         $is_actives = [
-            (object)['id' => 1, 'name' => 'Hiện'],
-            (object)['id' => 0, 'name' => 'Ẩn'],
+            (object)['id' => 1, 'name' => 'Cho Phép Kinh Doanh'],
+            (object)['id' => 0, 'name' => 'Ngừng Kinh Doanh'],
         ];
 
         return view('admin.products.variants.edit', compact('variant', 'colors', 'sizes', 'is_actives'));
@@ -114,9 +130,10 @@ class AdminProductVariantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $variant = ProductVariant::find($id);
+        $variant = ProductVariant::findOrFail($id);
 
-        $data = $request->validate(
+        // 1. Validate cơ bản
+        $validator = Validator::make($request->all(),
             [
                 'color_id' => 'required|exists:colors,id',
                 'size_id' => 'required|exists:sizes,id',
@@ -141,23 +158,37 @@ class AdminProductVariantController extends Controller
                 'is_active.required' => 'Vui lòng chọn trạng thái.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
                 'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
-            ]
-        );
+            ]);
 
+        // 2. Check trùng biến thể (ngoại trừ chính nó)
+        $validator->after(function ($validator) use ($request, $variant) {
+            $exists = ProductVariant::where('product_id', $variant->product_id)
+                ->where('color_id', $request->color_id)
+                ->where('size_id', $request->size_id)
+                ->where('id', '!=', $variant->id) // bỏ qua chính nó
+                ->exists();
+
+            if ($exists) {
+                $validator->errors()->add('color_id', 'Biến thể với màu & size này đã tồn tại.');
+                $validator->errors()->add('size_id', 'Biến thể với màu & size này đã tồn tại.');
+            }
+        });
+
+        // 3. Nếu có lỗi thì ném ra ValidationException
+        $data = $validator->validate();
+
+        // 4. Upload ảnh mới nếu có
         if ($request->hasFile('image')) {
             $path_image = $request->file('image')->store('variants', 'public');
             $data['image'] = $path_image;
-        }
 
-        // Xoa anh cu
-        if (isset($path_image)) {
-            if ($variant->image != null) {
-                if (Storage::fileExists($variant->image)) {
-                    Storage::delete($variant->image);
-                }
+            // Xóa ảnh cũ
+            if ($variant->image && Storage::disk('public')->exists($variant->image)) {
+                Storage::disk('public')->delete($variant->image);
             }
         }
 
+         // 5. Cập nhật
         $variant->update($data);
 
         return redirect()->route('admin.variants.index', $variant->product_id);
