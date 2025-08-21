@@ -27,7 +27,6 @@ class CartFactory extends Factory
 
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'voucher_id' => Voucher::inRandomOrder()->first()?->id ?? null,
             'quantity' => $quantity,
             'price' => $price,
             'total_amount' => $total,

@@ -12,7 +12,6 @@ class Cart extends Model
 
     protected $fillable = [
         'user_id',
-        'voucher_id',
         'quantity',
         'price',
         'total_amount',
@@ -21,11 +20,6 @@ class Cart extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function voucher()
-    {
-        return $this->belongsTo(Voucher::class);
     }
 
     public function cartDetails()
