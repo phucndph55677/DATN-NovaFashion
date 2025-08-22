@@ -77,7 +77,7 @@
                                                     <td>{{ $variant->quantity }}</td>
                                                     <td>
                                                         <div>
-                                                            <input type="checkbox" id="tr_fal_switch_{{ $variant->id }}" class="checkboxs" {{ $variant->is_active ? 'checked' : '' }} disabled />
+                                                            <input type="checkbox" id="tr_fal_switch_{{ $variant->id }}" class="checkboxs" {{ $variant->status ? 'checked' : '' }} disabled />
                                                             <label for="tr_fal_switch_{{ $variant->id }}" class="toggles text-white bg-success border-success"> 
                                                                 <p class="texts ps-1">On &nbsp;&nbsp;Off</p>
                                                             </label>
