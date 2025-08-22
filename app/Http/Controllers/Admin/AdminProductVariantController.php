@@ -32,12 +32,12 @@ class AdminProductVariantController extends Controller
         $product = Product::with(['variants.color', 'variants.size'])->where('id', $id)->first();
         $colors = Color::all();
         $sizes = Size::all();
-        $is_actives = [
+        $statuses = [
             (object)['id' => 1, 'name' => 'Cho Phép Kinh Doanh'],
             (object)['id' => 0, 'name' => 'Ngừng Kinh Doanh'],
         ];
 
-        return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id', 'is_actives'));
+        return view('admin.products.variants.create', compact('product', 'colors', 'sizes', 'id', 'statuses'));
     }
 
     /**
@@ -67,7 +67,7 @@ class AdminProductVariantController extends Controller
                 'price' => 'required|numeric|min:0',
                 'sale' => 'nullable|numeric|min:0|lt:price',
                 'quantity' => 'required|numeric|min:0',
-                'is_active' => 'required',
+                'status' => 'required',
                 'image' => 'required|image|max:2048',
             ],
             [
@@ -84,7 +84,7 @@ class AdminProductVariantController extends Controller
                 'quantity.required' => 'Số lượng không được để trống.',
                 'quantity.numeric' => 'Số lượng phải là số.',
                 'quantity.min' => 'Số lượng phải >= 0.',
-                'is_active.required' => 'Vui lòng chọn trạng thái.',
+                'status.required' => 'Vui lòng chọn trạng thái.',
                 'image.required' => 'Hình ảnh không được để trống.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
                 'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
@@ -114,15 +114,15 @@ class AdminProductVariantController extends Controller
      */
     public function edit(string $id)
     {
-        $variant = ProductVariant::find($id);
+        $variant = ProductVariant::findOrFail($id);
         $colors = Color::all();
         $sizes = Size::all();
-        $is_actives = [
+        $statuses = [
             (object)['id' => 1, 'name' => 'Cho Phép Kinh Doanh'],
             (object)['id' => 0, 'name' => 'Ngừng Kinh Doanh'],
         ];
 
-        return view('admin.products.variants.edit', compact('variant', 'colors', 'sizes', 'is_actives'));
+        return view('admin.products.variants.edit', compact('variant', 'colors', 'sizes', 'statuses'));
     }
 
     /**
@@ -140,7 +140,7 @@ class AdminProductVariantController extends Controller
                 'price' => 'required|numeric|min:0',
                 'sale' => 'nullable|numeric|min:0|lt:price',
                 'quantity' => 'required|numeric|min:0',
-                'is_active' => 'required',
+                'status' => 'required',
                 'image' => 'nullable|image|max:2048',
             ],
             [
@@ -155,7 +155,7 @@ class AdminProductVariantController extends Controller
                 'quantity.required' => 'Số lượng không được để trống.',
                 'quantity.numeric' => 'Số lượng phải là số.',
                 'quantity.min' => 'Số lượng phải >= 0.',
-                'is_active.required' => 'Vui lòng chọn trạng thái.',
+                'status.required' => 'Vui lòng chọn trạng thái.',
                 'image.image' => 'Hình ảnh không hợp lệ.',
                 'image.max' => 'Kích thước hình ảnh không được vượt quá 2MB.',
             ]);

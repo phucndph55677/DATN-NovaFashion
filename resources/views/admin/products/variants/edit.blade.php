@@ -98,16 +98,17 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="is_active" class="form-label fw-bold text-muted text-uppercase">Trạng Thái</label>
-                                <select id="is_active" name="is_active" class="form-select form-control choicesjs">
+                                <label for="status" class="form-label fw-bold text-muted text-uppercase">Trạng Thái</label>
+                                <select id="status" name="status" class="form-select form-control choicesjs">
                                     <option value="">Chọn Trạng Thái</option>
-                                    @foreach ($is_actives as $is_active)
-                                        <option value="{{ $is_active->id }}"
-                                            @selected($is_active->id == $variant->is_active)>
-                                            {{ $is_active->name }}</option>                        
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status->id }}"
+                                            @selected($status->id == $variant->status)>
+                                            {{ $status->name }}
+                                        </option>
                                     @endforeach
                                 </select>
-                                @error('is_active')
+                                @error('status')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
