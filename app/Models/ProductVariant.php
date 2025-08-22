@@ -18,11 +18,7 @@ class ProductVariant extends Model
         'price',
         'sale',
         'quantity',
-        'is_active',
-    ];
-
-    protected $casts = [
-        'is_active' => 'boolean', // Ép kiểu đúng
+        'status',
     ];
 
     public function product()
