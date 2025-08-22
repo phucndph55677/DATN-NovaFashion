@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('price'); // VD: 150000 (150.000 VND)
             $table->integer('sale')->nullable(); // Có thể để trống 
             $table->integer('quantity')->default(0);    // Số lượng tồn kho, mặc định 0
-            $table->boolean('is_active')->default(true); // Trạng thái biến thể sản phẩm: còn bán, dừng bán
+            $table->boolean('status')->default(true); // Trạng thái biến thể sản phẩm: còn bán, dừng bán
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }
