@@ -50,7 +50,21 @@ class ClientProductController extends Controller
             ->latest()
             ->get();
 
-        return view('client.products.show', compact('product', 'reviews'));
+        // Lấy category chính của product
+        $category = $product->category;
+
+        // Breadcrumb từ category
+        $breadcrumbs = [];
+        $currentCategory = $category;
+        while ($currentCategory) {
+            array_unshift($breadcrumbs, $currentCategory);
+            $currentCategory = $currentCategory->parent;
+        }
+
+        $averageRating = $reviews->avg('rating');
+        $totalReviews  = $reviews->count();
+
+        return view('client.products.show', compact('product', 'reviews', 'averageRating', 'breadcrumbs', 'totalReviews'));
     }
 
     /**
