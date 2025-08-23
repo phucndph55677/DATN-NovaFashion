@@ -24,54 +24,57 @@
                         </ol>
                     </div>
 
+                    {{-- Product Detail Container --}}
                     <div class="product-detail" data-product-id="{{ $product->id }}">
                         <div class="container">
                             <div class="row">
                                 @php
-                                    $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
+                                    $variant = $product->variants->first();
+                                    $activeVariants = $product->variants->where('status', '1');
+                                    $defaultColorName = optional(optional($activeVariants->unique('color_id')->first())->color)->name ?? '';
                                 @endphp
 
+                                {{-- Product Gallery Section --}}
                                 <div class="col-md-6">
-                                    <div class="product-detail__gallery">
-                                        <div class="product-gallery__slide">
-                                            <div class="product-gallery__slide--big">
-                                                <div class="thumb-product">
-                                                    <img class="product-img" style="width: 550px; height: 750px;" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
-                                                </div>     
+                                    <div class="product-gallery">
+                                        {{-- Main Product Image --}}
+                                        <div class="product-gallery__main">
+                                            <div class="product-gallery__main-image">
+                                                <img class="product-main-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" alt="{{ $product->name }}">
                                             </div>
+                                        </div>
                                             
-                                            <div class="product-gallery__slide--small">
-                                                <div class="swiper-nav-prev">
-                                                    <span class="icon-ic_down"></span>
+                                        {{-- Product Thumbnails --}}
+                                        <div class="product-gallery__thumbnails">
+                                            @if($product->photoAlbums && $product->photoAlbums->count() > 0)
+                                                {{-- First thumbnail is main product image --}}
+                                                <div class="thumbnail-item active" data-image="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
+                                                    <img src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" alt="{{ $product->name }}">
                                                 </div>
-                                                <div class="swiper-nav-next">
-                                                    <span class="icon-ic_down"></span>
-                                                </div>
-                                                <div class="swiper-container swiper">
-                                                    <div class="swiper-wrapper">
-                                                        @if($product->photoAlbums && $product->photoAlbums->count() > 0)
+                                                
+                                                {{-- Album images as thumbnails --}}
                                                             @foreach($product->photoAlbums as $album)
-                                                                <div class="swiper-slide">
-                                                                    <img class="product-photo-album" src="{{ asset('storage/' . $album->image) }}" alt="Album Image">
+                                                    <div class="thumbnail-item" data-image="{{ asset('storage/' . $album->image) }}">
+                                                        <img src="{{ asset('storage/' . $album->image) }}" alt="Album Image">
                                                                 </div>
                                                             @endforeach
                                                         @else
-                                                            {{-- Nếu không có album thì fallback về ảnh variant hoặc ảnh mặc định --}}
-                                                            <div class="swiper-slide">
-                                                                <img class="product-photo-album" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" alt="Default">
-                                                            </div>
-                                                        @endif
-                                                    </div>
+                                                {{-- If no album, show main image only --}}
+                                                <div class="thumbnail-item active" data-image="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
+                                                    <img src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" alt="{{ $product->name }}">
                                                 </div>
-                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
 
+                                {{-- Product Information Section --}}
                                 <div class="col-md-6">
                                     <div class="product-information">
+                                        {{-- Product Title --}}
                                         <h1 style="text-transform: uppercase;">{{ $product->name }}</h1>
 
+                                        {{-- Product Price --}}
                                         <div class="price-product">
                                             @if ($variant && $variant->sale > 0 && $variant->sale < $variant->price)
                                                 <ins><span>{{ number_format($variant->sale, 0, ',', '.') }} VND</span></ins>
@@ -85,6 +88,7 @@
                                             @endif
                                         </div>
 
+                                        {{-- Product Sub Info (SKU, Rating) --}}
                                         <div class="product-detail__sub-info">
                                             @php
                                                 $avg = $averageRating ?? 0;
@@ -101,12 +105,14 @@
                                             </p>
                                         </div>
 
+                                        {{-- Product Category --}}
                                         <div class="product-category">
                                             <p>
                                                 Danh mục: <span>{{ $product->category->name ?? 'Không có danh mục' }}</span>
                                             </p>
                                         </div>
 
+                                        {{-- Product Status --}}
                                         <div class="product-status">
                                             <p>
                                                 <span id="product_status" style="color: #dc3545;">
@@ -115,12 +121,7 @@
                                             </p>
                                         </div>
 
-                                        @php
-                                            $defaultColorName = optional(optional($product->variants->unique('color_id')->first())->color)->name ?? '';
-
-                                            // Lọc các variant đang cho phép kinh doanh
-                                            $activeVariants = $product->variants->where('status', '1'); 
-                                        @endphp
+                                        {{-- Color Selection --}}
                                         <p class="choice-label color-label" style="margin: 8px 0 6px; color:#5f6368;">
                                             Màu sắc: <span class="picked-color-name">{{ $defaultColorName }}</span>
                                         </p>
@@ -131,7 +132,6 @@
                                                         <a href="" 
                                                             class="color-picker" 
                                                             data-image="{{ asset('storage/' . $colorVariant->image) }}"
-                                                            data-size=""
                                                             data-price="{{ $colorVariant->price }}"
                                                             data-sale="{{ $colorVariant->sale }}"
                                                             data-product="{{ $product->id }}"
@@ -144,6 +144,7 @@
                                             </ul>                 
                                         </div>
 
+                                        {{-- Size Selection --}}
                                         <p class="choice-label size-label" style="margin: 12px 0 6px; color:#5f6368;">
                                             Kích thước: <span class="picked-size-name"></span>
                                         </p>
@@ -166,21 +167,24 @@
                                             @endforeach
                                         </div>
 
+                                        {{-- Product Cart Section --}}
                                         <div class="product-cart">
-                                            {{-- Chỉ hiển thị 1 input số lượng --}}
+                                            {{-- Quantity Selection --}}
                                             <div class="product-quantity">
                                                 <div class="product-quantity-row">
                                                     <span class="quantity-label">Số lượng</span>
                                                     <div class="quantity-control">
                                                         <button type="button" class="quantity-decrease qty-btn" aria-label="Giảm">-</button>
-                                                        <input type="number" id="quantity_input" value="1" min="1"class="qty-input" />
+                                                        <input type="number" id="quantity_input" value="1" min="1" class="qty-input" />
                                                         <button type="button" class="quantity-increase qty-btn" aria-label="Tăng">+</button>
                                                     </div>
+                                                    <div class="quantity-error" style="display: none; color: #dc3545; font-size: 12px;"></div>
                                                 </div>
                                             </div>
 
-                                            <div  style="display: flex; gap: 10px;">                                                
-                                                {{-- Form Thêm vào giỏ --}}
+                                            {{-- Action Buttons --}}
+                                            <div style="display: flex; gap: 10px;">                                                
+                                                {{-- Add to Cart Form --}}
                                                 <form action="{{ route('carts.add') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="product_variant_id" id="product_variant_id_add" value="{{ $variant->id }}">
@@ -188,7 +192,7 @@
                                                     <button type="submit" class="btn btn--large">Thêm vào giỏ</button>
                                                 </form>
 
-                                                {{-- Form Mua hàng --}}
+                                                {{-- Buy Now Form --}}
                                                 <form action="{{ route('carts.buy') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="product_variant_id" id="product_variant_id_buy" value="{{ $variant->id }}">
@@ -196,13 +200,14 @@
                                                     <button type="submit" class="btn btn--large btn--outline">Mua hàng</button>
                                                 </form>
 
-                                                {{-- Yêu thích --}}
+                                                {{-- Wishlist Button --}}
                                                 <button class="btn btn--large btn--outline btn--wishlist">
                                                     <i class="icon-ic_heart"></i>
                                                 </button>
                                             </div>
                                         </div>
 
+                                        {{-- Product Description Tab --}}
                                         <div class="product-detail__tab">
                                             <div class="product-detail__tab-header">
                                                 <div class="tab-item active">
@@ -229,6 +234,7 @@
                         </div>
                     </div>
 
+                    {{-- Product Reviews Section --}}
                     <div class="viewed-products">
                         <h1>ĐÁNH GIÁ SẢN PHẨM ({{ $reviews->count() }} đánh giá)</h1>
                         <div class="product-reviews block-border">
@@ -257,7 +263,7 @@
                         </div>              
                     </div>
                     
-                    <!-- Trending -->
+                    {{-- Trending Banner --}}
                     <a href="https://ivymoda.com/danh-muc/dress-day-hoa-tiet-110725">
                         <section class="home-trending box-border bg-before bg-before_02">
                             <div class="img-trending-desktop">
@@ -272,7 +278,6 @@
                             </div>
                         </section>
                     </a>
-                    <!-- End Trending -->
                 </div>
             </div>
         </div>
@@ -280,11 +285,41 @@
 @endsection
 
 @section('scripts')
-    {{-- JS xử lý khi click màu -> hiển thị ảnh + giá tương ứng --}}
-    {{-- JS xử lý khi click size + màu -> hiển thị giá tương ứng --}}
+    {{-- ========================================
+         PHẦN JAVASCRIPT - XỬ LÝ TƯƠNG TÁC
+    ======================================== --}}
+
+    {{-- ========================================
+         CHỨC NĂNG GALLERY ẢNH SẢN PHẨM
+    ======================================== --}}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Click màu
+            // Xử lý khi click vào thumbnail để đổi ảnh chính
+            document.querySelectorAll('.thumbnail-item').forEach(function (thumbnail) {
+                thumbnail.addEventListener('click', function () {
+                    const imageUrl = this.dataset.image;
+                    const mainImage = document.querySelector('.product-main-img');
+                    
+                    if (mainImage) {
+                        mainImage.src = imageUrl;
+                    }
+                    
+                    // Cập nhật trạng thái active cho thumbnail
+                    document.querySelectorAll('.thumbnail-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+
+    {{-- ========================================
+         CHỨC NĂNG CHỌN MÀU SẮC
+    ======================================== --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Xử lý khi người dùng chọn màu sắc
             document.querySelectorAll('.color-picker').forEach(function (el) {
                 el.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -299,14 +334,27 @@
                     const wrapper = document.querySelector(`.product-detail[data-product-id="${productId}"]`);
                     if (!wrapper) return;
 
-                    // Đổi ảnh
-                    wrapper.querySelector('.product-img').src = image;
+                    // Cập nhật ảnh chính trong gallery khi chọn màu
+                    const mainImage = wrapper.querySelector('.product-main-img');
+                    if (mainImage) {
+                        mainImage.src = image;
+                    }
+                    
+                    // Cập nhật thumbnail đầu tiên để hiển thị ảnh màu mới
+                    const firstThumbnail = wrapper.querySelector('.thumbnail-item');
+                    if (firstThumbnail) {
+                        firstThumbnail.dataset.image = image;
+                        const thumbnailImg = firstThumbnail.querySelector('img');
+                        if (thumbnailImg) {
+                            thumbnailImg.src = image;
+                        }
+                    }
 
-                    // Cập nhật nhãn màu
+                    // Cập nhật nhãn màu sắc đã chọn
                     const colorLabel = wrapper.querySelector('.picked-color-name');
                     if (colorLabel) colorLabel.textContent = colorName;
 
-                    // Đổi giá ban đầu (khi chưa chọn size)
+                    // Cập nhật hiển thị giá sản phẩm
                     const priceEl = wrapper.querySelector('.price-product ins span');
                     const saleEl = wrapper.querySelector('.price-product del');
                     const saleSpanEl = wrapper.querySelector('.price-product del span');
@@ -326,11 +374,11 @@
                         }
                     }
 
-                    // Đánh dấu màu
+                    // Đánh dấu màu sắc đã được chọn
                     wrapper.querySelectorAll('.list-color li').forEach(li => li.classList.remove('checked'));
                     this.closest('li').classList.add('checked');
 
-                    // Hiển thị size theo màu
+                    // Hiển thị các size tương ứng với màu đã chọn
                     wrapper.querySelectorAll('.product-size .size-group').forEach(group => {
                         group.classList.add('d-none');
                     });
@@ -341,20 +389,35 @@
                     });
                 });
             });
+        });
+    </script>
 
-            // Click size
+    {{-- ========================================
+         CHỨC NĂNG CHỌN SIZE VÀ QUẢN LÝ SỐ LƯỢNG
+    ======================================== --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Xử lý khi người dùng chọn kích thước
             document.querySelectorAll('.product-size input[type="radio"][name="size"]').forEach(function (input) {
                 input.addEventListener('change', function () {
+                    const variantId = this.dataset.variantId;
                     const price = parseInt(this.dataset.price);
                     const sale = parseInt(this.dataset.sale);
                     const quantity = parseInt(this.dataset.quantity);
                     const sizeName = this.dataset.sizeName || '';
                     const wrapper = this.closest('.product-detail');
 
-                    // Cập nhật nhãn kích thước
+                    // Cập nhật ID variant trong các form
+                    const variantAdd = document.getElementById('product_variant_id_add');
+                    const variantBuy = document.getElementById('product_variant_id_buy');
+                    if (variantAdd) variantAdd.value = variantId;
+                    if (variantBuy) variantBuy.value = variantId;
+
+                    // Cập nhật nhãn kích thước đã chọn
                     const sizeLabel = wrapper.querySelector('.picked-size-name');
                     if (sizeLabel) sizeLabel.textContent = sizeName;
 
+                    // Cập nhật hiển thị giá sản phẩm
                     const priceEl = wrapper.querySelector('.price-product ins span');
                     const saleEl = wrapper.querySelector('.price-product del');
                     const saleSpanEl = wrapper.querySelector('.price-product del span');
@@ -374,7 +437,7 @@
                         }
                     }
 
-                    // Cập nhật tình trạng sản phẩm
+                    // Cập nhật trạng thái kho hàng
                     const productStatus = wrapper.querySelector('.product-status span');
                     if (productStatus) {
                         if (quantity > 0) {
@@ -385,27 +448,56 @@
                             productStatus.style.color = '#dc3545';
                         }
                     }
+
+                    // Cập nhật số lượng tối đa cho input số lượng
+                    const quantityInput = wrapper.querySelector('#quantity_input');
+                    if (quantityInput) {
+                        quantityInput.setAttribute('data-max', quantity);
+                        // Kiểm tra nếu số lượng hiện tại vượt quá số lượng có sẵn
+                        const currentQty = parseInt(quantityInput.value);
+                        if (currentQty > quantity) {
+                            quantityInput.value = quantity;
+                            // Hiển thị thông báo
+                            const quantityError = wrapper.querySelector('.quantity-error');
+                            if (quantityError) {
+                                quantityError.textContent = `Số lượng tối đa có thể chọn: ${quantity}`;
+                                quantityError.style.display = 'block';
+                                setTimeout(() => {
+                                    quantityError.style.display = 'none';
+                                }, 3000);
+                            }
+                        }
+                        // Cập nhật các input ẩn
+                        const quantityAdd = wrapper.querySelector('#quantity_add');
+                        const quantityBuy = wrapper.querySelector('#quantity_buy');
+                        if (quantityAdd) quantityAdd.value = quantityInput.value;
+                        if (quantityBuy) quantityBuy.value = quantityInput.value;
+                    }
                 });
             });
         });
     </script>
 
+    {{-- ========================================
+         HỆ THỐNG ĐIỀU KHIỂN SỐ LƯỢNG
+    ======================================== --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const quantityInput = document.getElementById('quantity_input');
             const quantityAdd = document.getElementById('quantity_add');
             const quantityBuy = document.getElementById('quantity_buy');
-
             const decreaseBtn = document.querySelector('.quantity-decrease');
             const increaseBtn = document.querySelector('.quantity-increase');
 
             if (!quantityInput) return;
 
+            // Đồng bộ các input ẩn với input số lượng
             const syncHiddenInputs = () => {
                 quantityAdd.value = quantityInput.value;
                 quantityBuy.value = quantityInput.value;
             };
 
+                        // Xử lý nút giảm số lượng
             decreaseBtn?.addEventListener('click', () => {
                 let current = parseInt(quantityInput.value);
                 if (current > 1) {
@@ -414,25 +506,63 @@
                 }
             });
 
+            // Xử lý nút tăng số lượng
             increaseBtn?.addEventListener('click', () => {
                 let current = parseInt(quantityInput.value);
-                quantityInput.value = current + 1;
-                syncHiddenInputs();
+                const maxQty = parseInt(quantityInput.getAttribute('data-max')) || 999;
+                if (current < maxQty) {
+                    quantityInput.value = current + 1;
+                    syncHiddenInputs();
+                } else {
+                    // Hiển thị thông báo khi vượt quá số lượng
+                    const quantityError = document.querySelector('.quantity-error');
+                    if (quantityError) {
+                        quantityError.textContent = `Số lượng tối đa có thể chọn: ${maxQty}`;
+                        quantityError.style.display = 'block';
+                        setTimeout(() => {
+                            quantityError.style.display = 'none';
+                        }, 3000);
+                    }
+                }
             });
 
+            // Kiểm tra và xác thực input số lượng
             quantityInput.addEventListener('input', () => {
                 let val = parseInt(quantityInput.value);
+                const maxQty = parseInt(quantityInput.getAttribute('data-max')) || 999;
+                
                 if (isNaN(val) || val < 1) {
                     quantityInput.value = 1;
+                } else if (val > maxQty) {
+                    quantityInput.value = maxQty;
+                    // Hiển thị thông báo khi vượt quá số lượng
+                    const quantityError = document.querySelector('.quantity-error');
+                    if (quantityError) {
+                        quantityError.textContent = `Số lượng tối đa có thể chọn: ${maxQty}`;
+                        quantityError.style.display = 'block';
+                        setTimeout(() => {
+                            quantityError.style.display = 'none';
+                        }, 3000);
+                    }
                 }
                 syncHiddenInputs();
             });
 
-            // Gọi ngay khi load trang để đồng bộ giá trị ban đầu
+            // Khởi tạo số lượng tối đa dựa trên variant đầu tiên
+            const firstSizeInput = document.querySelector('.product-size input[type="radio"][name="size"]');
+            if (firstSizeInput) {
+                const initialQuantity = parseInt(firstSizeInput.dataset.quantity);
+                quantityInput.setAttribute('data-max', initialQuantity);
+            }
+
+            // Đồng bộ ban đầu
             syncHiddenInputs();
         });
     </script>
 
+    {{-- ========================================
+         KIỂM TRA FORM TRƯỚC KHI GỬI
+    ======================================== --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.product-cart form').forEach(function (form) {
@@ -452,64 +582,379 @@
         });
     </script>
 
+    {{-- ========================================
+         HIỂN THỊ ĐÁNH GIÁ SAO
+    ======================================== --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll('.product-size input[type="radio"][name="size"]').forEach(function (input) {
-                input.addEventListener('change', function () {
-                    const variantId = this.dataset.variantId;
-                    const price = parseInt(this.dataset.price);
-                    const sale = parseInt(this.dataset.sale);
-
-                    // Cập nhật cả hai input product_variant_id
-                    const variantAdd = document.getElementById('product_variant_id_add');
-                    const variantBuy = document.getElementById('product_variant_id_buy');
-                    if (variantAdd) variantAdd.value = variantId;
-                    if (variantBuy) variantBuy.value = variantId;
-
-                    // Cập nhật lại giá hiển thị
-                    const wrapper = this.closest('.product-detail') || document;
-                    const priceEl = wrapper.querySelector('.price-product ins span');
-                    const saleEl = wrapper.querySelector('.price-product del');
-                    const saleSpanEl = wrapper.querySelector('.price-product del span');
-
-                    if (sale > 0 && sale < price) {
-                        priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
-                        if (saleSpanEl) {
-                            saleSpanEl.textContent = price.toLocaleString('vi-VN') + ' VND';
-                        }
-                        if (saleEl) {
-                            saleEl.style.display = 'inline';
-                        }
-                    } else {
-                        priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
-                        if (saleEl) {
-                            saleEl.style.display = 'none';
-                        }
-                    }
-
-                    // Cập nhật tình trạng sản phẩm
-                    const quantity = parseInt(this.dataset.quantity);
-                    const productStatus = wrapper.querySelector('.product-status span');
-                    if (productStatus) {
-                        if (quantity > 0) {
-                            productStatus.textContent = `Kho hàng: ${quantity.toLocaleString('vi-VN')} sản phẩm`;
-                            productStatus.style.color = '#28a745';
-                        } else {
-                            productStatus.textContent = 'Hết hàng';
-                            productStatus.style.color = '#dc3545';
-                        }
-                    }
-                });
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.stars-inner[data-width]').forEach(function(el){
+                var pct = parseFloat(el.getAttribute('data-width')) || 0;
+                el.style.width = pct + '%';
             });
         });
     </script>
 
-    {{-- CSS xử lý giao diện Đánh giá sản phẩm --}}
+    {{-- ========================================
+         TẠO MÀU SẮC CHO COLOR SWATCH
+    ======================================== --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.color-swatch').forEach(function(sw){
+                var color = sw.getAttribute('data-color') || '#ffffff';
+                var hasBorder = sw.getAttribute('data-has-border') === '1';
+                sw.style.display = 'inline-block';
+                sw.style.width = '25px';
+                sw.style.height = '25px';
+                sw.style.borderRadius = '50%';
+                sw.style.backgroundColor = color;
+                sw.style.border = hasBorder ? '1px solid #ccc' : '1px solid transparent';
+            });
+        });
+    </script>
+
+    {{-- ========================================
+         PHẦN CSS - ĐỊNH DẠNG GIAO DIỆN
+    ======================================== --}}
+
+    {{-- ========================================
+         CSS CHO GALLERY ẢNH SẢN PHẨM
+    ======================================== --}}
     <style>
-        h1{
+        .product-gallery {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .product-gallery__main {
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: #fff;
+        }
+
+        .product-gallery__main-image {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 120%; /* Aspect ratio 5:6 */
+            overflow: hidden;
+        }
+
+        .product-main-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-gallery__main-image:hover .product-main-img {
+            transform: scale(1.05);
+        }
+
+        .product-gallery__thumbnails {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .thumbnail-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumbnail-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .thumbnail-item.active {
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Responsive - Tự động điều chỉnh theo kích thước màn hình */
+        @media (max-width: 768px) {
+            .product-gallery__main-image {
+                padding-bottom: 100%; /* Tỷ lệ hình vuông trên mobile */
+            }
+            
+            .thumbnail-item {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .product-gallery__thumbnails {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-gallery__main-image {
+                padding-bottom: 90%; /* Rộng hơn một chút trên màn hình nhỏ */
+            }
+            
+            .thumbnail-item {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+
+    {{-- ========================================
+         CSS CHO THÔNG TIN SẢN PHẨM
+    ======================================== --}}
+    <style>
+        .product-information { padding-top: 11px; }
+        .product-information h1 { 
+            font-size: 28px; 
+            font-weight: 700; 
+            line-height: 1.25; 
+            margin-bottom: 19px; 
+            text-transform: uppercase; 
+        }
+        @media (max-width: 576px) { 
+            .product-information h1 { font-size: 22px; } 
+        }
+
+        .price-product { 
+            display: flex; 
+            align-items: baseline; 
+            gap: 15px; 
+            margin: 11px 0 19px; 
+        }
+        .price-product ins { 
+            text-decoration: none; 
+            color: #222; 
+            font-weight: 700; 
+            font-size: 22px; 
+        }
+        .price-product del { 
+            color: #9aa0a6; 
+            font-size: 15px; 
+        }
+
+        .product-detail__sub-info p { 
+            margin: 0 0 15px; 
+            color: #5f6368; 
+            display: flex; 
+            align-items: center; 
+            gap: 17px; 
+            flex-wrap: wrap; 
+        }
+        .product-detail__sub-info .stars-outer { 
+            transform: translateY(1px); 
+        }
+
+        .product-category { margin-top: 15px; }
+        .product-category p { margin: 0; color: #5f6368; }
+
+        .product-status { margin-top: 15px; }
+        .product-status p { margin: 0; }
+        .product-status span { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            background: #f6f7f8; 
+            font-weight: 600; 
+        }
+    </style>
+
+    {{-- ========================================
+         CSS CHO CHỌN MÀU SẮC
+    ======================================== --}}
+    <style>
+        .list-color ul { gap: 12px !important; }
+        .list-color li a span { 
+            width: 32px !important; 
+            height: 32px !important; 
+            border-radius: 50%; 
+            box-shadow: 0 1px 2px rgba(0,0,0,.06); 
+            transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease; 
+        }
+        .list-color li a:hover span { 
+            transform: translateY(-1px); 
+            box-shadow: 0 3px 10px rgba(0,0,0,.12); 
+        }
+        .list-color li.checked a span { 
+            outline: 2px solid #222; 
+            outline-offset: 2px; 
+        }
+        @media (max-width: 576px) {
+            .list-color li a span { 
+                width: 28px !important; 
+                height: 28px !important; 
+            }
+        }
+    </style>
+
+    {{-- ========================================
+         CSS CHO CHỌN KÍCH THƯỚC
+    ======================================== --}}
+    <style>
+        .product-size label { 
+            display: inline-flex !important; 
+            align-items: center; 
+            gap: 6px; 
+            margin: 6px 8px 0 0 !important; 
+            padding: 8px 14px !important; 
+            border: 1.5px solid #ddd !important; 
+            border-radius: 8px !important; 
+            background: #fff; 
+            color: #333; 
+            transition: all .15s ease; 
+        }
+        .product-size label:hover { 
+            border-color: #222 !important; 
+            transform: translateY(-1px); 
+            box-shadow: 0 3px 10px rgba(0,0,0,.06); 
+        }
+        .product-size input[type="radio"] { display: none; }
+        .product-size input[type="radio"] + span { 
+            letter-spacing: .3px; 
+            font-weight: 600; 
+        }
+        .product-size label:has(input[type="radio"]:checked) { 
+            border-color: #222 !important; 
+            box-shadow: 0 2px 8px rgba(0,0,0,.06); 
+        }
+        @media (max-width: 576px) {
+            .product-size label { 
+                padding: 7px 12px !important; 
+            }
+        }
+    </style>
+
+    {{-- ========================================
+         CSS CHO ĐIỀU KHIỂN SỐ LƯỢNG
+    ======================================== --}}
+    <style>
+        .product-quantity { margin: 12px 0 16px; }
+        .product-quantity-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            flex-wrap: wrap;
+        }
+        .quantity-label { 
+            font-weight: 600; 
+            color: #333; 
+        }
+        .quantity-control { 
+            background: #fff; 
+            border: 1.5px solid #ddd; 
+            border-radius: 10px; 
+            padding: 6px; 
+            gap: 6px; 
+        }
+        .qty-btn { 
+            width: 38px; 
+            height: 38px; 
+            border: none; 
+            background: #f3f4f6; 
+            border-radius: 8px; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700; 
+            cursor: pointer; 
+        }
+        .qty-btn:hover { 
+            background: #e9ecef; 
+        }
+        .qty-input { 
+            width: 60px; 
+            height: 38px; 
+            border: none; 
+            text-align: center; 
+            background: transparent; 
+            outline: none; 
+            font-weight: 600; 
+        }
+        .quantity-control:has(.qty-input:focus) { 
+            box-shadow: inset 0 0 0 2px rgba(0,0,0,.06); 
+        }
+        
+        /* Thông báo lỗi số lượng */
+        .quantity-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            color: #721c24;
+            animation: fadeIn 0.3s ease-in;
+            white-space: nowrap;
+        }
+        
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-5px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+    </style>
+
+    {{-- ========================================
+         CSS CHO ĐÁNH GIÁ SAO
+    ======================================== --}}
+    <style>
+        .stars-outer {
+            position: relative;
+            display: inline-block;
+            color: #ccc;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .stars-outer::before {
+            content: '★★★★★';
+        }
+
+        .stars-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            color: gold;
+            width: 0;
+        }
+
+        .stars-inner::before {
+            content: '★★★★★';
+        }
+    </style>
+
+    {{-- ========================================
+         CSS CHO ĐÁNH GIÁ SẢN PHẨM
+    ======================================== --}}
+    <style>
+        h1 {
             color: black;
-            /* text-align: center;  */
-            margin-bottom: 20px
+            margin-bottom: 20px;
         }
 
         .viewed-products {
@@ -522,7 +967,6 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
-            /* border-left: 4px solid #ff4d4f; */
             padding-left: 10px;
         }
 
@@ -574,116 +1018,5 @@
             line-height: 1.6;
             color: #444;
         }
-    </style>
-
-    {{-- CSS xử lý % số sao --}}
-    <style>
-        /* Quantity row styling */
-        .product-quantity { margin: 12px 0 16px; }
-        .product-quantity-row { display: flex; align-items: center; justify-content: flex-start; gap: 12px; flex-wrap: wrap; }
-        .quantity-label { font-weight: 600; color: #333; }
-        .quantity-control { display: inline-flex; align-items: center; gap: 6px; background: #f6f7f8; padding: 6px; border-radius: 8px; border: 1px solid #e5e7eb; }
-        .qty-btn { width: 34px; height: 34px; line-height: 34px; text-align: center; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; font-weight: 700; cursor: pointer; }
-        .qty-btn:hover { background: #f3f4f6; }
-        .qty-input { width: 64px; text-align: center; height: 34px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; }
-        @media (max-width: 576px) { .qty-input { width: 56px; } }
-
-        /* Căn chỉnh thẩm mỹ khu vực thông tin sản phẩm */
-        .product-information { padding-top: 11px; }
-        .product-information h1 { font-size: 28px; font-weight: 700; line-height: 1.25; margin-bottom: 19px; text-transform: uppercase; }
-        @media (max-width: 576px) { .product-information h1 { font-size: 22px; } }
-
-        .price-product { display: flex; align-items: baseline; gap: 15px; margin: 11px 0 19px; }
-        .price-product ins { text-decoration: none; color: #222; font-weight: 700; font-size: 22px; }
-        .price-product del { color: #9aa0a6; font-size: 15px; }
-
-        .product-detail__sub-info p { margin: 0 0 15px; color: #5f6368; display: flex; align-items: center; gap: 17px; flex-wrap: wrap; }
-        .product-detail__sub-info .stars-outer { transform: translateY(1px); }
-
-        .product-category { margin-top: 15px; }
-        .product-category p { margin: 0; color: #5f6368; }
-
-        .product-status { margin-top: 15px; }
-        .product-status p { margin: 0; }
-        .product-status span { display: inline-block; padding: 4px 8px; border-radius: 6px; background: #f6f7f8; font-weight: 600; }
-
-        /* Nút chọn Màu (Color) */
-        .list-color ul { gap: 12px !important; }
-        .list-color li a span { width: 32px !important; height: 32px !important; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.06); transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease; }
-        .list-color li a:hover span { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.12); }
-        .list-color li.checked a span { outline: 2px solid #222; outline-offset: 2px; }
-
-        /* Nút chọn Size */
-        .product-size label { display: inline-flex !important; align-items: center; gap: 6px; margin: 6px 8px 0 0 !important; padding: 8px 14px !important; border: 1.5px solid #ddd !important; border-radius: 8px !important; background: #fff; color: #333; transition: all .15s ease; }
-        .product-size label:hover { border-color: #222 !important; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.06); }
-        .product-size input[type="radio"] { display: none; }
-        .product-size input[type="radio"] + span { letter-spacing: .3px; font-weight: 600; }
-        /* Khi chọn size: chỉ đổi viền, không đổi nền */
-        .product-size label:has(input[type="radio"]:checked) { border-color: #222 !important; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
-        @media (max-width: 576px) {
-            .product-size label { padding: 7px 12px !important; }
-            .list-color li a span { width: 28px !important; height: 28px !important; }
-        }
-
-        /* Fractional star rating */
-        .stars-outer {
-            position: relative;
-            display: inline-block;
-            color: #ccc;
-            font-size: 20px;
-            line-height: 1;
-        }
-
-        .stars-outer::before {
-            content: '★★★★★';
-        }
-
-        .stars-inner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            color: gold;
-            width: 0;
-        }
-
-        .stars-inner::before {
-            content: '★★★★★';
-        }
-    </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.stars-inner[data-width]').forEach(function(el){
-                var pct = parseFloat(el.getAttribute('data-width')) || 0;
-                el.style.width = pct + '%';
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.color-swatch').forEach(function(sw){
-                var color = sw.getAttribute('data-color') || '#ffffff';
-                var hasBorder = sw.getAttribute('data-has-border') === '1';
-                sw.style.display = 'inline-block';
-                sw.style.width = '25px';
-                sw.style.height = '25px';
-                sw.style.borderRadius = '50%';
-                sw.style.backgroundColor = color;
-                sw.style.border = hasBorder ? '1px solid #ccc' : '1px solid transparent';
-            });
-        });
-    </script>
-    
-    <style>
-        /* Kiểu lượng - phiên bản pill, cùng hàng, tối giản */
-        .product-quantity-row { gap: 16px; }
-        .quantity-control { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 6px; gap: 6px; }
-        .qty-btn { width: 38px; height: 38px; border: none; background: #f3f4f6; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer; }
-        .qty-btn:hover { background: #e9ecef; }
-        .qty-input { width: 60px; height: 38px; border: none; text-align: center; background: transparent; outline: none; font-weight: 600; }
-        .quantity-control:has(.qty-input:focus) { box-shadow: inset 0 0 0 2px rgba(0,0,0,.06); }
     </style>
 @endsection
