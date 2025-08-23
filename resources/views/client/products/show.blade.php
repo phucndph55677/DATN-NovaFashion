@@ -9,9 +9,18 @@
                 <div class="container">
                     <div class="breadcrumb-products">
                         <ol class="breadcrumb__list">
-                            <li class="breadcrumb__item"><a href="{{ route('home') }}" class="breadcrumb__link">Trang chủ</a></li>
-                            {{-- <li class="breadcrumb__item"><a href="#" class="breadcrumb__link" title="NỮ">NỮ</a></li> --}}
-                            <li class="breadcrumb__item"><a href="#">{{ $product->name }}</a></li>
+                            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{{ route('home') }}">Trang chủ</a></li>
+                            @isset($breadcrumbs)
+                                @foreach ($breadcrumbs as $crumb)
+                                    <li class="breadcrumb__item">
+                                        @if (!$loop->last)
+                                            <a href="{{ route('categories.index', $crumb->slug) }}" class="breadcrumb__link" title="{{ $crumb->name }}">{{ $crumb->name }}</a>
+                                        @else
+                                            <span class="breadcrumb__link" aria-current="page">{{ $crumb->name }}</span>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            @endisset
                         </ol>
                     </div>
 
@@ -27,7 +36,7 @@
                                         <div class="product-gallery__slide">
                                             <div class="product-gallery__slide--big">
                                                 <div class="thumb-product">
-                                                    <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
+                                                    <img class="product-img" style="width: 550px; height: 750px;" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
                                                 </div>     
                                             </div>
                                             
@@ -40,9 +49,18 @@
                                                 </div>
                                                 <div class="swiper-container swiper">
                                                     <div class="swiper-wrapper">
-                                                        <div class="swiper-slide">
-                                                            <img class="product-photo-album" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
-                                                        </div>
+                                                        @if($product->photoAlbums && $product->photoAlbums->count() > 0)
+                                                            @foreach($product->photoAlbums as $album)
+                                                                <div class="swiper-slide">
+                                                                    <img class="product-photo-album" src="{{ asset('storage/' . $album->image) }}" alt="Album Image">
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            {{-- Nếu không có album thì fallback về ảnh variant hoặc ảnh mặc định --}}
+                                                            <div class="swiper-slide">
+                                                                <img class="product-photo-album" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}" alt="Default">
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -51,36 +69,64 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <div class="product-detail__information">
+                                    <div class="product-information">
                                         <h1 style="text-transform: uppercase;">{{ $product->name }}</h1>
 
-                                        <div class="product-detail__sub-info">
-                                            <p>
-                                                SKU: <span>{{ $product->product_code }}</span>
-                                            </p>
-                                            <div class="product-detail__rating">
-                                                <div class="product-detail__rating-wrapper" data-percentage="100">
-                                                    <div class="product-detail__rating__background"></div>
-                                                    <div class="product-detail__rating__bar"></div>
-                                                </div>
-                                                <span>(0 đánh giá)</span>
-                                            </div>
-                                        </div>
-                                        
                                         <div class="price-product">
                                             @if ($variant && $variant->sale > 0 && $variant->sale < $variant->price)
                                                 <ins><span>{{ number_format($variant->sale, 0, ',', '.') }} VND</span></ins>
                                                 <del><span>{{ number_format($variant->price, 0, ',', '.') }} VND</span></del>
-                                            @elseif ($variant)
+                                            @elseif ($variant && $variant->price > 0)
                                                 <ins><span>{{ number_format($variant->price, 0, ',', '.') }} VND</span></ins>
+                                                <del style="display: none;"><span></span></del>
                                             @else
-                                                <ins><span>Liên hệ</span></ins> {{-- Trường hợp không có biến thể --}}
+                                                <ins><span>Liên hệ</span></ins>
+                                                <del style="display: none;"><span></span></del>
                                             @endif
                                         </div>
 
+                                        <div class="product-detail__sub-info">
+                                            @php
+                                                $avg = $averageRating ?? 0;
+                                                $percentage = max(0, min(100, ($avg / 5) * 100));
+                                            @endphp
+                                            <p style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                                                <span>SKU: <span>{{ $product->product_code }}</span></span>
+                                                <span class="sub-info-rating" style="display:flex; align-items:center; gap:8px;">
+                                                    <span class="stars-outer">
+                                                        <span class="stars-inner" data-width="{{ $percentage }}"></span>
+                                                    </span>
+                                                    <span>({{ number_format($avg, 1) }}/5 từ {{ $totalReviews }} đánh giá)</span>
+                                                </span>
+                                            </p>
+                                        </div>
+
+                                        <div class="product-category">
+                                            <p>
+                                                Danh mục: <span>{{ $product->category->name ?? 'Không có danh mục' }}</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="product-status">
+                                            <p>
+                                                <span id="product_status" style="color: #dc3545;">
+                                                    Vui lòng chọn màu và size
+                                                </span>
+                                            </p>
+                                        </div>
+
+                                        @php
+                                            $defaultColorName = optional(optional($product->variants->unique('color_id')->first())->color)->name ?? '';
+
+                                            // Lọc các variant đang cho phép kinh doanh
+                                            $activeVariants = $product->variants->where('status', '1'); 
+                                        @endphp
+                                        <p class="choice-label color-label" style="margin: 8px 0 6px; color:#5f6368;">
+                                            Màu sắc: <span class="picked-color-name">{{ $defaultColorName }}</span>
+                                        </p>
                                         <div class="list-color">
                                             <ul style="display: flex; gap: 10px;">
-                                                @foreach ($product->variants->unique('color_id') as $colorVariant)
+                                                @foreach ($activeVariants->unique('color_id') as $colorVariant)
                                                     <li class="{{ $loop->first ? 'checked' : '' }}" data-color-id="{{ $colorVariant->color_id }}">
                                                         <a href="" 
                                                             class="color-picker" 
@@ -88,27 +134,31 @@
                                                             data-size=""
                                                             data-price="{{ $colorVariant->price }}"
                                                             data-sale="{{ $colorVariant->sale }}"
-                                                            data-product="{{ $product->id }}">
-                                                            <span style="display:inline-block; width: 25px; height: 25px; border-radius: 50%;
-                                                                background-color: {{ $colorVariant->color->color_code }};
-                                                                border: 1px solid {{ strtolower($colorVariant->color->color_code) === '#ffffff' ? '#ccc' : 'transparent' }};">
-                                                            </span>
+                                                            data-product="{{ $product->id }}"
+                                                            data-color-name="{{ $colorVariant->color->name ?? '' }}">
+                                                            @php $needsBorder = strtolower($colorVariant->color->color_code) === '#ffffff' ? '1' : '0'; @endphp
+                                                            <span class="color-swatch" data-color="{{ $colorVariant->color->color_code }}" data-has-border="{{ $needsBorder }}"></span>
                                                         </a>
                                                     </li>
                                                 @endforeach
                                             </ul>                 
                                         </div>
 
+                                        <p class="choice-label size-label" style="margin: 12px 0 6px; color:#5f6368;">
+                                            Kích thước: <span class="picked-size-name"></span>
+                                        </p>
                                         <div class="product-size">
-                                            @foreach ($product->variants->groupBy('color_id') as $colorId => $variantsByColor)
-                                                <div class="size-group" data-color-id="{{ $colorId }}" style="{{ $loop->first ? '' : 'display: none;' }}">
+                                            @foreach ($activeVariants->groupBy('color_id') as $colorId => $variantsByColor)
+                                                <div class="size-group {{ $loop->first ? '' : 'd-none' }}" data-color-id="{{ $colorId }}">
                                                     @foreach ($variantsByColor as $colorVariant)
                                                         <label style="display: inline-block; margin: 5px; padding: 5px 9px; border: 1px solid #ccc; border-radius: 4px;">
                                                             <input type="radio" name="size" value="{{ $colorVariant->size->id }}"
                                                                 data-price="{{ $colorVariant->price }}"
                                                                 data-sale="{{ $colorVariant->sale }}"
                                                                 data-size-id="{{ $colorVariant->size->id }}"
-                                                                data-variant-id="{{ $colorVariant->id }}">
+                                                                data-variant-id="{{ $colorVariant->id }}"
+                                                                data-quantity="{{ $colorVariant->quantity }}"
+                                                                data-size-name="{{ $colorVariant->size->name }}">
                                                             <span class="text-uppercase">{{ $colorVariant->size->name }}</span>
                                                         </label>
                                                     @endforeach
@@ -119,11 +169,13 @@
                                         <div class="product-cart">
                                             {{-- Chỉ hiển thị 1 input số lượng --}}
                                             <div class="product-quantity">
-                                                <p style="font-weight: 500;">Số lượng</p>
-                                                <div style="display: flex; align-items: center; gap: 10px;">
-                                                    <button type="button" class="quantity-decrease" style="width: 32px;">-</button>
-                                                    <input type="number" id="quantity_input" value="1" min="1" style="width: 60px; text-align: center;" />
-                                                    <button type="button" class="quantity-increase" style="width: 32px;">+</button>
+                                                <div class="product-quantity-row">
+                                                    <span class="quantity-label">Số lượng</span>
+                                                    <div class="quantity-control">
+                                                        <button type="button" class="quantity-decrease qty-btn" aria-label="Giảm">-</button>
+                                                        <input type="number" id="quantity_input" value="1" min="1"class="qty-input" />
+                                                        <button type="button" class="quantity-increase qty-btn" aria-label="Tăng">+</button>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -225,15 +277,6 @@
             </div>
         </div>
     </main>
-
-    {{-- <div class="add-card-size" id="fancybox-add-to-cart">
-        <div class="thank-you__icon"><svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M56.7833 20.1167C62.9408 13.9592 71.2921 10.5 80 10.5C84.3117 10.5 88.5812 11.3493 92.5648 12.9993C96.5483 14.6493 100.168 17.0678 103.217 20.1167C106.266 23.1655 108.684 26.785 110.334 30.7686C111.984 34.7521 112.833 39.0216 112.833 43.3333V62.8333H47.1667V43.3333C47.1667 34.6254 50.6259 26.2741 56.7833 20.1167ZM46.1667 62.8333V43.3333C46.1667 34.3602 49.7312 25.7545 56.0762 19.4096C62.4212 13.0646 71.0268 9.5 80 9.5C84.4431 9.5 88.8426 10.3751 92.9474 12.0754C97.0523 13.7757 100.782 16.2678 103.924 19.4096C107.065 22.5513 109.558 26.281 111.258 30.3859C112.958 34.4907 113.833 38.8903 113.833 43.3333V62.8333H133.333C133.582 62.8333 133.793 63.0163 133.828 63.2626L147.162 156.596C147.182 156.739 147.139 156.885 147.044 156.994C146.949 157.104 146.812 157.167 146.667 157.167H13.3333C13.1884 157.167 13.0506 157.104 12.9556 156.994C12.8606 156.885 12.8179 156.739 12.8384 156.596L26.1717 63.2626C26.2069 63.0163 26.4178 62.8333 26.6667 62.8333H46.1667ZM113.333 63.8333H46.6667H27.1003L13.9098 156.167H146.09L132.9 63.8333H113.333Z" fill="#212121"></path>
-            <path d="M107.205 91.3663L80.4451 121.251L64.5853 106.174L62 108.893L80.6618 126.634L110 93.8694L107.205 91.3663Z" fill="black"></path>
-        </svg>
-        </div>
-        <p class="notify__add-to-cart--success text-uppercase">Thêm vào giỏ hàng thành công !</p>
-    </div> --}}
 @endsection
 
 @section('scripts')
@@ -251,6 +294,7 @@
                     const price = parseInt(this.dataset.price);
                     const sale = parseInt(this.dataset.sale);
                     const colorId = this.closest('li').dataset.colorId;
+                    const colorName = this.dataset.colorName || '';
 
                     const wrapper = document.querySelector(`.product-detail[data-product-id="${productId}"]`);
                     if (!wrapper) return;
@@ -258,18 +302,27 @@
                     // Đổi ảnh
                     wrapper.querySelector('.product-img').src = image;
 
+                    // Cập nhật nhãn màu
+                    const colorLabel = wrapper.querySelector('.picked-color-name');
+                    if (colorLabel) colorLabel.textContent = colorName;
+
                     // Đổi giá ban đầu (khi chưa chọn size)
                     const priceEl = wrapper.querySelector('.price-product ins span');
-                    const saleEl = wrapper.querySelector('.price-product del span');
+                    const saleEl = wrapper.querySelector('.price-product del');
+                    const saleSpanEl = wrapper.querySelector('.price-product del span');
+                    
                     if (sale > 0 && sale < price) {
                         priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
-                        saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
-                        saleEl.parentElement.style.display = 'inline';
+                        if (saleSpanEl) {
+                            saleSpanEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        }
+                        if (saleEl) {
+                            saleEl.style.display = 'inline';
+                        }
                     } else {
                         priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
                         if (saleEl) {
-                            saleEl.textContent = '';
-                            saleEl.parentElement.style.display = 'none';
+                            saleEl.style.display = 'none';
                         }
                     }
 
@@ -279,11 +332,11 @@
 
                     // Hiển thị size theo màu
                     wrapper.querySelectorAll('.product-size .size-group').forEach(group => {
-                        group.style.display = 'none';
+                        group.classList.add('d-none');
                     });
                     wrapper.querySelectorAll(`.product-size .size-group`).forEach(group => {
                         if (group.dataset.colorId == colorId) {
-                            group.style.display = 'block';
+                            group.classList.remove('d-none');
                         }
                     });
                 });
@@ -294,20 +347,42 @@
                 input.addEventListener('change', function () {
                     const price = parseInt(this.dataset.price);
                     const sale = parseInt(this.dataset.sale);
+                    const quantity = parseInt(this.dataset.quantity);
+                    const sizeName = this.dataset.sizeName || '';
                     const wrapper = this.closest('.product-detail');
 
+                    // Cập nhật nhãn kích thước
+                    const sizeLabel = wrapper.querySelector('.picked-size-name');
+                    if (sizeLabel) sizeLabel.textContent = sizeName;
+
                     const priceEl = wrapper.querySelector('.price-product ins span');
-                    const saleEl = wrapper.querySelector('.price-product del span');
+                    const saleEl = wrapper.querySelector('.price-product del');
+                    const saleSpanEl = wrapper.querySelector('.price-product del span');
 
                     if (sale > 0 && sale < price) {
                         priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
-                        saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
-                        saleEl.parentElement.style.display = 'inline';
+                        if (saleSpanEl) {
+                            saleSpanEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        }
+                        if (saleEl) {
+                            saleEl.style.display = 'inline';
+                        }
                     } else {
                         priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
                         if (saleEl) {
-                            saleEl.textContent = '';
-                            saleEl.parentElement.style.display = 'none';
+                            saleEl.style.display = 'none';
+                        }
+                    }
+
+                    // Cập nhật tình trạng sản phẩm
+                    const productStatus = wrapper.querySelector('.product-status span');
+                    if (productStatus) {
+                        if (quantity > 0) {
+                            productStatus.textContent = `Kho hàng: ${quantity.toLocaleString('vi-VN')} sản phẩm`;
+                            productStatus.style.color = '#28a745';
+                        } else {
+                            productStatus.textContent = 'Hết hàng';
+                            productStatus.style.color = '#dc3545';
                         }
                     }
                 });
@@ -359,6 +434,25 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.product-cart form').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    const wrapper = this.closest('.product-detail');
+                    const picked = wrapper?.querySelector('.product-size input[type="radio"][name="size"]:checked');
+                    if (!picked) {
+                        e.preventDefault();
+                        if (typeof showToast === 'function') {
+                            showToast('Vui lòng chọn size trước khi tiếp tục', 'warning');
+                        } else {
+                            alert('Vui lòng chọn size trước khi tiếp tục');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.product-size input[type="radio"][name="size"]').forEach(function (input) {
                 input.addEventListener('change', function () {
@@ -375,17 +469,34 @@
                     // Cập nhật lại giá hiển thị
                     const wrapper = this.closest('.product-detail') || document;
                     const priceEl = wrapper.querySelector('.price-product ins span');
-                    const saleEl = wrapper.querySelector('.price-product del span');
+                    const saleEl = wrapper.querySelector('.price-product del');
+                    const saleSpanEl = wrapper.querySelector('.price-product del span');
 
                     if (sale > 0 && sale < price) {
                         priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
-                        saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
-                        saleEl.parentElement.style.display = 'inline';
+                        if (saleSpanEl) {
+                            saleSpanEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                        }
+                        if (saleEl) {
+                            saleEl.style.display = 'inline';
+                        }
                     } else {
                         priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
                         if (saleEl) {
-                            saleEl.textContent = '';
-                            saleEl.parentElement.style.display = 'none';
+                            saleEl.style.display = 'none';
+                        }
+                    }
+
+                    // Cập nhật tình trạng sản phẩm
+                    const quantity = parseInt(this.dataset.quantity);
+                    const productStatus = wrapper.querySelector('.product-status span');
+                    if (productStatus) {
+                        if (quantity > 0) {
+                            productStatus.textContent = `Kho hàng: ${quantity.toLocaleString('vi-VN')} sản phẩm`;
+                            productStatus.style.color = '#28a745';
+                        } else {
+                            productStatus.textContent = 'Hết hàng';
+                            productStatus.style.color = '#dc3545';
                         }
                     }
                 });
@@ -463,5 +574,116 @@
             line-height: 1.6;
             color: #444;
         }
+    </style>
+
+    {{-- CSS xử lý % số sao --}}
+    <style>
+        /* Quantity row styling */
+        .product-quantity { margin: 12px 0 16px; }
+        .product-quantity-row { display: flex; align-items: center; justify-content: flex-start; gap: 12px; flex-wrap: wrap; }
+        .quantity-label { font-weight: 600; color: #333; }
+        .quantity-control { display: inline-flex; align-items: center; gap: 6px; background: #f6f7f8; padding: 6px; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .qty-btn { width: 34px; height: 34px; line-height: 34px; text-align: center; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .qty-btn:hover { background: #f3f4f6; }
+        .qty-input { width: 64px; text-align: center; height: 34px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; }
+        @media (max-width: 576px) { .qty-input { width: 56px; } }
+
+        /* Căn chỉnh thẩm mỹ khu vực thông tin sản phẩm */
+        .product-information { padding-top: 11px; }
+        .product-information h1 { font-size: 28px; font-weight: 700; line-height: 1.25; margin-bottom: 19px; text-transform: uppercase; }
+        @media (max-width: 576px) { .product-information h1 { font-size: 22px; } }
+
+        .price-product { display: flex; align-items: baseline; gap: 15px; margin: 11px 0 19px; }
+        .price-product ins { text-decoration: none; color: #222; font-weight: 700; font-size: 22px; }
+        .price-product del { color: #9aa0a6; font-size: 15px; }
+
+        .product-detail__sub-info p { margin: 0 0 15px; color: #5f6368; display: flex; align-items: center; gap: 17px; flex-wrap: wrap; }
+        .product-detail__sub-info .stars-outer { transform: translateY(1px); }
+
+        .product-category { margin-top: 15px; }
+        .product-category p { margin: 0; color: #5f6368; }
+
+        .product-status { margin-top: 15px; }
+        .product-status p { margin: 0; }
+        .product-status span { display: inline-block; padding: 4px 8px; border-radius: 6px; background: #f6f7f8; font-weight: 600; }
+
+        /* Nút chọn Màu (Color) */
+        .list-color ul { gap: 12px !important; }
+        .list-color li a span { width: 32px !important; height: 32px !important; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.06); transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease; }
+        .list-color li a:hover span { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+        .list-color li.checked a span { outline: 2px solid #222; outline-offset: 2px; }
+
+        /* Nút chọn Size */
+        .product-size label { display: inline-flex !important; align-items: center; gap: 6px; margin: 6px 8px 0 0 !important; padding: 8px 14px !important; border: 1.5px solid #ddd !important; border-radius: 8px !important; background: #fff; color: #333; transition: all .15s ease; }
+        .product-size label:hover { border-color: #222 !important; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.06); }
+        .product-size input[type="radio"] { display: none; }
+        .product-size input[type="radio"] + span { letter-spacing: .3px; font-weight: 600; }
+        /* Khi chọn size: chỉ đổi viền, không đổi nền */
+        .product-size label:has(input[type="radio"]:checked) { border-color: #222 !important; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+        @media (max-width: 576px) {
+            .product-size label { padding: 7px 12px !important; }
+            .list-color li a span { width: 28px !important; height: 28px !important; }
+        }
+
+        /* Fractional star rating */
+        .stars-outer {
+            position: relative;
+            display: inline-block;
+            color: #ccc;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .stars-outer::before {
+            content: '★★★★★';
+        }
+
+        .stars-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            color: gold;
+            width: 0;
+        }
+
+        .stars-inner::before {
+            content: '★★★★★';
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.stars-inner[data-width]').forEach(function(el){
+                var pct = parseFloat(el.getAttribute('data-width')) || 0;
+                el.style.width = pct + '%';
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.color-swatch').forEach(function(sw){
+                var color = sw.getAttribute('data-color') || '#ffffff';
+                var hasBorder = sw.getAttribute('data-has-border') === '1';
+                sw.style.display = 'inline-block';
+                sw.style.width = '25px';
+                sw.style.height = '25px';
+                sw.style.borderRadius = '50%';
+                sw.style.backgroundColor = color;
+                sw.style.border = hasBorder ? '1px solid #ccc' : '1px solid transparent';
+            });
+        });
+    </script>
+    
+    <style>
+        /* Kiểu lượng - phiên bản pill, cùng hàng, tối giản */
+        .product-quantity-row { gap: 16px; }
+        .quantity-control { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 6px; gap: 6px; }
+        .qty-btn { width: 38px; height: 38px; border: none; background: #f3f4f6; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer; }
+        .qty-btn:hover { background: #e9ecef; }
+        .qty-input { width: 60px; height: 38px; border: none; text-align: center; background: transparent; outline: none; font-weight: 600; }
+        .quantity-control:has(.qty-input:focus) { box-shadow: inset 0 0 0 2px rgba(0,0,0,.06); }
     </style>
 @endsection
