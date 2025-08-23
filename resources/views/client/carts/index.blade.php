@@ -7,7 +7,7 @@
         <div class="container">
             <div class="cart pt-40 cart-page">
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-9">
                         <div class="checkout-process-bar block-border">
                             <ul>
                                 <li class="active"><span>Giỏ hàng </span></li>
@@ -66,27 +66,29 @@
                                                 </td>
 
                                                 <td class="product-price">
-                                                   <p>{{ number_format($cartDetail->price, 0, ',', '.') }} VND</p>
+                                                   <p style="white-space: nowrap;">
+                                                        {{ number_format($cartDetail->price, 0, ',', '.') }} VND
+                                                    </p>
                                                 </td>
 
                                                 <td class="product-quantity">
-                                                    <div>
-                                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                                            <button type="button" class="quantity-decrease" style="width: 32px;">-</button>
-                                                            <input 
-                                                                type="number" 
-                                                                name="quantity" 
-                                                                class="quantity-input"
-                                                                value="{{ $cartDetail->quantity }}" 
-                                                                style="width: 60px; text-align: center;"
-                                                                data-price="{{ $cartDetail->price }}" />
-                                                            <button type="button" class="quantity-increase" style="width: 32px;">+</button>
-                                                        </div>
+                                                    <div class="quantity-control">
+                                                        <button type="button" class="quantity-decrease qty-btn" aria-label="Giảm">-</button>
+                                                        <input 
+                                                            type="number" 
+                                                            name="quantity" 
+                                                            class="quantity-input qty-input"
+                                                            value="{{ $cartDetail->quantity }}" 
+                                                            data-price="{{ $cartDetail->price }}"
+                                                            data-max="{{ $cartDetail->productVariant->quantity ?? 999 }}" />
+                                                        <button type="button" class="quantity-increase qty-btn" aria-label="Tăng">+</button>
                                                     </div>
                                                 </td>
 
                                                 <td class="product-total-amount">
-                                                    <p>{{ number_format($cartDetail->total_amount, 0, ',', '.') }} VND</p> 
+                                                    <p style="white-space: nowrap; font-weight: bold;">
+                                                        {{ number_format($cartDetail->total_amount, 0, ',', '.') }} VND
+                                                    </p> 
                                                 </td>
 
                                                 <td>
@@ -112,7 +114,7 @@
                         </a>
                     </div>
                     
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="cart-summary" id="cart-page-summary">
                             <div class="cart-summary__overview">
                                 <h3>Tổng tiền giỏ hàng</h3>
@@ -123,17 +125,6 @@
                                 <div class="cart-summary__overview__item">
                                     <p>Tổng tiền hàng</p>
                                     <p><b class="product-total-amount">{{ number_format($cart->total_amount, 0, ',', '.') }} VND</b></p> 
-                                </div>
-                            </div>
-
-                            <div class="cart-summary__note">
-                                <div class="inner-note d-flex">
-                                    <div class="left-inner-note">
-                                        <span class="icon-ic_alert"></span>
-                                    </div>
-                                    <div class="content-inner-note">
-                                        Sản phẩm nằm trong chương trình KM giảm giá trên 50% không hỗ trợ đổi trả
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -221,20 +212,34 @@
 
                 increaseBtn?.addEventListener("click", () => {
                     let val = parseInt(quantityInput.value);
-                    quantityInput.value = val + 1;
-                    updateQuantityInDatabase(cartDetailId, val + 1);
+                    const maxQty = parseInt(quantityInput.getAttribute('data-max')) || 999;
+                    
+                    if (val < maxQty) {
+                        quantityInput.value = val + 1;
+                        updateQuantityInDatabase(cartDetailId, val + 1);
 
-                    const checkbox = wrapper.closest('tr').querySelector('input[type="checkbox"]');
-                    if (checkbox && !checkbox.checked) checkbox.checked = true;
+                        const checkbox = wrapper.closest('tr').querySelector('input[type="checkbox"]');
+                        if (checkbox && !checkbox.checked) checkbox.checked = true;
 
-                    updateTotals();
+                        updateTotals();
+                    } else {
+                        // Hiển thị thông báo khi vượt quá số lượng
+                        showToast(`Số lượng tối đa có thể chọn: ${maxQty}`, 'warning');
+                    }
                 });
 
                 quantityInput?.addEventListener("input", () => {
                     let val = parseInt(quantityInput.value);
+                    const maxQty = parseInt(quantityInput.getAttribute('data-max')) || 999;
+                    
                     if (isNaN(val) || val < 1) {
                         quantityInput.value = 1;
                         val = 1;
+                    } else if (val > maxQty) {
+                        quantityInput.value = maxQty;
+                        val = maxQty;
+                        // Hiển thị thông báo khi vượt quá số lượng
+                        showToast(`Số lượng tối đa có thể chọn: ${maxQty}`, 'warning');
                     }
 
                     const checkbox = wrapper.closest('tr').querySelector('input[type="checkbox"]');
@@ -277,13 +282,25 @@
                             lineTotalCell.textContent = data.data.total_amount.toLocaleString('vi-VN') + " VND";
                         }
 
+                        // ✅ Cập nhật data-max nếu server trả về thông tin mới về tồn kho
+                        if (data.data.available_quantity !== undefined) {
+                            quantityInput.setAttribute('data-max', data.data.available_quantity);
+                        }
+
                         // ✅ Gọi lại tính tổng theo checkbox đã chọn
                         updateTotals();
 
-                        showToast('Cập nhật số lượng thành công!');
+                        showToast('Cập nhật số lượng thành công!', 'success');
                     } else {
                         console.error('Lỗi:', data.message);
-                        showToast('Có lỗi xảy ra: ' + data.message, 'error');
+                        
+                        // Kiểm tra nếu lỗi liên quan đến số lượng tồn kho
+                        if (data.message && data.message.includes('tồn kho') || data.message.includes('quantity')) {
+                            showToast('Số lượng vượt quá tồn kho hiện có!', 'warning');
+                        } else {
+                            showToast('Có lỗi xảy ra: ' + data.message, 'error');
+                        }
+                        
                         quantityInput.value = originalValue; // Khôi phục giá trị cũ
                     }
                 })
@@ -320,4 +337,68 @@
             window.location.href = url;
         });
     </script>
+
+    {{-- ========================================
+         CSS CHO ĐIỀU KHIỂN SỐ LƯỢNG
+    ======================================== --}}
+    <style>
+        .product-quantity { 
+            margin: 8px 0; 
+        }
+        
+        .quantity-control { 
+            background: #fff; 
+            border: 1.5px solid #ddd; 
+            border-radius: 10px; 
+            padding: 6px; 
+            gap: 6px; 
+            display: flex;
+            align-items: center;
+        }
+        
+        .qty-btn { 
+            width: 38px; 
+            height: 38px; 
+            border: none; 
+            background: #f3f4f6; 
+            border-radius: 8px; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: background-color 0.2s ease;
+        }
+        
+        .qty-btn:hover { 
+            background: #e9ecef; 
+        }
+        
+        .qty-input { 
+            width: 60px; 
+            height: 38px; 
+            border: none; 
+            text-align: center; 
+            background: transparent; 
+            outline: none; 
+            font-weight: 600; 
+        }
+        
+        .quantity-control:has(.qty-input:focus) { 
+            box-shadow: inset 0 0 0 2px rgba(0,0,0,.06); 
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .qty-btn {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .qty-input {
+                width: 50px;
+                height: 32px;
+            }
+        }
+    </style>
 @endsection
