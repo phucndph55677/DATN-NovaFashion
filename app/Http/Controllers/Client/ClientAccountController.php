@@ -140,29 +140,78 @@ class ClientAccountController extends Controller
     {
         $order = Order::findOrFail($id);
 
-        // Chỉ cho phép hủy khi trạng thái là 1 (Chưa xác nhận) hoặc 2 (Đã xác nhận)
-        if (in_array($order->order_status_id, [1, 2])) {
-            $order->order_status_id = 8; // 8 = Trạng thái Hủy đơn
+        // Chỉ cho phép hủy khi trạng thái là 1 (Chưa xác nhận) hoặc 2 (Đã xác nhận) hoặc 3 là (Chuẩn bị hàng)
+        if (in_array($order->order_status_id, [1, 2, 3])) {
+            $order->order_status_id = 9; // 8 = Trạng thái Hủy đơn
             $order->save();
         }
 
         return redirect()->back();
     }
 
-     /**
-     * Hoàn hàng
+    /**
+     * Gửi yêu cầu hoàn hàng
      */
-    public function return($id)
+    public function return($id, Request $request)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with('orderDetails.productVariant')->findOrFail($id);
 
-        // Chỉ cho phép hoàn hàng khi trạng thái là 6 (Thành công)
-        if ($order->order_status_id == 6) {
-            $order->order_status_id = 7; // 7 = Trạng thái Hoàn hàng
-            $order->save();
+        // Kiểm tra đơn có thuộc user hiện tại không
+        $userId = Auth::id();
+        if ($order->user_id !== $userId) {
+            abort(403, 'Bạn không có quyền hoàn đơn này.');
         }
 
-        return redirect()->back();
+        // Chỉ cho phép hoàn khi đơn đã Thành công (6)
+        if ($order->order_status_id != 6) {
+            return redirect()->back()->with('error', 'Đơn hàng chưa hoàn tất, không thể yêu cầu hoàn hàng.');
+        }
+
+        // Validate dữ liệu
+        $validated = $request->validate([
+            'return_reason' => 'required|string|max:1000',
+            'other_reason' => 'required_if:return_reason,other|nullable|string|max:1000',
+            'return_bank' => 'required|string|max:100',
+            'return_stk' => 'required|regex:/^[0-9]+$/|max:100',
+            'return_images' => 'required|max:2048',
+        ], [
+            'return_reason.required' => 'Bạn cần chọn hoặc nhập lý do hoàn hàng.',
+            'return_reason.max' => 'Lý do hoàn hàng không được vượt quá 1000 ký tự.',
+            'other_reason.required_if' => 'Bạn phải nhập lý do khác khi chọn "Khác..."',
+            'other_reason.max' => 'Lý do không được vượt quá 1000 ký tự.',
+            'return_bank.required' => 'Bạn cần nhập tên ngân hàng.',
+            'return_bank.max' => 'Tên ngân hàng không được vượt quá 100 ký tự.',
+            'return_stk.required' => 'Bạn cần nhập số tài khoản.',
+            'return_stk.regex' => 'Số tài khoản phải là số.',
+            'return_stk.max' => 'Số tài khoản không được vượt quá 100 ký tự.',
+            'return_images.required' => 'Vui lòng tải ảnh minh chứng.',
+            'return_images.max' => 'Mỗi ảnh không được quá 2MB.',
+        ]);
+
+        // Xử lý lý do
+        $reason = $request->return_reason === 'other' && $request->filled('other_reason')
+            ? $request->other_reason
+            : $request->return_reason;
+
+        // Upload ảnh (nếu có)
+        $imageLinks = [];
+        if ($request->hasFile('return_images')) {
+            foreach ($request->file('return_images') as $file) {
+                $path = $file->store('returns', 'public'); // storage/app/public/returns
+                $imageLinks[] = asset('storage/' . $path);
+            }
+        }
+
+        // Cập nhật đơn hàng
+        $order->update([
+            'order_status_id' => 7, // 7 = Chờ hoàn hàng
+            'return_reason' => $reason,
+            'return_bank'     => $request->return_bank,
+            'return_stk'      => $request->return_stk,
+            'return_image' => $imageLinks ? implode(',', $imageLinks) : null,
+        ]);
+
+        return redirect()->back()->with('success', 'Yêu cầu hoàn hàng đã được gửi!');
     }
 
     public function favorite(Request $request)
