@@ -7,7 +7,7 @@
         <main id="main" class="site-main">
             <div class="container">
                 <!-- Promotion -->
-                <div class="nav-info d-flex">
+                {{-- <div class="nav-info d-flex">
                     <div class="left-nav-info item-nav-info">
                         <a href="{{ route('products.sale', 50) }}">
                             <span>SALE OFF 50%</span>
@@ -23,7 +23,7 @@
                             <span>SALE OFF 10% </span>
                         </a>
                     </div>
-                </div>
+                </div> --}}
                 <!-- End Promotion -->
 
                 <!--Slider Trang chủ - Đầu trang-->
