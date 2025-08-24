@@ -185,20 +185,28 @@
                                             {{-- Action Buttons --}}
                                             <div style="display: flex; gap: 10px;">                                                
                                                 {{-- Add to Cart Form --}}
-                                                <form action="{{ route('carts.add') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="product_variant_id" id="product_variant_id_add" value="{{ $variant->id }}">
-                                                    <input type="hidden" name="quantity" id="quantity_add" value="1">
-                                                    <button type="submit" class="btn btn--large">Thêm vào giỏ</button>
-                                                </form>
+                                                @if(isset($variant) && $variant)
+                                                    <form action="{{ route('carts.add') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="product_variant_id" id="product_variant_id_add" value="{{ $variant->id }}">
+                                                        <input type="hidden" name="quantity" id="quantity_add" value="1">
+                                                        <button type="submit" class="btn btn--large">Thêm vào giỏ</button>
+                                                    </form>
+                                                @else
+                                                    <p class="text-danger">Liên hệ</p>
+                                                @endif
 
                                                 {{-- Buy Now Form --}}
-                                                <form action="{{ route('carts.buy') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="product_variant_id" id="product_variant_id_buy" value="{{ $variant->id }}">
-                                                    <input type="hidden" name="quantity" id="quantity_buy" value="1">
-                                                    <button type="submit" class="btn btn--large btn--outline">Mua hàng</button>
-                                                </form>
+                                                @if(isset($variant) && $variant)
+                                                    <form action="{{ route('carts.buy') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="product_variant_id" id="product_variant_id_buy" value="{{ $variant->id }}">
+                                                        <input type="hidden" name="quantity" id="quantity_buy" value="1">
+                                                        <button type="submit" class="btn btn--large btn--outline">Mua hàng</button>
+                                                    </form>
+                                                @else
+                                                    <p class="text-danger">Liên hệ</p>
+                                                @endif
 
                                                 {{-- Wishlist Button --}}
                                                 <button class="btn btn--large btn--outline btn--wishlist">
