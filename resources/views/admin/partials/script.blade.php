@@ -25,8 +25,6 @@
 <script src="https://templates.iqonic.design/datum-dist/laravel/public/vendor/quill/quill.min.js" async></script>
 <!-- Chart Custom JavaScript -->
 
-
-
 <!-- slider JavaScript -->
 <script src="https://templates.iqonic.design/datum-dist/laravel/public/js/slider.js"></script>
 
