@@ -25,12 +25,10 @@ return new class extends Migration
             $table->decimal('discount', 10, 2)->default(0); // Tiền giảm giá (nếu có) 
             $table->decimal('total_amount', 10, 2); // Tổng tiền cuối cùng phải thanh toán
             $table->text('note')->nullable();   // Ghi chú thêm (nếu có)
-            $table->text('note')->nullable();   // Ghi chú thêm (nếu có)
-            $table->string('return_reason')->nullable(); // lý do hoàn hàng
+            $table->text('return_reason')->nullable(); // lý do hoàn hàng
             $table->string('return_bank')->nullable();   // tên ngân hàng
             $table->string('return_stk')->nullable();    // số tài khoản
-            $table->string('return_image')->nullable();  // ảnh minh chứng (URL hoặc path)
-            $table->timestamps(); // Tạo 2 cột created_at và updated_at
+            $table->text('return_image')->nullable();   // ảnh minh chứng (URL hoặc path)
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }
