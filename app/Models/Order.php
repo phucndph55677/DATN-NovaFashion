@@ -23,6 +23,10 @@ class Order extends Model
         'discount',
         'total_amount',
         'note',
+        'return_reason',
+        'return_bank',
+        'return_stk',
+        'return_image',
     ];
 
     public function user()
