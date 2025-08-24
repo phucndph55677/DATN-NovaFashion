@@ -37,14 +37,22 @@ class AdminCategoryController extends Controller
     {
         $data = $request->validate(
             [
-                'name' => 'required|string|unique:categories,name',
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('categories')->where(function ($query) use ($request) {
+                        return $query->where('parent_id', $request->parent_id);
+                    }),
+                ],
                 'description' => 'nullable|string|max:255',
                 'parent_id' => 'nullable|exists:categories,id',
             ],
             [
                 'name.required' => 'Tên danh mục không được để trống.',
                 'name.string' => 'Tên danh mục phải là chuỗi.',
-                'name.unique' => 'Tên danh mục đã tồn tại.',
+                'name.unique' => $request->parent_id
+                    ? 'Tên danh mục đã tồn tại trong danh mục cha này.'
+                    : 'Danh mục đã tồn tại.',
                 'description.string' => 'Mô tả phải là chuỗi.',
                 'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
                 'parent_id.exists' => 'Danh mục cha không tồn tại hoặc đã bị xóa.',
@@ -54,7 +62,6 @@ class AdminCategoryController extends Controller
         Category::query()->create($data);
 
         return redirect()->route('admin.categories.index')->with('success', 'Thêm mới danh mục thành công!');
-
     }
 
     /**
@@ -112,7 +119,11 @@ class AdminCategoryController extends Controller
         $invalidIds = array_merge($invalidIds, $siblings);
 
         // Cấm việc chuyển danh mục cha có con → thành con
-        if ($category->childrenRecursive->count() > 0 && $request->parent_id != $category->parent_id && $request->parent_id !== null) {
+        if (
+            $category->childrenRecursive->count() > 0 && 
+            $request->parent_id != $category->parent_id && 
+            $request->parent_id !== null
+        ) {
             return back()->withErrors(['parent_id' => 'Không thể chuyển danh mục cha thành danh mục con khi nó đang có danh mục con.']);
         }
 
@@ -125,7 +136,11 @@ class AdminCategoryController extends Controller
                 'name' => [
                     'required',
                     'string',
-                    Rule::unique('categories', 'name')->ignore($category->id),
+                    Rule::unique('categories', 'name')
+                    ->ignore($category->id)
+                    ->where(function ($query) use ($request) {
+                        return $query->where('parent_id', $request->parent_id);
+                    }),
                 ],
                 'description' => 'nullable|string|max:255',
                 'parent_id' => [
@@ -138,7 +153,9 @@ class AdminCategoryController extends Controller
             [
                 'name.required' => 'Tên danh mục không được để trống.',
                 'name.string' => 'Tên danh mục phải là chuỗi.',
-                'name.unique' => 'Tên danh mục đã tồn tại.',
+                'name.unique' => $request->parent_id
+                    ? 'Tên danh mục đã tồn tại trong danh mục cha này.'
+                    : 'Danh mục đã tồn tại.',
                 'description.string' => 'Mô tả phải là chuỗi.',
                 'description.max' => 'Mô tả không được vượt quá 255 ký tự.',
                 'parent_id.not_in' => 'Không thể chọn chính nó hoặc danh mục con làm cha.',

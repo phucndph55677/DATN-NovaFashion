@@ -185,20 +185,28 @@
                                             {{-- Action Buttons --}}
                                             <div style="display: flex; gap: 10px;">                                                
                                                 {{-- Add to Cart Form --}}
-                                                <form action="{{ route('carts.add') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="product_variant_id" id="product_variant_id_add" value="{{ $variant->id }}">
-                                                    <input type="hidden" name="quantity" id="quantity_add" value="1">
-                                                    <button type="submit" class="btn btn--large">Thêm vào giỏ</button>
-                                                </form>
+                                                @if(isset($variant) && $variant)
+                                                    <form action="{{ route('carts.add') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="product_variant_id" id="product_variant_id_add" value="{{ $variant->id }}">
+                                                        <input type="hidden" name="quantity" id="quantity_add" value="1">
+                                                        <button type="submit" class="btn btn--large">Thêm vào giỏ</button>
+                                                    </form>
+                                                @else
+                                                    <p class="text-danger">Liên hệ</p>
+                                                @endif
 
                                                 {{-- Buy Now Form --}}
-                                                <form action="{{ route('carts.buy') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="product_variant_id" id="product_variant_id_buy" value="{{ $variant->id }}">
-                                                    <input type="hidden" name="quantity" id="quantity_buy" value="1">
-                                                    <button type="submit" class="btn btn--large btn--outline">Mua hàng</button>
-                                                </form>
+                                                @if(isset($variant) && $variant)
+                                                    <form action="{{ route('carts.buy') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="product_variant_id" id="product_variant_id_buy" value="{{ $variant->id }}">
+                                                        <input type="hidden" name="quantity" id="quantity_buy" value="1">
+                                                        <button type="submit" class="btn btn--large btn--outline">Mua hàng</button>
+                                                    </form>
+                                                @else
+                                                    <p class="text-danger">Liên hệ</p>
+                                                @endif
 
                                                 {{-- Wishlist Button --}}
                                                 <button class="btn btn--large btn--outline btn--wishlist">
@@ -262,6 +270,122 @@
                             @endforeach
                         </div>              
                     </div>
+
+                    <!-- SẢN PHẨM LIÊN QUAN -->
+                    <section class="home-new-prod">
+                        <div class="title-section">
+                            SẢN PHẨM LIÊN QUAN
+                        </div>
+
+                        <div class="exclusive-tabs">
+                            <div class="exclusive-content">
+                                <div class="exclusive-inner active">
+                                    <div class="list-products new-prod-slider owl-carousel">
+                                        @foreach ($relatedProducts as $relatedProduct)
+                                            @php
+                                                $variant = $relatedProduct->variants->first();
+                                                
+                                                $favorites = Auth::check() ? Auth::user()->favorites->pluck('product_id')->toArray() : [];
+                                                $isFavorite = in_array($relatedProduct->id, $favorites);
+                                            @endphp
+
+                                            <div class="item-new-prod">
+                                                <div class="product" data-product-id="{{ $relatedProduct->id }}">
+                                                    <div class="thumb-product">
+                                                        <a href="{{ route('products.show', $relatedProduct->id) }}">
+                                                            <img class="product-img" src="{{ asset('storage/' . ($variant?->image ?? 'default.png')) }}">
+                                                        </a>
+                                                    </div>
+                                                    <div class="info-product">
+                                                        <div class="list-color">
+                                                            <ul>
+                                                                @foreach ($relatedProduct->variants->unique('color_id') as $colorVariant)
+                                                                    <li class="{{ $loop->first ? 'checked' : '' }}" data-color-id="{{ $colorVariant->color_id }}">
+                                                                        <a href=""
+                                                                            class="color-picker"
+                                                                            data-image="{{ asset('storage/' . $colorVariant->image) }}"
+                                                                            data-price="{{ $colorVariant->price }}"
+                                                                            data-sale="{{ $colorVariant->sale }}"
+                                                                            data-product="{{ $relatedProduct->id }}"
+                                                                            data-color-name="{{ $colorVariant->color->name ?? '' }}">
+                                                                            @php $needsBorder = strtolower($colorVariant->color->color_code) === '#ffffff' ? '1' : '0'; @endphp
+                                                                            <span class="color-swatch" data-color="{{ $colorVariant->color->color_code }}" data-has-border="{{ $needsBorder }}"></span>
+                                                                        </a>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+
+                                                            <div style="display:inline-block; cursor:pointer;">
+                                                                <svg
+                                                                    id="favorite-icon-{{ $relatedProduct->id }}"
+                                                                    width="24" height="24"
+                                                                    fill="{{ $isFavorite ? 'red' : 'none' }}"
+                                                                    stroke="{{ $isFavorite ? 'white' : 'currentColor' }}"
+                                                                    stroke-width="1"
+                                                                    onclick="
+                                                                        event.preventDefault();
+                                                                        let userLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+                                                                        const toast = document.getElementById('toast');
+                                                                        if(!userLoggedIn){
+                                                                            document.getElementById('toast-message').innerText = 'Vui lòng đăng nhập để thêm sản phẩm yêu thích.';
+                                                                            toast.style.display = 'flex';
+                                                                            toast.style.opacity = '1';
+                                                                            setTimeout(()=> {
+                                                                                toast.style.opacity = '0';
+                                                                                setTimeout(()=>{ toast.style.display='none'; }, 400);
+                                                                            }, 3000);
+                                                                            return;
+                                                                        }
+
+                                                                        // Toggle màu icon
+                                                                        let icon = this;
+                                                                        if(icon.getAttribute('fill') === 'red'){
+                                                                            icon.setAttribute('fill', 'none');
+                                                                            icon.setAttribute('stroke', 'currentColor');
+                                                                        } else {
+                                                                            icon.setAttribute('fill', 'red');
+                                                                            icon.setAttribute('stroke', 'white');
+                                                                        }
+
+                                                                        // Submit form ẩn
+                                                                        document.getElementById('favorite-form-{{ $relatedProduct->id }}').submit();
+                                                                    "
+                                                                >
+                                                                    <path d="M20.8 4.6c-1.5-1.4-3.9-1.4-5.4 0l-.9.9-.9-.9c-1.5-1.4-3.9-1.4-5.4 0-1.6 1.5-1.6 4 0 5.5l6.3 6.2 6.3-6.2c1.6-1.5 1.6-4 0-5.5z" />
+                                                                </svg>
+
+                                                                <form id="favorite-form-{{ $relatedProduct->id }}" action="{{ route('account.favorites.toggle') }}" method="POST" class="d-none">
+                                                                    @csrf
+                                                                    <input type="hidden" name="product_id" value="{{ $relatedProduct->id }}">
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <h3 class="title-product">
+                                                            <a href="{{ route('products.show', $relatedProduct->id) }}">{{ $relatedProduct->name }}</a>
+                                                        </h3>
+                                                        <div class="price-product">
+                                                            @if ($variant && $variant->sale > 0 && $variant->sale < $variant->price)
+                                                                <ins><span>{{ number_format($variant->sale, 0, ',', '.') }} VND</span></ins>
+                                                                <del><span>{{ number_format($variant->price, 0, ',', '.') }} VND</span></del>
+                                                            @elseif ($variant)
+                                                                <ins><span>{{ number_format($variant->price, 0, ',', '.') }} VND</span></ins>
+                                                            @else
+                                                                <ins><span>Liên hệ</span></ins>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="add-to-cart">
+                                                        <a href="{{ route('products.show', $relatedProduct->id) }}"><i class="icon-ic_shopping-bag"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- SẢN PHẨM LIÊN QUAN -->
                     
                     {{-- Trending Banner --}}
                     <a href="https://ivymoda.com/danh-muc/dress-day-hoa-tiet-110725">
@@ -613,6 +737,79 @@
     </script>
 
     {{-- ========================================
+         XỬ LÝ COLOR PICKER CHO SẢN PHẨM LIÊN QUAN
+    ======================================== --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Xử lý khi click vào color picker trong sản phẩm liên quan
+            document.querySelectorAll('.color-picker').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const productId = this.dataset.product;
+                    const image = this.dataset.image;
+                    const price = parseInt(this.dataset.price) || 0;
+                    const sale = parseInt(this.dataset.sale) || 0;
+
+                    const wrapper = document.querySelector(`.product[data-product-id="${productId}"]`);
+                    if (!wrapper) {
+                        console.log('Không tìm thấy product wrapper:', productId);
+                        return;
+                    }
+
+                    // 1. Đổi ảnh sản phẩm
+                    const productImg = wrapper.querySelector('.product-img');
+                    if (productImg) {
+                        productImg.src = image;
+                    }
+
+                    // 2. Đổi giá
+                    const priceEl = wrapper.querySelector('.price-product ins span');
+                    const saleEl = wrapper.querySelector('.price-product del span');
+
+                    if (priceEl) {
+                        if (sale > 0 && sale < price) {
+                            priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
+                            if (saleEl) {
+                                saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                                saleEl.parentElement.style.display = 'inline';
+                            }
+                        } else {
+                            priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                            if (saleEl) {
+                                saleEl.textContent = '';
+                                saleEl.parentElement.style.display = 'none';
+                            }
+                        }
+                    }
+
+                    // 3. Đánh dấu màu được chọn
+                    wrapper.querySelectorAll('.list-color li').forEach(li => li.classList.remove('checked'));
+                    this.closest('li').classList.add('checked');
+                });
+            });
+        });
+    </script>
+
+    {{-- ========================================
+         TẠO MÀU SẮC CHO COLOR SWATCH (SẢN PHẨM LIÊN QUAN)
+    ======================================== --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Đợi một chút để đảm bảo DOM đã sẵn sàng
+            setTimeout(function() {
+                document.querySelectorAll('.color-swatch').forEach(function(sw){
+                    var color = sw.getAttribute('data-color') || '#ffffff';
+                    var hasBorder = sw.getAttribute('data-has-border') === '1';
+                    sw.style.backgroundColor = color;
+                    sw.style.border = hasBorder ? '1px solid #ccc' : '1px solid transparent';
+                });
+            }, 100);
+        });
+    </script>
+
+    {{-- ========================================
          PHẦN CSS - ĐỊNH DẠNG GIAO DIỆN
     ======================================== --}}
 
@@ -735,28 +932,10 @@
             .product-information h1 { font-size: 22px; } 
         }
 
-        .price-product { 
-            display: flex; 
-            align-items: baseline; 
-            gap: 15px; 
-            margin: 11px 0 19px; 
-        }
-        .price-product ins { 
-            text-decoration: none; 
-            color: #222; 
-            font-weight: 700; 
-            font-size: 22px; 
-        }
-        .price-product del { 
-            color: #9aa0a6; 
-            font-size: 15px; 
-        }
-
         .product-detail__sub-info p { 
             margin: 0 0 15px; 
             color: #5f6368; 
             display: flex; 
-            align-items: center; 
             gap: 17px; 
             flex-wrap: wrap; 
         }
@@ -782,10 +961,10 @@
          CSS CHO CHỌN MÀU SẮC
     ======================================== --}}
     <style>
-        .list-color ul { gap: 12px !important; }
+        .list-color ul { gap: 8px !important; }
         .list-color li a span { 
-            width: 32px !important; 
-            height: 32px !important; 
+            width: 20px !important; 
+            height: 20px !important; 
             border-radius: 50%; 
             box-shadow: 0 1px 2px rgba(0,0,0,.06); 
             transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease; 
@@ -800,8 +979,8 @@
         }
         @media (max-width: 576px) {
             .list-color li a span { 
-                width: 28px !important; 
-                height: 28px !important; 
+                width: 18px !important; 
+                height: 18px !important; 
             }
         }
     </style>
