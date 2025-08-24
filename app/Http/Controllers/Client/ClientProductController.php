@@ -64,7 +64,14 @@ class ClientProductController extends Controller
         $averageRating = $reviews->avg('rating');
         $totalReviews  = $reviews->count();
 
-        return view('client.products.show', compact('product', 'reviews', 'averageRating', 'breadcrumbs', 'totalReviews'));
+        // 🔥 Lấy sản phẩm liên quan (cùng category, loại bỏ sản phẩm hiện tại)
+        $relatedProducts = Product::with(['variants.color', 'variants.size'])
+            ->where('category_id', $category?->id) // tránh null
+            ->where('id', '!=', $product->id)
+            ->latest()
+            ->get();
+
+        return view('client.products.show', compact('product', 'reviews', 'averageRating', 'breadcrumbs', 'totalReviews', 'relatedProducts'));
     }
 
     /**
