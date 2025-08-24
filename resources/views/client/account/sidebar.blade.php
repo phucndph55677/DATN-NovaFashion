@@ -31,15 +31,6 @@
                         <span class="icon-ic_heart"></span>Sản phẩm yêu thích
                     </a>
                 </li>
-                <li class="">
-                    <a href="https://ivymoda.com/customer/login_log"><span class="icon-ic_padlock"></span>Lịch sử đăng nhập</a>
-                </li>
-                <li class="">
-                    <a href="https://ivymoda.com/customer/question"><span class="icon-ic_headphones"></span>Hỏi đáp sản phẩm</a>
-                </li>
-                <li class="">
-                    <a href="https://ivymoda.com/ivy-support/danh-sach"><span class="icon-ic_hand"></span>Hỗ trợ - IVY</a>
-                </li>
             </ul>
         </div>
     </div>
