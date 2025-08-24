@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Banner;
-use App\Models\Product;
 use App\Models\Voucher;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -20,6 +21,78 @@ class HomeController extends Controller
             ->whereDate('end_date', '>=', now())   // chưa hết hạn
             ->orderBy('created_at', 'desc')        // voucher mới nhất hiển thị trước
             ->get();
+
+        // Lấy category Nữ
+        $nuCategory = Category::where('name', 'Nữ')->first();
+
+        // Sản phẩm thuộc danh mục Nữ (bao gồm con)
+        $productsNu = collect(); // mặc định rỗng
+        if ($nuCategory) {
+            $productsNu = Product::with(['variants.color', 'variants.size'])
+                ->whereHas('category', function ($q) use ($nuCategory) {
+                    $q->where('id', $nuCategory->id)
+                    ->orWhere('parent_id', $nuCategory->id);
+                })
+                ->latest()
+                ->get();
+        }
+
+        // Nút xem tất cả Danh mục Nữ
+        $parentNu = Category::where('name', 'Nữ')->first();
+
+        // Lấy category Nam
+        $namCategory = Category::where('name', 'Nam')->first();
+
+        // Sản phẩm thuộc danh mục Nam (bao gồm con)
+        $productsNam = collect(); // mặc định rỗng
+        if ($namCategory) {
+            $productsNam = Product::with(['variants.color', 'variants.size'])
+                ->whereHas('category', function ($q) use ($namCategory) {
+                    $q->where('id', $namCategory->id)
+                    ->orWhere('parent_id', $namCategory->id);
+                })
+                ->latest()
+                ->get();
+        }
+
+        // Nút xem tất cả Danh mục Nam
+        $parentNam = Category::where('name', 'Nam')->first();
+
+        // Lấy category Tự Hào Việt Nam Ơi
+        $vnCategory = Category::where('name', 'Tự Hào Việt Nam Ơi')->first();  
+
+        // Sản phẩm thuộc danh mục Tự Hào Việt Nam Ơi (bao gồm con)
+        $productsVN = collect(); // mặc định rỗng
+        if ($vnCategory) {
+            $productsVN = Product::with(['variants.color', 'variants.size'])
+                ->whereHas('category', function ($q) use ($vnCategory) {
+                    $q->where('id', $vnCategory->id)
+                    ->orWhere('parent_id', $vnCategory->id);
+                })
+                ->latest()
+                ->get();
+        }
+
+        // Nút xem tất cả Danh mục Tự Hào Việt Nam Ơi
+        $parentVN = Category::where('name', 'Tự Hào Việt Nam Ơi')->first();
+
+        // Lấy category Bộ Sưu Tập Gia Đình
+        $FMLCategory = Category::where('name', 'Bộ Sưu Tập Gia Đình')->first();  
+
+        // Sản phẩm thuộc danh mục Bộ Sưu Tập Gia Đình (bao gồm con)
+        $productsFML = collect(); // mặc định rỗng
+        if ($FMLCategory) {
+            $productsFML = Product::with(['variants.color', 'variants.size'])
+                ->whereHas('category', function ($q) use ($FMLCategory) {
+                    $q->where('id', $FMLCategory->id)
+                    ->orWhere('parent_id', $FMLCategory->id);
+                })
+                ->latest()
+                ->get();
+        }
+
+        // Nút xem tất cả Danh mục Bộ Sưu Tập Gia Đình
+        $parentFML = Category::where('name', 'Bộ Sưu Tập Gia Đình')->first();
 
         // Lấy banner theo từng vị trí
         $banners_top_home = Banner::where('status', 1)
@@ -69,9 +142,14 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc') // fallback sort mới nhất
             ->get();
 
-        $products = Product::with(['variants.color', 'variants.size'])->latest()->get();
-
-        return view('home', compact('products', 'vouchers', 'banners_top_home', 'banners_mid_home', 'banners_bottom_home'));
+        return view('home', compact(
+            'vouchers', 
+            'productsNu', 'parentNu', 
+            'productsNam', 'parentNam', 
+            'productsVN', 'parentVN', 
+            'productsFML', 'parentFML', 
+            'banners_top_home', 'banners_mid_home', 'banners_bottom_home'
+        ));
     }
 
     /**
