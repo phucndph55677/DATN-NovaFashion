@@ -20,6 +20,7 @@ class OrderStatusSeeder extends Seeder
             'Đang giao hàng',
             'Đã giao hàng',
             'Thành công',
+            'Chờ xác nhận',
             'Hoàn hàng',
             'Hủy đơn',
         ];
