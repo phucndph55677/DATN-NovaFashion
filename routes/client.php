@@ -66,6 +66,9 @@ Route::match(['get', 'post'], '/payments/momo/callback', [ClientPaymentControlle
 
 // Account
 Route::prefix('account')->name('account.')->group(function () {
+    // Search
+    Route::get('/search', [ClientAccountController::class, 'search'])->name('products.search');
+
     // Info
     Route::get('/info', [ClientAccountController::class, 'info'])->name('info');
 

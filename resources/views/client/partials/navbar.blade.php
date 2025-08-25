@@ -48,39 +48,20 @@
         </div>
 
         <div class="right-header">
-            <form class="search-form" enctype="application/x-www-form-urlencoded" method="get"
-                action="https://ivymoda.com/tim-kiem" name="frm_search">
-                <button class="submit" name="btn_search_header_tmp"><i class="icon-ic_search"></i></button>
-                <input id="search-quick" type="text" name="q" placeholder="TÌM KIẾM SẢN PHẨM"
-                    autocomplete="off" minlength="1">
+            <form class="search-form" method="get" action="{{ route('account.products.search') }}" name="">
+                <button class="submit" name=""><i class="icon-ic_search"></i></button>
+                <input id="search-quick" type="text" name="q" value="{{ request('q') }}" placeholder="TÌM KIẾM SẢN PHẨM" autocomplete="off" minlength="1">
                 <div class="quick-search">
                     <div class="item-searchs">
-                        <h4>Tìm kiếm nhiều nhất2</h4>
+                        <h4>Tìm kiếm nhiều nhất</h4>
                         <div class="item-side-size">
                             <label class="item-sub-list po-relative mb-2">
-                                <a href="https://ivymoda.com/timkiem?q=Đầm" class="item-sub-title">Đầm</a>
+                                <a href="{{ route('categories.index', 'nam') }}" class="item-sub-title">Nam</a>
                             </label>
                             <label class="item-sub-list po-relative mb-2">
-                                <a href="https://ivymoda.com/timkiem?q=trễ+vai" class="item-sub-title">trễ vai</a>
+                                <a href="{{ route('categories.index', 'nữ') }}" class="item-sub-title">Nữ</a>
                             </label>
                         </div>
-                    </div>
-                    <div class="item-searchs">
-                        <h4>Vừa tìm kiếmm</h4>
-                        <ul class="item-side-size d-flex">
-                            <li>
-                                <label class="item-sub-list po-relative mb-2">
-                                    <a href="https://ivymoda.com/timkiem?q=&aacute;o"
-                                        class="item-sub-title">&aacute;o</a>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="item-sub-list po-relative mb-2">
-                                    <a href="https://ivymoda.com/timkiem?q=&aacute;o+ph&ocirc;ng"
-                                        class="item-sub-title">&aacute;o ph&ocirc;ng</a>
-                                </label>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </form>
