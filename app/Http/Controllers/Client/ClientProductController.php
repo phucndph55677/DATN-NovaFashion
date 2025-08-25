@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Http\Request;
@@ -71,7 +72,21 @@ class ClientProductController extends Controller
             ->latest()
             ->get();
 
-        return view('client.products.show', compact('product', 'reviews', 'averageRating', 'breadcrumbs', 'totalReviews', 'relatedProducts'));
+        // Brand Danh mục - Cuối trang
+        $banners_bottom_product = Banner::where('status', 1)
+            ->where('location_id', 5) // Danh mục - Cuối trang
+            ->where(function ($q) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->orderByRaw("CASE WHEN start_date IS NULL THEN 1 ELSE 0 END") // banner có thời gian -> ưu tiên
+            ->orderBy('start_date', 'asc') // banner có ngày bắt đầu thì sort tăng dần
+            ->orderBy('created_at', 'desc') // fallback sort mới nhất
+            ->get();
+
+        return view('client.products.show', compact('product', 'reviews', 'averageRating', 'breadcrumbs', 'totalReviews', 'relatedProducts', 'banners_bottom_product'));
     }
 
     /**
