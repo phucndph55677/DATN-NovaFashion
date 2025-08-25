@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Color;
+use App\Models\Size;
+use App\Models\Product;
+use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductFavorite;
 use App\Models\Review;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -15,6 +20,89 @@ class ClientAccountController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function search(Request $request)
+    {
+        $q = trim((string) $request->input('q', ''));
+        $isSingleChar = mb_strlen($q) === 1;
+
+        $matchedCategoryIds = [];
+        $exactMatchedCategory = null;
+
+        // 🔎 Tìm danh mục nếu từ khóa >= 2 ký tự
+        if ($q !== '' && !$isSingleChar) {
+            $matchedCategories = Category::select('id', 'name', 'slug')
+                ->where('name', 'like', "%{$q}%")
+                ->get();
+
+            foreach ($matchedCategories as $cat) {
+                // thêm id chính nó
+                $matchedCategoryIds[] = $cat->id;
+
+                // thêm con cháu (nếu có method)
+                if (method_exists($cat, 'getAllDescendantIds')) {
+                    $matchedCategoryIds = array_merge(
+                        $matchedCategoryIds,
+                        (array) $cat->getAllDescendantIds()
+                    );
+                }
+
+                // check exact match theo slug (ổn định hơn name)
+                if (mb_strtolower($cat->slug) === mb_strtolower(Str::slug($q))) {
+                    $exactMatchedCategory = $cat;
+                }
+            }
+
+            $matchedCategoryIds = array_unique($matchedCategoryIds);
+        }
+
+        // 🔎 Query sản phẩm
+        $products = Product::with('variants.size', 'variants.color')
+            ->when($q !== '' || (!empty($matchedCategoryIds) && !$isSingleChar), function ($query) use ($q, $matchedCategoryIds, $isSingleChar) {
+                $query->where(function ($sub) use ($q, $matchedCategoryIds, $isSingleChar) {
+                    if ($q !== '') {
+                        $sub->where('name', 'like', "%{$q}%")
+                            ->orWhere('description', 'like', "%{$q}%");
+                    }
+                    if (!$isSingleChar && !empty($matchedCategoryIds)) {
+                        $sub->orWhereIn('category_id', $matchedCategoryIds);
+                    }
+                });
+            })
+            ->where('onpage', 1) // 👉 gợi ý: chỉ lấy sản phẩm active
+            ->orderByDesc('id')
+            ->paginate(20)
+            ->withQueryString();
+
+        // 🔎 Chuẩn bị category object cho view
+        if ($exactMatchedCategory && !$isSingleChar) {
+            $category = (object)[
+                'name' => $exactMatchedCategory->name,
+                'slug' => $exactMatchedCategory->slug,
+            ];
+            $slug = $exactMatchedCategory->slug;
+        } else {
+            $category = (object)[
+                'name' => $q ? ('Kết quả tìm kiếm theo "' . $q . '"') : 'Kết quả tìm kiếm',
+                'slug' => 'search',
+            ];
+            $slug = 'search';
+        }
+
+        // 🔎 Biến phụ cho view
+        return view('client.categories.index', [
+            'q'          => $q,
+            'products'   => $products,
+            'slug'       => $slug,
+            'subslug'    => null,
+            'childslug'  => null,
+            'category'   => $category,
+            'breadcrumbs'=> [],                         // breadcrumb để build path Trang chủ > ... 
+            'sizes'      => Size::all(),                // dùng cho filter size
+            'colors'     => Color::all(),               // dùng cho filter màu
+            'banners_bottom_category' => collect(),     // fallback để view không lỗi
+        ]);
+    }
+
     public function info()
     {
         if (!Auth::check()) {
@@ -140,29 +228,78 @@ class ClientAccountController extends Controller
     {
         $order = Order::findOrFail($id);
 
-        // Chỉ cho phép hủy khi trạng thái là 1 (Chưa xác nhận) hoặc 2 (Đã xác nhận)
-        if (in_array($order->order_status_id, [1, 2])) {
-            $order->order_status_id = 8; // 8 = Trạng thái Hủy đơn
+        // Chỉ cho phép hủy khi trạng thái là 1 (Chưa xác nhận) hoặc 2 (Đã xác nhận) hoặc 3 là (Chuẩn bị hàng)
+        if (in_array($order->order_status_id, [1, 2, 3])) {
+            $order->order_status_id = 9; // 8 = Trạng thái Hủy đơn
             $order->save();
         }
 
         return redirect()->back();
     }
 
-     /**
-     * Hoàn hàng
+    /**
+     * Gửi yêu cầu hoàn hàng
      */
-    public function return($id)
+    public function return($id, Request $request)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with('orderDetails.productVariant')->findOrFail($id);
 
-        // Chỉ cho phép hoàn hàng khi trạng thái là 6 (Thành công)
-        if ($order->order_status_id == 6) {
-            $order->order_status_id = 7; // 7 = Trạng thái Hoàn hàng
-            $order->save();
+        // Kiểm tra đơn có thuộc user hiện tại không
+        $userId = Auth::id();
+        if ($order->user_id !== $userId) {
+            abort(403, 'Bạn không có quyền hoàn đơn này.');
         }
 
-        return redirect()->back();
+        // Chỉ cho phép hoàn khi đơn đã Thành công (6)
+        if ($order->order_status_id != 6) {
+            return redirect()->back()->with('error', 'Đơn hàng chưa hoàn tất, không thể yêu cầu hoàn hàng.');
+        }
+
+        // Validate dữ liệu
+        $validated = $request->validate([
+            'return_reason' => 'required|string|max:1000',
+            'other_reason' => 'required_if:return_reason,other|nullable|string|max:1000',
+            'return_bank' => 'required|string|max:100',
+            'return_stk' => 'required|regex:/^[0-9]+$/|max:100',
+            'return_images' => 'required|max:2048',
+        ], [
+            'return_reason.required' => 'Bạn cần chọn hoặc nhập lý do hoàn hàng.',
+            'return_reason.max' => 'Lý do hoàn hàng không được vượt quá 1000 ký tự.',
+            'other_reason.required_if' => 'Bạn phải nhập lý do khác khi chọn "Khác..."',
+            'other_reason.max' => 'Lý do không được vượt quá 1000 ký tự.',
+            'return_bank.required' => 'Bạn cần nhập tên ngân hàng.',
+            'return_bank.max' => 'Tên ngân hàng không được vượt quá 100 ký tự.',
+            'return_stk.required' => 'Bạn cần nhập số tài khoản.',
+            'return_stk.regex' => 'Số tài khoản phải là số.',
+            'return_stk.max' => 'Số tài khoản không được vượt quá 100 ký tự.',
+            'return_images.required' => 'Vui lòng tải ảnh minh chứng.',
+            'return_images.max' => 'Mỗi ảnh không được quá 2MB.',
+        ]);
+
+        // Xử lý lý do
+        $reason = $request->return_reason === 'other' && $request->filled('other_reason')
+            ? $request->other_reason
+            : $request->return_reason;
+
+        // Upload ảnh (nếu có)
+        $imageLinks = [];
+        if ($request->hasFile('return_images')) {
+            foreach ($request->file('return_images') as $file) {
+                $path = $file->store('returns', 'public'); // storage/app/public/returns
+                $imageLinks[] = asset('storage/' . $path);
+            }
+        }
+
+        // Cập nhật đơn hàng
+        $order->update([
+            'order_status_id' => 7, // 7 = Chờ hoàn hàng
+            'return_reason' => $reason,
+            'return_bank'     => $request->return_bank,
+            'return_stk'      => $request->return_stk,
+            'return_image' => $imageLinks ? implode(',', $imageLinks) : null,
+        ]);
+
+        return redirect()->back()->with('success', 'Yêu cầu hoàn hàng đã được gửi!');
     }
 
     public function favorite(Request $request)

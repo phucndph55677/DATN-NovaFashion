@@ -1,237 +1,591 @@
-@extends('admin.layouts.app')
+    @extends('admin.layouts.app')
 
-@section('title', 'Dashboard')
+    @section('title', 'Bảng điều khiển')
 
-@section('content')
-<div class="container-fluid">
-    <!-- Filter -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold">Dashboard</h4>
-            <p class="text-muted">
-                Data from {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }}
-                to {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
-            </p>
-        </div>
-        <form id="filterForm" action="{{ route('admin.dashboards.index') }}" method="GET" class="d-flex gap-2">
-            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $startDate }}">
-            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $endDate }}">
-            <button type="submit" class="btn btn-primary">Filter</button>
-            <a href="{{ route('admin.dashboards.index') }}" class="btn btn-outline-primary">Current Month</a>
-        </form>
-    </div>
-    <div id="error-message" class="alert alert-danger alert-dismissible fade show text-center d-none mt-2" role="alert">
-        <span id="error-text"></span>
-        <button type="button" class="btn-close position-absolute end-0 top-50 translate-middle-y me-3" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <!-- Overview -->
-    <div class="row mb-4">
-        @foreach ([
-            ['label' => 'Total Products', 'value' => $totalProducts],
-            ['label' => 'Total Orders', 'value' => $totalOrders],
-            ['label' => 'Total Users', 'value' => $totalUsers],
-            ['label' => 'Total Revenue', 'value' => number_format($totalRevenue) . ' VND']
-        ] as $item)
-        <div class="col-md-3">
-            <div class="card text-center p-3">
-                <h6 class="text-muted">{{ $item['label'] }}</h6>
-                <h4>{{ $item['value'] }}</h4>
+    @section('content')
+        <div class="container-fluid">
+            <!-- Spinner khi loading -->
+            <div id="loadingSpinner" class="text-center my-5 d-none">
+                <div class="spinner-border text-primary spinner-border-lg" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                </div>
+                <p class="mt-2 fw-bold text-primary">Đang tải dữ liệu, vui lòng chờ...</p>
             </div>
-        </div>
-        @endforeach
-    </div>
+            <!-- Bộ lọc -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold">Bảng điều khiển</h4>
+                    <p class="text-muted">
+                        Dữ liệu từ {{ $startDateFormatted }} đến {{ $endDateFormatted }}
+                    </p>
+                </div>
+                <form id="filterForm" action="{{ route('admin.dashboards.index') }}" method="GET"
+                    class="d-flex gap-2 align-items-center  ">
+                    {{-- Kiểu lọc --}}
+                    <select name="filter_type" id="filter_type" class="form-select form-select-sm w-auto">
+                        <option value="" disabled selected>-- Chọn kiểu lọc --</option>
+                        <option value="day" {{ request('filter_type') == 'day' ? 'selected' : '' }}>Theo ngày</option>
+                        <option value="month" {{ request('filter_type') == 'month' ? 'selected' : '' }}>Theo tháng</option>
+                        <option value="year" {{ request('filter_type') == 'year' ? 'selected' : '' }}>Theo năm</option>
+                        <option value="quarter" {{ request('filter_type') == 'quarter' ? 'selected' : '' }}>Theo quý
+                        </option>
+                    </select>
 
-    <!-- Chart -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="fw-bold mb-0">📊 Statistics Chart</h4>
-                <div class="btn-group">
-                    <button id="btn-revenue" class="btn btn-primary" onclick="switchChart('revenue', this)">Revenue</button>
-                    <button id="btn-products" class="btn btn-outline-primary" onclick="switchChart('products', this)">Products</button>
-                    <button id="btn-users" class="btn btn-outline-primary" onclick="switchChart('users', this)">Users</button>
+                    {{-- Input lọc động --}}
+                    <div id="filter-inputs" class="d-flex gap-2 align-items-center">
+                        {{-- Theo tháng --}}
+                        <input type="month" name="month" class="form-control form-control-sm w-auto d-none"
+                            value="{{ request('month', now()->format('Y-m')) }}">
+
+                        {{-- Theo năm --}}
+                        <input type="number" name="year" class="form-control form-control-sm w-auto d-none"
+                            value="{{ request('year', now()->year) }}" placeholder="Nhập năm">
+
+                        {{-- Theo quý --}}
+                        <select name="quarter" class="form-select form-select-sm w-auto d-none">
+                            <option value="1" {{ request('quarter') == 1 ? 'selected' : '' }}>Quý 1</option>
+                            <option value="2" {{ request('quarter') == 2 ? 'selected' : '' }}>Quý 2</option>
+                            <option value="3" {{ request('quarter') == 3 ? 'selected' : '' }}>Quý 3</option>
+                            <option value="4" {{ request('quarter') == 4 ? 'selected' : '' }}>Quý 4</option>
+                        </select>
+                        <input type="number" name="year_quarter" class="form-control form-control-sm w-auto d-none"
+                            value="{{ request('year_quarter', now()->year) }}" placeholder="Năm cho quý">
+
+                        {{-- Theo ngày --}}
+                        <input type="date" name="start_date" class="form-control form-control-sm d-none"
+                            value="{{ request('start_date', now()->startOfMonth()->format('Y-m-d')) }}">
+                        <input type="date" name="end_date" class="form-control form-control-sm d-none"
+                            value="{{ request('end_date', now()->endOfMonth()->format('Y-m-d')) }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Lọc</button>
+                    <a href="{{ route('admin.dashboards.index') }}"
+                        class="btn btn-outline-primary btn-sm text-nowrap py-2">
+                        Tháng hiện tại
+                    </a>
+                </form>
+            </div>
+
+            <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-success">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="errorModalLabel">⚠️ Lỗi</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Đóng"></button>
+                        </div>
+                        <div class="modal-body fw-bold text-danger" id="errorModalText">
+                            <!-- Nội dung lỗi sẽ được chèn bằng JS -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div style="height: 400px;">
-                <canvas id="chartCanvas"></canvas>
+
+            <!-- Tổng quan -->
+            <div class="row mb-4">
+                @foreach ($overview as $item)
+                    <div class="col-md-3">
+                        <div class="card text-center p-3">
+                            <h5 class="fw-bold text-dark">{{ $item['label'] }}</h5>
+                            <h5>{{ $item['value'] }}</h5>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        </div>
-    </div>
 
-    <!-- Recent Orders -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="fw-bold">Recent Orders</h5>
-            @if($recentOrders->count())
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr><th>ID</th><th>Name</th><th>Total</th><th>Time</th><th>Status</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentOrders as $order)
-                        <tr>
-                            <td>#{{ $order->id }}</td>
-                            <td>{{ $order->name }}</td>
-                            <td>{{ number_format($order->total_amount) }} VND</td>
-                            <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                            <td>{{ $order->orderStatus->name ?? 'Unknown' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <!-- Biểu đồ -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold mb-0">📊 Biểu đồ thống kê</h4>
+                        <div class="mb-3">
+                            <label for="chartSelector" class="form-label fw-bold">Chọn loại biểu đồ</label>
+                            <select id="chartSelector" class="form-select w-auto d-inline-block">
+                                <option value="revenue">📈 Tổng Doanh thu</option>
+                                <option value="profit">📈 Doanh thu thực tế</option>
+                                <option value="users">👥 Người dùng</option>
+                                <option value="products">🥇 Top sản phẩm bán chạy</option>
+                                <option value="leastProducts">📉 Top sản phẩm bán ế</option>
+                                <option value="orderStatuses">📦 Trạng thái đơn hàng</option>
+                            </select>
+
+                            <!-- 👇 Select số lượng sản phẩm -->
+                            <select id="topProductLimit" class="form-select w-auto d-inline-block d-none">
+                                {{-- <option value="" disabled selected>-- Chọn top sản phẩm --</option> --}}
+                                <option value="5" selected>Top 5</option>
+                                <option value="10">Top 10</option>
+                                <option value="15">Top 15</option>
+                                <option value="20">Top 20</option>
+                            </select>
+
+                            <!-- 👇 Select số lượng sản phẩm bán ế -->
+                            <select id="leastProductLimit" class="form-select w-auto d-inline-block d-none">
+                                {{-- <option value="" disabled selected>-- Chọn top sản phẩm --</option> --}}
+                                <option value="5" selected>Top 5</option>
+                                <option value="10">Top 10</option>
+                                <option value="15">Top 15</option>
+                                <option value="20">Top 20</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Thông báo khi không có dữ liệu -->
+                    <div id="noChartDataMessage" class="alert alert-warning text-center d-none" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Không có dữ liệu để hiển thị cho biểu đồ này.
+                    </div>
+                    <div style="width: 100%; height: 70vh;"> <!-- hoặc height: 100%; tùy bạn -->
+                        <canvas id="chartCanvas" style="width: 100% !important; height: 100% !important;"></canvas>
+                    </div>
+                </div>
             </div>
-            @else
-            <p class="text-muted text-center">No orders found for this date range.</p>
-            @endif
-        </div>
-    </div>
 
-    <!-- New Users -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="fw-bold">New Users</h5>
-            @if($newCustomers->count())
-            <div class="table-responsive">
-                <table class="table">
-                    <thead><tr><th>Name</th><th>Email</th><th>Registered At</th></tr></thead>
-                    <tbody>
-                        @foreach($newCustomers as $user)
-                        <tr>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <!-- Đơn hàng gần đây -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold">Đơn hàng mới nhất</h5>
+                    <br>
+                    @if ($recentOrders->count())
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Khách hàng</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Thời gian</th>
+
+                                        <th>Trạng thái đơn hàng</th>
+                                        <th>Trạng thái thanh toán</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($recentOrders as $order)
+                                        <tr>
+                                            <td>{{ $order->order_code }}</td>
+                                            <td>{{ $order->name }}</td>
+                                            <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
+                                            <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                            <td>
+                                                <span class="badge bg-primary">
+                                                    {{ $order->orderStatus->name ?? 'Không xác định' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if ($order->paymentStatus)
+                                                    @if ($order->paymentStatus->name === 'Đã thanh toán')
+                                                        <span class="badge bg-success">Đã thanh toán</span>
+                                                    @elseif ($order->paymentStatus->name === 'Chưa thanh toán')
+                                                        <span class="badge bg-warning text-dark">Chưa thanh toán</span>
+                                                    @else
+                                                        <span
+                                                            class="badge bg-secondary">{{ $order->paymentStatus->name }}</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">Không xác định</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted text-center">Không có đơn hàng trong khoảng thời gian này.</p>
+                    @endif
+                </div>
             </div>
-            @else
-            <p class="text-muted text-center">No new users in this date range.</p>
-            @endif
+
+            <!-- Người dùng mới -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold">Người dùng mới</h5>
+                    <br>
+                    @if ($newCustomers->count())
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Họ tên</th>
+                                        <th>Email</th>
+                                        <th>Vai trò</th>
+                                        <th>Ngày đăng ký</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($newCustomers as $user)
+                                        <tr>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>
+                                                @if ($user->role === 'admin')
+                                                    <span class="badge bg-primary">Admin</span>
+                                                @else
+                                                    <span class="badge bg-secondary">User</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                            <td>
+                                                @if ($user->status == 1)
+                                                    <span class="badge bg-success">Đang hoạt động</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Ngừng hoạt động</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted text-center">Không có người dùng mới trong khoảng thời gian này.</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Khách hàng hàng đầu -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold">Khách hàng hàng đầu</h5>
+                    <br>
+                    @if ($topUsers->count())
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Họ tên</th>
+                                        <th>Email</th>
+                                        <th>Số đơn hàng</th>
+                                        <th>Tổng tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($topUsers as $user)
+                                        <tr>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>{{ $user->total_orders }}</td>
+                                            <td>{{ number_format($user->total_amount, 0, ',', '.') }} VND</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted text-center">Không có khách hàng nổi bật trong khoảng thời gian này.</p>
+                    @endif
+                </div>
+            </div>
+
         </div>
-    </div>
-</div>
-@endsection
+    @endsection
 
-@section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.getElementById('filterForm').addEventListener('submit', function (e) {
-        const start = document.getElementById('start_date').value;
-        const end = document.getElementById('end_date').value;
-        const errorBox = document.getElementById('error-message');
-        const errorText = document.getElementById('error-text');
+    @section('scripts')
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        errorBox.classList.add('d-none');
-        errorText.textContent = '';
-
-        if (!start || !end) {
-            e.preventDefault();
-            errorText.textContent = '❌ Please select both start and end dates.';
-            errorBox.classList.remove('d-none');
-            return;
-        }
-
-        if (start > end) {
-            e.preventDefault();
-            errorText.textContent = '❌ Start date cannot be later than end date.';
-            errorBox.classList.remove('d-none');
-        }
-    });
-
-    const chartLabels = {
-        revenue: @json($labels),
-        products: @json($productLabels),
-        users: @json($userLabels),
-    };
-
-    const chartData = {
-        revenue: {
-            label: 'Revenue (VND)',
-            data: @json($data),
-            type: 'line',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            fill: true
-        },
-        products: {
-            label: 'Orders Count',
-            data: @json($productData),
-            type: 'bar',
-            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            fill: false
-        },
-        users: {
-            label: 'New Users',
-            data: @json($userData),
-            type: 'line',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            fill: true
-        }
-    };
-
-    const ctx = document.getElementById('chartCanvas').getContext('2d');
-    let currentChart;
-
-    function renderChart(type) {
-        if (currentChart) currentChart.destroy();
-
-        const maxValues = {
-            revenue: 100000000,
-            products: 100,
-            users: 100
+    <script>
+        // ================= CHART CONFIG & DATA =================
+        const chartData = {
+            revenue: {
+                labels: @json($labels),
+                data: @json($data),
+                label: "Doanh thu (VND)",
+                type: "line",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                fill: true
+            },
+            products: {
+                labels: @json($productLabels),
+                data: @json($productData),
+                label: "Số sản phẩm bán được",
+                type: "bar",
+                backgroundColor: "rgba(54, 162, 235, 0.7)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                fill: false
+            },
+            profit: {
+                labels: @json($profitLabels ?? $labels),
+                data: @json($profitValues),
+                label: "Doanh thu thực tế (VND)",
+                type: "line",
+                backgroundColor: "rgba(34, 197, 94, 0.2)",
+                borderColor: "rgba(34, 197, 94, 1)",
+                fill: true
+            },
+            users: {
+                labels: @json($userLabels),
+                data: @json($userData),
+                label: "Người dùng mới",
+                type: "line",
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                fill: true
+            },
+            orderStatuses: {
+                labels: @json($orderStatusLabels),
+                data: @json($orderStatusData),
+                label: "Tỷ lệ đơn hàng",
+                type: "pie",
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.7)",
+                    "rgba(54, 162, 235, 0.7)",
+                    "rgba(255, 206, 86, 0.7)",
+                    "rgba(75, 192, 192, 0.7)",
+                    "rgba(153, 102, 255, 0.7)",
+                    "rgba(255, 159, 64, 0.7)",
+                    "rgba(199, 199, 199, 0.7)",
+                    "rgba(255, 105, 180, 0.7)",
+                    "rgba(60, 179, 113, 0.7)",
+                    "rgba(123, 104, 238, 0.7)"
+                ],
+                borderColor: "rgba(255, 255, 255, 1)",
+                fill: false
+            },
+            leastProducts: {
+                labels: @json($leastProductLabels),
+                data: @json($leastProductData),
+                label: "Số sản phẩm bán được",
+                type: "bar",
+                backgroundColor: "rgba(255, 99, 132, 0.7)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                fill: false
+            }
         };
 
-        currentChart = new Chart(ctx, {
-            type: chartData[type].type,
-            data: {
-                labels: chartLabels[type],
-                datasets: [{
-                    label: chartData[type].label,
-                    data: chartData[type].data,
-                    backgroundColor: chartData[type].backgroundColor,
-                    borderColor: chartData[type].borderColor,
-                    fill: chartData[type].fill,
-                    tension: 0.3
-                }]
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        let currentChart;
+        let currentType = null;
+
+        const tooltipFormatters = {
+            products: (label, value) => `${label}: ${value} sản phẩm`,
+            leastProducts: (label, value) => `${label}: ${value} sản phẩm`,
+            orderStatuses: (label, value, dataset) => {
+                const total = dataset.reduce((a, b) => a + b, 0) || 0;
+                const percent = total ? ((value / total) * 100).toFixed(1) : 0;
+                return `${label}: ${value} đơn (${percent}%)`;
             },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        min: 0,
-                        max: maxValues[type],
-                        ticks: {
-                            precision: 0,
-                            stepSize: type === 'revenue' ? 5000000 : undefined,
-                            callback: function(value) {
-                                return type === 'revenue' ? value.toLocaleString('vi-VN') + ' ₫' : value;
-                            }
-                        }
+            revenue: (label, value) =>
+                `${label}: ${Number(value).toLocaleString("vi-VN", { maximumFractionDigits: 0 })} VND`,
+            profit: (label, value) =>
+                `${label}: ${Number(value).toLocaleString("vi-VN", { maximumFractionDigits: 0 })} VND`,
+        };
+
+        function formatTooltip(type, context) {
+            const value = context.parsed.y ?? context.parsed;
+            const label = context.label;
+            const dataset = context.dataset.data;
+            return tooltipFormatters[type]?.(label, value, dataset) ?? context.formattedValue;
+        }
+
+        function formatYAxis(type, value) {
+            if (type === 'revenue' || type === 'profit') {
+                return value.toLocaleString('vi-VN') + ' VND';
+            }
+            return Number.isInteger(value) ? value : null;
+        }
+
+        const baseOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: 20
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    align: 'center',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        boxWidth: 15
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => formatTooltip(currentType, ctx)
                     }
                 }
             }
-        });
-    }
+        };
 
-    function switchChart(type, btn) {
-        renderChart(type);
-        document.querySelectorAll('.btn-group .btn').forEach(b => {
-            b.classList.remove('btn-primary');
-            b.classList.add('btn-outline-primary');
-        });
-        btn.classList.remove('btn-outline-primary');
-        btn.classList.add('btn-primary');
-    }
+        // ================= HÀM CHART =================
+        function toggleChartVisibility(hasData) {
+            const chartCanvas = document.getElementById('chartCanvas');
+            const noDataMessage = document.getElementById('noChartDataMessage');
+            chartCanvas.style.display = hasData ? 'block' : 'none';
+            noDataMessage.classList.toggle('d-none', hasData);
+        }
 
-    window.onload = () => {
-        const defaultBtn = document.getElementById('btn-revenue');
-        switchChart('revenue', defaultBtn);
-    };
-</script>
+        function renderChart(type) {
+            if (currentChart) currentChart.destroy();
+            currentType = type;
+
+            const hasData = chartData[type].data?.some(v => v > 0);
+            toggleChartVisibility(hasData);
+            if (!hasData) return;
+
+            const chartConfig = {
+                type: chartData[type].type,
+                data: {
+                    labels: chartData[type].labels,
+                    datasets: [{
+                        ...chartData[type],
+                        tension: chartData[type].type === 'line' ? 0.3 : 0
+                    }]
+                },
+                options: {
+                    ...baseOptions,
+                    plugins: {
+                        ...baseOptions.plugins,
+                        legend: {
+                            ...baseOptions.plugins.legend,
+                            position: chartData[type].type === 'pie' ? 'bottom' : 'top'
+                        }
+                    }
+                }
+            };
+
+            if (chartData[type].type !== 'pie') {
+                chartConfig.options.scales = {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0,
+                            callback: (value) => formatYAxis(type, value)
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
+                    }
+                };
+            }
+            currentChart = new Chart(ctx, chartConfig);
+        }
+
+        // ================= VALIDATE FORM =================
+        function validateFilter(filterType, values) {
+            if (!filterType) return "❌ Vui lòng chọn kiểu lọc.";
+            const { month, year, quarter, yearQuarter, start, end } = values;
+            switch (filterType) {
+                case "month":
+                    return !month && "❌ Vui lòng chọn tháng.";
+                case "year":
+                    return !year && "❌ Vui lòng chọn năm.";
+                case "quarter":
+                    return (!quarter || !yearQuarter) && "❌ Vui lòng chọn quý và năm cho lọc theo quý.";
+                case "day":
+                    if (!start || !end) return "❌ Vui lòng chọn ngày bắt đầu và kết thúc.";
+                    if (start > end) return "❌ Ngày bắt đầu không được lớn hơn ngày kết thúc.";
+                    return null;
+                default:
+                    return null;
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('errorModalText').innerText = message;
+            let modal = new bootstrap.Modal(document.getElementById('errorModal'));
+            modal.show();
+        }
+
+        // ================= DOM READY =================
+        document.addEventListener("DOMContentLoaded", function() {
+            const chartSelector = document.getElementById("chartSelector");
+            const topProductLimit = document.getElementById("topProductLimit");
+            const leastProductLimit = document.getElementById("leastProductLimit");
+            const filterType = document.getElementById("filter_type");
+
+            const limitSelectors = {
+                products: topProductLimit,
+                leastProducts: leastProductLimit
+            };
+
+            chartSelector.addEventListener("change", function() {
+                Object.values(limitSelectors).forEach(el => el.classList.add("d-none"));
+                if (limitSelectors[this.value]) {
+                    limitSelectors[this.value].classList.remove("d-none");
+                }
+            });
+
+            async function fetchProducts(limit, type = "products") {
+                let url = `{{ route('admin.dashboards.index') }}?filter_type={{ request('filter_type') }}&limit=${limit}${type==="leastProducts" ? "&type=least" : ""}`;
+                try {
+                    const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }});
+                    const data = await res.json();
+                    chartData[type].labels = data.labels;
+                    chartData[type].data = data.data;
+                    renderChart(type);
+                } catch (err) {
+                    console.error("Lỗi khi fetch dữ liệu:", err);
+                }
+            }
+
+            [topProductLimit, leastProductLimit].forEach(selectEl => {
+                selectEl.addEventListener("change", e => {
+                    const type = e.target.id === "topProductLimit" ? "products" : "leastProducts";
+                    fetchProducts(e.target.value, type);
+                });
+            });
+
+            // toggle filter inputs
+            const inputs = {
+                month: document.querySelector("input[name='month']"),
+                year: document.querySelector("input[name='year']"),
+                quarter: document.querySelector("select[name='quarter']"),
+                year_quarter: document.querySelector("input[name='year_quarter']"),
+                start_date: document.querySelector("input[name='start_date']"),
+                end_date: document.querySelector("input[name='end_date']")
+            };
+
+            const inputGroups = {
+                month: ["month"],
+                year: ["year"],
+                quarter: ["quarter", "year_quarter"],
+                day: ["start_date", "end_date"],
+            };
+
+            function toggleInputs(type) {
+                const active = inputGroups[type] || [];
+                Object.entries(inputs).forEach(([key, el]) => {
+                    el.classList.toggle("d-none", !active.includes(key));
+                });
+            }
+
+            toggleInputs(filterType.value);
+            filterType.addEventListener("change", function() {
+                toggleInputs(this.value);
+            });
+
+            renderChart(chartSelector.value);
+            chartSelector.addEventListener('change', function() {
+                renderChart(this.value);
+            });
+
+            // validate form
+            document.getElementById('filterForm').addEventListener('submit', function(e) {
+                const filterType = document.getElementById("filter_type").value;
+                const month = document.querySelector('input[name="month"]').value;
+                const year = document.querySelector('input[name="year"]').value;
+                const quarter = document.querySelector('select[name="quarter"]').value;
+                const yearQuarter = document.querySelector('input[name="year_quarter"]').value;
+                const start = document.querySelector('input[name="start_date"]').value;
+                const end = document.querySelector('input[name="end_date"]').value;
+
+                const errorMsg = validateFilter(filterType, { month, year, quarter, yearQuarter, start, end });
+                if (errorMsg) {
+                    e.preventDefault();
+                    showError(errorMsg);
+                    return;
+                }
+            });
+        });
+    </script>
 @endsection
+
