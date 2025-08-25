@@ -209,6 +209,9 @@ class ClientCheckoutController extends Controller
                     ]);
                 }  
 
+                // Giảm số lượng sản phẩm trong kho ngay sau khi tạo order detail
+                $cartDetail->productVariant->decrement('quantity', $cartDetail->quantity);
+
                 // Xoá cart detail đã đặt
                 CartDetail::whereIn('id', $cartDetailIds)->delete();
 

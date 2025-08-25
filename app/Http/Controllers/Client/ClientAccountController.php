@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Color;
 use App\Models\Size;
 use App\Models\Product;
@@ -16,8 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class ClientAccountController extends Controller
 {
@@ -233,14 +234,38 @@ class ClientAccountController extends Controller
         $order = Order::findOrFail($id);
 
         // Chỉ cho phép hủy khi trạng thái là 1 (Chưa xác nhận) hoặc 2 (Đã xác nhận) hoặc 3 là (Chuẩn bị hàng)
-        if (in_array($order->order_status_id, [1, 2, 3])) {
-            $order->order_status_id = 9; // 8 = Trạng thái Hủy đơn
-            $order->save();
+        if (!in_array($order->order_status_id, [1, 2, 3])) {
+            return redirect()->back()->with('error', 'Không thể hủy đơn hàng ở trạng thái hiện tại.');
         }
+
+        DB::transaction(function () use ($order) {
+            // Cập nhật trạng thái hủy
+            $order->update(['order_status_id' => 9]);
+
+            // Hoàn lại quantity trong product_variants khi hủy đơn hàng
+            $orderDetails = $order->orderDetails()->with('productVariant')->get();
+            foreach ($orderDetails as $orderDetail) {
+                DB::table('product_variants')
+                    ->where('id', $orderDetail->product_variant_id)
+                    ->increment('quantity', $orderDetail->quantity);
+            }
+
+            // Hoàn voucher nếu có dùng
+            if ($order->voucher_id && $order->discount > 0) {
+                DB::table('vouchers')
+                    ->where('id', $order->voucher_id)
+                    ->where('total_used', '>', 0)
+                    ->decrement('total_used');
+
+                DB::table('order_vouchers')
+                    ->where('order_id', $order->id)
+                    ->where('voucher_id', $order->voucher_id)
+                    ->delete();
+            }
+        });
 
         return redirect()->back();
     }
-
     /**
      * Gửi yêu cầu hoàn hàng
      */
