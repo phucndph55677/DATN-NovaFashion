@@ -12,8 +12,6 @@ use App\Http\Controllers\Admin\AdminVoucherController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
-use App\Http\Controllers\Admin\Accounts\SellerManageController;
-
 
 // ROUTE ADMIN
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -83,12 +81,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Client Management
             Route::resource('client-manage', ClientManageController::class);
 
-            // Seller Management
-            Route::resource('seller-manage', SellerManageController::class);
-
             // Admin Management
             Route::resource('admin-manage', AdminManageController::class);
         });
+
+        // Hồ sơ cá nhân + Đổi mật khẩu (admin đã đăng nhập)
+            Route::get('/profile', [AdminManageController::class, 'edit'])->name('profile.edit');
+
+            Route::put('/profile/password', [AdminManageController::class, 'updatePassword'])
+                ->middleware('throttle:6,1') // hạn chế thử sai liên tục
+                ->name('profile.password.update');
 
         // Reviews
         Route::resource('reviews', AdminReviewController::class);

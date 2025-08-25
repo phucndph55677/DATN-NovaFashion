@@ -142,24 +142,6 @@
                         <span class="ms-2">Banner</span>
                     </a>
                 </li>
-                
-                <li class=" sidebar-layout ">
-                    <a href="https://templates.iqonic.design/datum-dist/laravel/public/invoice" class="svg-icon">
-                        <i class="">
-                            <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6"
-                                    style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
-                                </path>
-                                <line x1="8" y1="10" x2="12" y2="10"
-                                    style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
-                                </line>
-                            </svg>
-                        </i>
-                        <span class="ms-2">Hóa Đơn</span>
-                    </a>
-                </li>
 
                 <li class="sidebar-layout">
                     <a href="#app1" class="collapsed svg-icon" data-bs-toggle="collapse" aria-expanded="false">
@@ -187,18 +169,6 @@
                                             d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                                     </svg>
                                 </i><span class="">Khách Hàng</span>
-                            </a>
-                        </li>
-
-                        <li class=" sidebar-layout ">
-                            <a href="{{ route('admin.accounts.seller-manage.index') }}" class="svg-icon">
-                                <i class="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
-                                    </svg>
-                                </i><span class="">Người Bán</span>
                             </a>
                         </li>
 

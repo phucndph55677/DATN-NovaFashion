@@ -18,6 +18,7 @@ class LocationSeeder extends Seeder
             ['id' => 2, 'name' => 'Trang chủ - Giữa'],
             ['id' => 3, 'name' => 'Trang chủ - Cuối'],
             ['id' => 4, 'name' => 'Danh mục - Cuối'],
+            ['id' => 5, 'name' => 'Sản phẩm - Cuối'],
         ]);
     }
 }
