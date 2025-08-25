@@ -63,12 +63,6 @@
                                     <li class="list-group-item px-0">
                                         <strong>Số Điện Thoại:</strong> {{ $client->phone }}
                                     </li>
-                                    <li class="list-group-item px-0">
-                                        <strong>Xếp Hạng:</strong> {{ $client->ranking->name }}
-                                    </li>
-                                    {{-- <li class="list-group-item px-0">
-                                        <strong>Address:</strong> {{ $client->address }}
-                                    </li> --}}
                                     <li class="list-group-item px-0 border-bottom">
                                         <strong>Địa Chỉ:</strong> {{ $client->address }}
                                     </li>
@@ -77,16 +71,13 @@
                         </div>
                     </div>
 
-                    <div class="card-body">
+                    {{-- <div class="card-body">
                         <hr>
                         <h5 class="fw-bold mb-3">Danh Sách Đơn Hàng</h5>
-                        <!-- Card Table -->
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="card card-block card-stretch">
                                     <div class="card-body p-0">                           
-
-                                        <!-- Table -->
                                         <div class="table-responsive iq-product-table">
                                             <table class="table data-table mb-0">
                                                 <thead class="table-color-heading">
@@ -100,7 +91,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    
                                                 </tbody>
                                             </table>
                                         </div>
@@ -108,7 +98,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="card-body">
                         <hr>
@@ -118,7 +108,6 @@
                             <div class="col-lg-12">
                                 <div class="card card-block card-stretch">
                                     <div class="card-body p-0">                           
-
                                         <!-- Table -->
                                         <div class="table-responsive iq-product-table">
                                             <table class="table data-table mb-0">
@@ -126,7 +115,7 @@
                                                     <tr class="text-light">
                                                         <th><label class="text-muted m-0">ID</label></th>
                                                         <th><label class="text-muted mb-0">Tên Sản Phẩm</label></th>
-                                                        <th><label class="text-muted mb-0">Xếp Hạng</label></th>
+                                                        {{-- ❌ Bỏ cột Ranking --}}
                                                         <th><label class="text-muted mb-0">Nội Dung</label></th>
                                                         <th><label class="text-muted mb-0">Ngày Đánh Giá</label></th>
                                                         <th><label class="text-muted mb-0">Trạng Thái</label></th>
@@ -138,22 +127,15 @@
                                                         <tr class="white-space-no-wrap">
                                                             <td>{{ $review->id }}</td>
                                                             <td>{{ $review->product->name }}</td>
-                                                            <td>
-                                                                @for ($i = 1; $i <= 5; $i++)
-                                                                    @if ($i <= $review->rating)
-                                                                        <span style="color: gold; font-size: 20px;">&#9733;</span>
-                                                                    @else
-                                                                        <span style="color: #ccc; font-size: 20px;">&#9733;</span>
-                                                                    @endif
-                                                                @endfor
-                                                            </td>
+                                                            {{-- ❌ Bỏ phần hiển thị sao --}}
                                                             <td style="white-space: normal; word-break: break-word; max-width: 300px;">
                                                                 {{ $review->content }}
                                                             </td>  
                                                             <td>{{ $review->created_at->format('d/m/Y') }}</td>
                                                             <td>{{ $review->status == 1 ? 'Hiển thị' : 'Bị ẩn' }}</td>
                                                             <td>
-                                                                <form action="{{ route('admin.comment.toggle', $review->id) }}" method="POST">
+                                                                {{-- ✅ Sửa đúng tên route theo web.php: admin.reviews.toggle --}}
+                                                                <form action="{{ route('admin.reviews.toggle', $review->id) }}" method="POST">
                                                                     @csrf
                                                                     @method('PATCH')
                                                                     <button type="submit"

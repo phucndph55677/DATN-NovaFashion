@@ -72,6 +72,12 @@ Route::prefix('account')->name('account.')->group(function () {
     // Info
     Route::get('/info', [ClientAccountController::class, 'info'])->name('info');
 
+    // Cập nhật thông tin tài khoản
+    Route::put('/info', [ClientAccountController::class, 'update'])->name('update');
+
+    // Đổi mật khẩu
+    Route::post('/password', [ClientAccountController::class, 'updatePassword'])->name('password.update');
+    
     // Order
     Route::get('/orders', [ClientAccountController::class, 'index'])->name('orders.index');
     Route::get('/orders/track/{id}', [ClientAccountController::class, 'track'])->name('orders.track');
