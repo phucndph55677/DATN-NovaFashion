@@ -33,6 +33,7 @@ class HomeController extends Controller
                     $q->where('id', $nuCategory->id)
                     ->orWhere('parent_id', $nuCategory->id);
                 })
+                ->where('onpage', 1)
                 ->latest()
                 ->get();
         }
@@ -51,6 +52,7 @@ class HomeController extends Controller
                     $q->where('id', $namCategory->id)
                     ->orWhere('parent_id', $namCategory->id);
                 })
+                ->where('onpage', 1)
                 ->latest()
                 ->get();
         }
@@ -69,6 +71,7 @@ class HomeController extends Controller
                     $q->where('id', $vnCategory->id)
                     ->orWhere('parent_id', $vnCategory->id);
                 })
+                ->where('onpage', 1)
                 ->latest()
                 ->get();
         }
@@ -87,6 +90,7 @@ class HomeController extends Controller
                     $q->where('id', $FMLCategory->id)
                     ->orWhere('parent_id', $FMLCategory->id);
                 })
+                ->where('onpage', 1)
                 ->latest()
                 ->get();
         }
