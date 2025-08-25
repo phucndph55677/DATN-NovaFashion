@@ -20,11 +20,29 @@ class AdminDashboardController extends Controller
         $startDate = $start->format('Y-m-d');
         $endDate   = $end->format('Y-m-d');
 
-        // Thống kê tổng quan
-        $totalProducts = Product::count();
-        $totalOrders = Order::whereBetween('created_at', [$start, $end])->count();
-        $totalUsers = User::whereBetween('created_at', [$start, $end])->count();
-        $totalRevenue = Order::whereBetween('created_at', [$start, $end])->sum('total_amount');
+        // 2. Tổng quan
+        $totalProducts = Order::join('order_details', 'orders.id', '=', 'order_details.order_id')
+            ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
+            ->whereBetween('orders.created_at', [$start, $end])
+            ->where('orders.order_status_id', 6)
+            ->where('orders.payment_status_id', 2)
+            ->sum('order_details.quantity');
+
+        $totalOrders = Order::whereBetween('created_at', [$start, $end])
+            ->where('order_status_id', 6)
+            ->where('payment_status_id', 2)
+            ->count();
+
+        $totalRevenueMoney = Order::whereBetween('created_at', [$start, $end])
+            ->where('order_status_id', 6)
+            ->where('payment_status_id', 2)
+            ->selectRaw('SUM(total_amount - 30000 - discount) as total_revenue')
+            ->value('total_revenue');
+
+        $totalRevenue = Order::whereBetween('created_at', [$start, $end])
+            ->where('order_status_id', 6)
+            ->where('payment_status_id', 2)
+            ->sum('total_amount');
 
         // Doanh thu theo ngày
         $revenueData = Order::whereBetween('created_at', [$start, $end])
