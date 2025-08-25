@@ -45,7 +45,7 @@
                                                 <th><label class="text-muted m-0">ID</label></th>
                                                 <th><label class="text-muted mb-0">Tên Khách Hàng</label></th>
                                                 <th><label class="text-muted mb-0">Số Điện Thoại</label></th>
-                                                <th><label class="text-muted mb-0">Xếp Hạng</label></th>
+                                                {{-- <th><label class="text-muted mb-0">Xếp Hạng</label></th> --}}
                                                 <th><label class="text-muted mb-0">Trạng Thái</label></th>
                                                 <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
@@ -72,7 +72,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $client->phone }}</td>
-                                                    <td>{{ $client->ranking->name }}</td>  
+                                                    {{-- <td>{{ $client->ranking->name }}</td>   --}}
                                                     <td>{{ $client->status ? 'Active' : 'Inactive' }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-start align-items-center">
