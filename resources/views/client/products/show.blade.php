@@ -387,21 +387,21 @@
                     </section>
                     <!-- SẢN PHẨM LIÊN QUAN -->
                     
-                    {{-- Trending Banner --}}
-                    <a href="https://ivymoda.com/danh-muc/dress-day-hoa-tiet-110725">
-                        <section class="home-trending box-border bg-before bg-before_02">
-                            <div class="img-trending-desktop">
-                                <img data-original="https://cotton4u.vn/files/news/2025/07/11/0c185bb21dbd0deca33f5f464c1f4787.webp" alt="BANNER TRENDING" class="lazy" loading="lazy" />
-                            </div>
-                            <div class="trending-content">
-                                <div class="box-trending">
-                                    <!--<h3 style="text-transform: capitalize;">trending</h3>-->
-                                    <!--<h2>BANNER TRENDING</h2>-->
-                                    <!--<p></p>-->
-                                </div>
+                    <!-- Brand Chi tiết sản phẩm - Cuối trang-->
+                    @if ($banners_bottom_product->count() > 0)
+                        <section class="list-ads-brand">
+                            <div id="banner-bottom-category" class="slider-ads-brand owl-carousel">
+                                @foreach ($banners_bottom_product as $banner)
+                                    <div class="item-slider-ads">
+                                        <a href="{{ $banner->product_link ?? '#' }}">
+                                            <img src="{{ asset('storage/' . $banner->image) }}"  style="width: 666px; height: 280px;" alt="{{ $banner->name }}"/>
+                                        </a>
+                                    </div>
+                                @endforeach
                             </div>
                         </section>
-                    </a>
+                    @endif
+                    <!-- End Brand -->
                 </div>
             </div>
         </div>
