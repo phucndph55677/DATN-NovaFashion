@@ -13,13 +13,12 @@ class AdminDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Lấy khoảng thời gian từ request, mặc định là từ đầu tháng đến cuối tháng của tháng hiện tại
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        // 1. Bộ lọc ngày + limit
+        $limit = $request->input('limit', 5);
+        [$start, $end] = $this->getDateRange($request);
 
-        // Chuyển sang Carbon và lấy đầu ngày - cuối ngày để so sánh chính xác
-        $start = Carbon::parse($startDate)->startOfDay();
-        $end = Carbon::parse($endDate)->endOfDay();
+        $startDate = $start->format('Y-m-d');
+        $endDate   = $end->format('Y-m-d');
 
         // Thống kê tổng quan
         $totalProducts = Product::count();
@@ -130,11 +129,36 @@ class AdminDashboardController extends Controller
         ));
     }
 
-    // Các hàm CRUD không dùng đến
-    public function create() {}
-    public function store(Request $request) {}
-    public function show($id) {}
-    public function edit($id) {}
-    public function update(Request $request, $id) {}
-    public function destroy($id) {}
+     private function getDateRange(Request $request)
+    {
+        $filterType = $request->input('filter_type');
+        $start = $end = null;
+        switch ($filterType) {
+            case 'month':
+                if ($request->filled('month')) {
+                    $start = Carbon::createFromFormat('Y-m', $request->month)->startOfMonth();
+                    $end   = Carbon::createFromFormat('Y-m', $request->month)->endOfMonth();
+                }
+                break;
+            case 'year':
+                if ($request->filled('year')) {
+                    $start = Carbon::createFromDate($request->year, 1, 1)->startOfDay();
+                    $end   = Carbon::createFromDate($request->year, 12, 31)->endOfDay();
+                }
+                break;
+            case 'quarter':
+                if ($request->filled('quarter') && $request->filled('year_quarter')) {
+                    $start = Carbon::createFromDate($request->year_quarter, ($request->quarter - 1) * 3 + 1, 1);
+                    $end   = (clone $start)->addMonths(2)->endOfMonth();
+                }
+                break;
+            case 'day':
+                if ($request->filled('start_date') && $request->filled('end_date')) {
+                    $start = Carbon::parse($request->start_date)->startOfDay();
+                    $end   = Carbon::parse($request->end_date)->endOfDay();
+                }
+                break;
+        }
+        return [$start ?? now()->startOfMonth(), $end ?? now()->endOfMonth()];
+    }
 }
