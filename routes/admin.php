@@ -62,6 +62,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/orders/{id}/payment-status', [AdminOrderController::class, 'updatePaymentStatus'])->name('orders.updatePaymentStatus');
         Route::put('/orders/{id}/order-status', [AdminOrderController::class, 'updateOrderStatus'])->name('orders.updateOrderStatus');
 
+        // Order Return
+        Route::get('order-return', [AdminOrderController::class, 'orderReturn'])->name('orderReturn');
+        Route::get('show-return/{id}', [AdminOrderController::class, 'showReturn'])->name('showReturn');
+        Route::put('orders/{order}/return', [AdminOrderController::class, 'handleReturn'])->name('handle.return');
+
         // Vouchers
         Route::resource('vouchers', AdminVoucherController::class);
 
