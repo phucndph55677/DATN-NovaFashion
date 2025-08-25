@@ -34,15 +34,21 @@
                                                 <ul class="list-side">
                                                     {{-- Size --}}
                                                     <li class="item-side item-side-size">
-                                                        <p class="item-side-title">Size<span class="icon-ic_plus"></span><span class="icon-ic_minus"></span></p>
-                                                        <div class="sub-list-side">
+                                                        <p class="item-side-title">Size
+                                                            <span class="icon-ic_plus"></span>
+                                                            <span class="icon-ic_minus" style="display: none;"></span>
+                                                        </p>
+                                                        <div class="sub-list-side" id="size-filter" style="display: none;">
                                                             @foreach ($sizes as $size)
-                                                                <label class="item-sub-list po-relative">
-                                                                    <input class="field-cat size-checkbox" type="checkbox" name="att_size[]"
+                                                                <div class="size-option" style="display: inline-block; margin-right: 5px; margin-bottom: 5px;">
+                                                                    <input type="checkbox" id="size-{{ $size->id }}" name="att_size[]" 
                                                                         value="{{ $size->size_code }}"
-                                                                        {{ in_array($size->size_code, (array) request()->input('att_size')) ? 'checked' : '' }}>
-                                                                    <span class="item-sub-title item-sub-pr">{{ $size->name }}</span>
-                                                                </label>
+                                                                        {{ in_array($size->size_code, (array) request()->input('att_size', [])) ? 'checked' : '' }} 
+                                                                        class="size-checkbox" style="display: none;">
+                                                                    <label for="size-{{ $size->id }}" class="size-label" style="display: inline-block; padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; margin: 2px;">
+                                                                        {{ $size->name }}
+                                                                    </label>
+                                                                </div>
                                                             @endforeach
                                                         </div>
                                                     </li>
@@ -50,7 +56,10 @@
 
                                                     {{-- Color --}}
                                                     <li class="item-side item-side-color">
-                                                        <p class="item-side-title">Màu sắc<span class="icon-ic_plus"></span><span class="icon-ic_minus"></span></p>
+                                                        <p class="item-side-title">Màu sắc
+                                                            <span class="icon-ic_plus"></span>
+                                                            <span class="icon-ic_minus"></span>
+                                                        </p>
                                                         <div class="sub-list-side">
                                                             @foreach ($colors as $color)
                                                                 <label class="color-checkbox-wrapper" title="{{ $color->name }}">
@@ -64,23 +73,34 @@
 
                                                     {{-- Price --}}
                                                     <li class="item-side item-side-price">
-                                                        <p class="item-side-title">Mức giá <span class="icon-ic_plus"></span><span class="icon-ic_minus"></span></p>
-                                                        <div class="sub-list-side" style="padding: 0px 0;">
-                                                            <div class="value-range" style="display: flex; gap: 10px; align-items: center;">
-                                                                <div style="flex: 1;">
-                                                                    <label style="display: block; font-size: 13px; margin-bottom: 5px;">Giá từ:</label>
-                                                                    <input type="text" name="product_price_from"
-                                                                        value="{{ request('product_price_from') ? number_format(request('product_price_from'), 0, '', '.') : '' }}"
-                                                                        oninput="this.value = this.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.')"
-                                                                        style="width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
-                                                                </div>
-                                                                <div style="flex: 1;">
-                                                                    <label style="display: block; font-size: 13px; margin-bottom: 5px;">Đến:</label>
-                                                                    <input type="text" name="product_price_to"
-                                                                        value="{{ request('product_price_to') ? number_format(request('product_price_to'), 0, '', '.') : '' }}"
-                                                                        oninput="this.value = this.value.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.')"
-                                                                        style="width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px;">
-                                                                </div>
+                                                        <p class="item-side-title">Mức giá<span class="icon-ic_plus"></span><span class="icon-ic_minus"></span></p>
+                                                        <div class="sub-list-side">
+                                                            <div class="price-options">
+                                                                <label class="price-option">
+                                                                    <input type="radio" name="price_range" value="0-100000" 
+                                                                        {{ request('price_range') == '0-100000' ? 'checked' : '' }}>
+                                                                    <span>Dưới 100.000đ</span>
+                                                                </label>
+                                                                <label class="price-option">
+                                                                    <input type="radio" name="price_range" value="100000-300000"
+                                                                        {{ request('price_range') == '100000-300000' ? 'checked' : '' }}>
+                                                                    <span>100.000đ - 300.000đ</span>
+                                                                </label>
+                                                                <label class="price-option">
+                                                                    <input type="radio" name="price_range" value="300000-500000"
+                                                                        {{ request('price_range') == '300000-500000' ? 'checked' : '' }}>
+                                                                    <span>300.000đ - 500.000đ</span>
+                                                                </label>
+                                                                <label class="price-option">
+                                                                    <input type="radio" name="price_range" value="500000-1000000"
+                                                                        {{ request('price_range') == '500000-1000000' ? 'checked' : '' }}>
+                                                                    <span>500.000đ - 1.000.000đ</span>
+                                                                </label>
+                                                                <label class="price-option">
+                                                                    <input type="radio" name="price_range" value="1000000-"
+                                                                        {{ request('price_range') == '1000000-' ? 'checked' : '' }}>
+                                                                    <span>Trên 1.000.000đ</span>
+                                                                </label>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -108,23 +128,6 @@
                                         <div class="top-main-prod">
                                             <h1 class="sub-title-main">{{ $category->name }}</h1>
                                             <div class="filter-prod">
-                                                <div class="item-filter">
-                                                    <span>Sắp xếp theo <i class="icon-ic_down"></i></span>
-                                                    <div class="list-number-row">
-                                                        <div class="item-number-row">
-                                                            <a href="javascript:void(0)" class="sel-order-option" data-value="">Mặc định</a>
-                                                        </div>
-                                                                                <div class="item-number-row">
-                                                            <a href="javascript:void(0)" class="sel-order-option" data-value="latest">Mới nhất</a>
-                                                        </div>
-                                                                    <div class="item-number-row">
-                                                            <a href="javascript:void(0)" class="sel-order-option" data-value="price_desc">Giá: cao đến thấp</a>
-                                                        </div>
-                                                                    <div class="item-number-row">
-                                                            <a href="javascript:void(0)" class="sel-order-option" data-value="price_asc">Giá: thấp đến cao</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <div class="sidebar-prod">
                                                     <div class="filter-search">
                                                         <i class="icon-ic_filter"></i>
@@ -156,7 +159,7 @@
                                                                     <ul>
                                                                         @foreach ($product->variants->unique('color_id') as $colorVariant)
                                                                             <li class="{{ $loop->first ? 'checked' : '' }} ">
-                                                                                <a href=""
+                                                                                <a href="javascript:void(0)"
                                                                                     class="color-picker"
                                                                                     data-image="{{ asset('storage/' . $colorVariant->image) }}"
                                                                                     data-price="{{ $colorVariant->price }}"
@@ -241,16 +244,6 @@
                                                 @endforeach
                                             </div>
 
-                                            <ul class="list-inline-pagination">
-                                                <li><a href="#">«</a></li>
-                                                <li id="products_active_ts"><a href="#">1</a></li>
-                                                <li><a href="https://ivymoda.com/danh-muc/ao-nu/2">2</a></li>
-                                                <li><a href="https://ivymoda.com/danh-muc/ao-nu/3">3</a></li>
-                                                <li><a href="https://ivymoda.com/danh-muc/ao-nu/4">4</a></li>
-                                                <li><a href="https://ivymoda.com/danh-muc/ao-nu/5">5</a></li>
-                                                <li><a href="https://ivymoda.com/danh-muc/ao-nu/2">»</a></li>
-                                                <li class="last-page"><a href="https://ivymoda.com/danh-muc/ao-nu/24">Trang cuối</a></li>
-                                            </ul>
                                         </div>
                                     </div>
                                 @else
@@ -282,7 +275,136 @@
 @endsection
 
 @section('scripts')
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý nút bỏ lọc (đã có ở trên) - giữ lại 1 lần duy nhất
+            const resetBtnInit = document.querySelector('button[type="reset"]');
+            if (resetBtnInit) {
+                resetBtnInit.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = "{{ route('categories.index', [$slug, $subslug, $childslug]) }}";
+                });
+            }
+
+            // Click màu: đổi ảnh + giá + trạng thái checked
+            document.querySelectorAll('.color-picker').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const productId = this.dataset.product;
+                    const image = this.dataset.image;
+                    const price = parseInt(this.dataset.price) || 0;
+                    const sale = parseInt(this.dataset.sale) || 0;
+
+                    const wrapper = document.querySelector(`.product[data-product-id="${productId}"]`);
+                    if (!wrapper) return;
+
+                    // 1) Đổi ảnh
+                    const productImg = wrapper.querySelector('.product-img');
+                    if (productImg) productImg.src = image;
+
+                    // 2) Đổi giá
+                    const priceEl = wrapper.querySelector('.price-product ins span');
+                    const saleEl = wrapper.querySelector('.price-product del span');
+                    if (priceEl) {
+                        if (sale > 0 && sale < price) {
+                            priceEl.textContent = sale.toLocaleString('vi-VN') + ' VND';
+                            if (saleEl) {
+                                saleEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                                saleEl.parentElement.style.display = 'inline';
+                            }
+                        } else {
+                            priceEl.textContent = price.toLocaleString('vi-VN') + ' VND';
+                            if (saleEl) {
+                                saleEl.textContent = '';
+                                saleEl.parentElement.style.display = 'none';
+                            }
+                        }
+                    }
+
+                    // 3) Checked state
+                    wrapper.querySelectorAll('.list-color li').forEach(li => li.classList.remove('checked'));
+                    this.closest('li').classList.add('checked');
+                });
+            });
+        });
+    </script>
+    
     <style>
+        /* Style cho phần lọc size */
+        #size-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+        }
+        
+        .size-option {
+            display: inline-block;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .size-label {
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .size-checkbox:checked + .size-label {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+        }
+        
+        .size-checkbox {
+            display: none;
+        }
+        
+        /* CSS cho phần lọc giá */
+        .price-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 0;
+        }
+        
+        .price-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .price-option:hover {
+            background-color: #f8f9fa;
+            border-color: #d0d0d0;
+        }
+        
+        .price-option input[type="radio"] {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        
+        .price-option span {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .price-option input[type="radio"]:checked + span {
+            font-weight: 500;
+            color: #000;
+        }
+
         /* Wrapper cho từng màu */
         .color-checkbox-wrapper {
             display: inline-block;
@@ -315,6 +437,32 @@
         .color-checkbox-wrapper input[type="checkbox"]:checked + .color-circle {
             border-color: #000; /* Viền nổi bật khi chọn */
             box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+        }
+        /* ==============================
+           CSS CHO CHỌN MÀU SẮC (PRODUCT LIST)
+           ============================== */
+        .list-color ul { gap: 8px !important; }
+        .list-color li a span {
+            display: inline-block !important;
+            width: 20px !important;
+            height: 20px !important;
+            border-radius: 50% !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,.06) !important;
+            transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease !important;
+        }
+        .list-color li a:hover span {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 10px rgba(0,0,0,.12) !important;
+        }
+        .list-color li.checked a span {
+            outline: 2px solid #222 !important;
+            outline-offset: 2px !important;
+        }
+        @media (max-width: 576px) {
+            .list-color li a span {
+                width: 18px !important;
+                height: 18px !important;
+            }
         }
     </style>
 @endsection
