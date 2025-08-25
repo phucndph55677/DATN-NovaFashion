@@ -95,7 +95,15 @@
                         </div>
                         <div class="sub-action" style="display: none;">
                             <div class="top-action">
-                                <a class="icon" href="{{ route('account.info') }}"><h3>Tài khoản của tôi</h3></a>
+                                @if(Auth::user()->role_id == 1)
+                                    <a class="icon" href="{{ route('admin.dashboards.index') }}">
+                                        <h3>Trang quản trị - NovaFashion</h3>
+                                    </a>
+                                @else
+                                    <a class="icon" href="{{ route('account.info') }}">
+                                        <h3>Tài khoản của tôi</h3>
+                                    </a>
+                                @endif
                             </div>
                             <ul>
                                 <li><a href="{{ route('account.info') }}"><i class="icon-ic_avatar-1"></i>Thông tin tài khoản</a></li>
