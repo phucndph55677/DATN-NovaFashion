@@ -44,7 +44,7 @@ class OrderFactory extends Factory
             'return_reason' => $this->faker->sentence(6),    // ví dụ: "Sản phẩm bị lỗi"
             'return_bank' => $this->faker->randomElement(['Vietcombank', 'Techcombank', 'MB Bank']),
             'return_stk' => $this->faker->bankAccountNumber(),
-            'return_image' => 'returns/' . $this->faker->image('public/storage/returns', 640, 480, null, false),
+            'return_image' => 'https://picsum.photos/600/400?random=' . fake()->numberBetween(1, 1000),
         ];
     }
 }

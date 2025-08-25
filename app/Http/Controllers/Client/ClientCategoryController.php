@@ -28,11 +28,12 @@ class ClientCategoryController extends Controller
 
         // Lấy filters từ request
         $filters = [
-            'sizes'      => array_filter((array) $request->input('att_size', [])),
-            'colors'     => array_filter((array) $request->input('att_color', [])),
-            'price_from' => $request->input('product_price_from'),
-            'price_to'   => $request->input('product_price_to'),
-            'sort'       => $request->input('sort')
+            'sizes'       => array_filter((array) $request->input('att_size', [])),
+            'colors'      => array_filter((array) $request->input('att_color', [])),
+            'price_range' => $request->input('price_range'),
+            'price_from'  => $request->input('product_price_from'),
+            'price_to'    => $request->input('product_price_to'),
+            'sort'        => $request->input('sort')
         ];
 
         // Query sản phẩm
@@ -48,13 +49,16 @@ class ClientCategoryController extends Controller
                     $q->whereIn('color_id', $filters['colors']);
                 });
             })
-            ->when($filters['price_from'], function ($query) use ($filters) {
-                $query->where('price', '>=', (int) str_replace('.', '', $filters['price_from']));
+            ->when($filters['price_range'] ?? null, function ($query) use ($filters) {
+                list($min, $max) = explode('-', $filters['price_range']);
+                $query->whereHas('variants', function($q) use ($min, $max) {
+                    $q->where('price', '>=', (int)$min);
+                    if (!empty($max)) {
+                        $q->where('price', '<=', (int)$max);
+                    }
+                });
             })
-            ->when($filters['price_to'], function ($query) use ($filters) {
-                $query->where('price', '<=', (int) str_replace('.', '', $filters['price_to']));
-            })
-            ->paginate(12)
+            ->paginate(20)
             ->appends($request->query());
 
         // Breadcrumb: danh sách danh mục từ gốc đến hiện tại
