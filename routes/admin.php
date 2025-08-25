@@ -12,8 +12,6 @@ use App\Http\Controllers\Admin\AdminVoucherController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
-use App\Http\Controllers\Admin\Accounts\SellerManageController;
-
 
 // ROUTE ADMIN
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -82,9 +80,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('accounts')->name('accounts.')->group(function () {
             // Client Management
             Route::resource('client-manage', ClientManageController::class);
-
-            // Seller Management
-            Route::resource('seller-manage', SellerManageController::class);
 
             // Admin Management
             Route::resource('admin-manage', AdminManageController::class);
