@@ -166,6 +166,9 @@ class ClientPaymentController extends Controller
             ]);
         }
 
+        // Giảm số lượng sản phẩm trong kho ngay sau khi tạo order detail
+        $item->productVariant->decrement('quantity', $item->quantity);
+
         // Xoá giỏ hàng đã đặt
         CartDetail::whereIn('id', $checkout['cart_detail_ids'])->delete();
 
