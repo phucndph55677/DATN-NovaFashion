@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
@@ -44,110 +45,231 @@ class AdminDashboardController extends Controller
             ->where('payment_status_id', 2)
             ->sum('total_amount');
 
-        // Doanh thu theo ngày
-        $revenueData = Order::whereBetween('created_at', [$start, $end])
-            ->selectRaw('DATE(created_at) as date, SUM(total_amount) as total')
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
+        // 3. Xác định groupType cho biểu đồ
+        $diffDays = $start->diffInDays($end);
+        $groupType = $diffDays <= 31 ? 'day' : ($diffDays <= 180 ? 'week4' : ($diffDays <= 365 ? 'month' : 'year'));
 
-        $labels = [];
-        $data = [];
-        $currentDate = Carbon::parse($startDate);
-        $endDateObj = Carbon::parse($endDate);
+        // 4. Doanh thu theo thời gian
+        [$labels, $data] = $this->buildChartData(
+            Order::whereBetween('created_at', [$start, $end])
+                ->where('order_status_id', 6)
+                ->where('payment_status_id', 2),
+            $start,
+            $end,
+            $groupType,
+            'SUM(total_amount)'
+        );
 
-        while ($currentDate->lte($endDateObj)) {
-            $dateStr = $currentDate->format('Y-m-d');
-            $labels[] = $currentDate->format('d/m/Y');
-            $revenue = $revenueData->firstWhere('date', $dateStr);
-            $data[] = $revenue ? (float) $revenue->total : 0;
-            $currentDate = $currentDate->copy()->addDay();
-        }
+        // 5. Lợi nhuận theo thời gian
+        [$profitLabels, $profitValues] = $this->buildChartData(
+            DB::table('orders')->where('order_status_id', 6)
+                ->where('payment_status_id', 2)
+                ->whereBetween('created_at', [$start, $end]),
+            $start,
+            $end,
+            $groupType,
+            'SUM(total_amount - 30000 - discount)'
+        );
 
-        // Dữ liệu cho biểu đồ sản phẩm bán chạy (top 10)
-        $topProductsChart = Product::select('products.*')
+        // 6. Người dùng mới theo thời gian
+        [$userLabels, $userData] = $this->buildChartData(
+            User::whereBetween('created_at', [$start, $end]),
+            $start,
+            $end,
+            $groupType,
+            'COUNT(*)'
+        );
+
+        // 7. Top sản phẩm bán chạy (chart)
+        $topProductsChart = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_quantity'))
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->whereBetween('orders.created_at', [$start, $end])
-            ->selectRaw('products.*, COUNT(DISTINCT order_details.order_id) as total_orders, SUM(order_details.quantity) as total_quantity')
+            ->where('orders.order_status_id', 6)
+            ->where('orders.payment_status_id', 2)
             ->groupBy('products.id')
-            ->orderBy('total_orders', 'desc')
-            ->take(10)
+            ->orderByDesc('total_quantity')
+            ->take($limit)
             ->get();
 
         $productLabels = $topProductsChart->pluck('name')->toArray();
-        $productData = $topProductsChart->pluck('total_orders')->toArray();
+        $productData   = $topProductsChart->pluck('total_quantity')->toArray();
 
-        // Dữ liệu cho biểu đồ người dùng theo ngày
-        $usersData = User::whereBetween('created_at', [$start, $end])
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
-
-        $userLabels = [];
-        $userData = [];
-        $currentDate = Carbon::parse($startDate);
-        $endDateObj = Carbon::parse($endDate);
-
-        while ($currentDate->lte($endDateObj)) {
-            $dateStr = $currentDate->format('Y-m-d');
-            $userLabels[] = $currentDate->format('d/m/Y');
-            $users = $usersData->firstWhere('date', $dateStr);
-            $userData[] = $users ? (int) $users->total : 0;
-            $currentDate = $currentDate->copy()->addDay();
-        }
-
-        // Sản phẩm bán chạy nhất
+        // 8. Top sản phẩm bán chạy (chi tiết)
         $topProducts = Product::select('products.*')
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->whereBetween('orders.created_at', [$start, $end])
+            ->where('orders.order_status_id', 6)
+            ->where('orders.payment_status_id', 2)
             ->selectRaw('products.*, COUNT(DISTINCT order_details.order_id) as total_orders, SUM(order_details.quantity) as total_quantity')
             ->groupBy('products.id')
-            ->with(['variants' => function($query) {
-                $query->select('product_id', 'price');
-            }])
-            ->orderBy('total_orders', 'desc')
-            ->take(5)
+            ->with(['variants' => fn($q) => $q->select('product_id', 'price')])
+            ->orderByDesc('total_orders')
+            ->take($limit)
             ->get();
 
-        // Đơn hàng gần đây
+        // 9. Sản phẩm bán chậm
+        $leastSellingProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_quantity'))
+            ->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
+            ->leftJoin('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
+            ->leftJoin('orders', 'order_details.order_id', '=', 'orders.id')
+            ->whereBetween('orders.created_at', [$start, $end])
+            ->where('orders.order_status_id', 6)
+            ->where('orders.payment_status_id', 2)
+            ->groupBy('products.id')
+            ->orderBy('total_quantity', 'asc')
+            ->take($limit)
+            ->get();
+
+        $leastProductLabels = $leastSellingProducts->pluck('name')->toArray();
+        $leastProductData   = $leastSellingProducts->pluck('total_quantity')->toArray();
+
+        // 10. Trạng thái đơn hàng
+        $orderStatusStats = DB::table('orders')
+            ->join('order_statuses', 'orders.order_status_id', '=', 'order_statuses.id')
+            ->where('payment_status_id', 2)
+            ->whereBetween('orders.created_at', [$start, $end])
+            ->select('order_statuses.name as status_name', DB::raw('COUNT(*) as count'))
+            ->groupBy('order_statuses.name')->get();
+
+        $orderStatusLabels = $orderStatusStats->pluck('status_name');
+        $orderStatusData   = $orderStatusStats->pluck('count');
+
+        // 11. Đơn hàng gần đây
         $recentOrders = Order::with(['user', 'orderDetails.productVariant.product'])
             ->whereBetween('created_at', [$start, $end])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+            ->latest()->take(5)->get();
 
-        // Khách hàng mới
+        // 12. Người dùng mới
         $newCustomers = User::where('role_id', 2)
             ->whereBetween('created_at', [$start, $end])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+            ->latest()->take(5)->get();
+
+        // 13. Top người dùng
+        $topUsers = User::select(
+            'users.id',
+            'users.name',
+            'users.email',
+            DB::raw('COUNT(orders.id) as total_orders'),
+            DB::raw('SUM(orders.total_amount) as total_amount')
+        )
+            ->join('orders', 'users.id', '=', 'orders.user_id')
+            ->where('orders.order_status_id', 6)
+            ->where('payment_status_id', 2)
+            ->whereBetween('orders.created_at', [$start, $end])
+            ->groupBy('users.id', 'users.name', 'users.email')
+            ->orderByDesc('total_orders')->take(5)->get();
+
+        // 14. Xử lý AJAX (chart update)
+        if ($request->ajax()) {
+            if ($request->input('type') === 'least') {
+                return response()->json([
+                    'labels' => $leastProductLabels,
+                    'data'   => collect($leastProductData)->map(fn($q) => (int)$q),
+                ]);
+            }
+            return response()->json([
+                'labels' => $productLabels,
+                'data'   => collect($productData)->map(fn($q) => (int)$q),
+            ]);
+        }
+
+        // 15. Trả dữ liệu về view
+        $overview = [
+            ['label' => 'Tổng sản phẩm', 'value' => $totalProducts],
+            ['label' => 'Tổng đơn hàng', 'value' => $totalOrders],
+            ['label' => 'Tổng doanh thu thực tế', 'value' => number_format($totalRevenueMoney, 0, ',', '.') . ' VND'],
+            ['label' => 'Tổng doanh thu', 'value' => number_format($totalRevenue, 0, ',', '.') . ' VND'],
+        ];
+        $startDateFormatted = Carbon::parse($startDate)->format('m/d/Y');
+        $endDateFormatted   = Carbon::parse($endDate)->format('m/d/Y');
 
         return view('admin.dashboards.index', compact(
             'totalProducts',
             'totalOrders',
-            'totalUsers',
+            'totalRevenueMoney',
             'totalRevenue',
-            'topProducts',
-            'recentOrders',
-            'newCustomers',
-            'startDate',
-            'endDate',
             'labels',
             'data',
+            'profitLabels',
+            'profitValues',
+            'userLabels',
+            'userData',
             'productLabels',
             'productData',
-            'userLabels',
-            'userData'
+            'topProducts',
+            'leastProductLabels',
+            'leastProductData',
+            'leastSellingProducts',
+            'orderStatusLabels',
+            'orderStatusData',
+            'recentOrders',
+            'newCustomers',
+            'topUsers',
+            'limit',
+            'overview',
+            'startDateFormatted',
+            'endDateFormatted'
         ));
     }
 
-     private function getDateRange(Request $request)
+
+    private function buildChartData($query, $start, $end, $type, $sumExpr)
+    {
+        $labels = $values = [];
+        switch ($type) {
+            case 'day':
+                $data = $query->selectRaw("DATE(created_at) as period, $sumExpr as val")
+                    ->groupBy('period')->pluck('val', 'period');
+                for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+                    $key = $d->format('Y-m-d');
+                    $labels[] = $d->format('d/m/Y');
+                    $values[] = (float) ($data[$key] ?? 0);
+                }
+                break;
+            case 'month':
+                $data = $query->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as period, $sumExpr as val")
+                    ->groupBy('period')->pluck('val', 'period');
+                for ($d = $start->copy()->startOfMonth(); $d->lte($end); $d->addMonth()) {
+                    $key = $d->format('Y-m');
+                    $labels[] = $d->format('m/Y');
+                    $values[] = (float) ($data[$key] ?? 0);
+                }
+                break;
+            case 'year':
+                $data = $query->selectRaw("YEAR(created_at) as period, $sumExpr as val")
+                    ->groupBy('period')->pluck('val', 'period');
+                for ($d = $start->copy()->startOfYear(); $d->lte($end); $d->addYear()) {
+                    $key = $d->format('Y');
+                    $labels[] = $key;
+                    $values[] = (float) ($data[$key] ?? 0);
+                }
+                break;
+            default: // week4
+                $data = $query->selectRaw("YEAR(created_at) as y, MONTH(created_at) as m,
+                        CASE WHEN DAY(created_at) BETWEEN 1 AND 7 THEN 1
+                             WHEN DAY(created_at) BETWEEN 8 AND 14 THEN 2
+                             WHEN DAY(created_at) BETWEEN 15 AND 21 THEN 3
+                             ELSE 4 END as w, $sumExpr as val")
+                    ->groupBy('y', 'm', 'w')->get()
+                    ->mapWithKeys(fn($r) => ["{$r->y}-{$r->m}-{$r->w}" => $r->val]);
+                for ($d = $start->copy()->startOfMonth(); $d->lte($end); $d->addMonth()) {
+                    for ($w = 1; $w <= 4; $w++) {
+                        $key = "{$d->year}-{$d->month}-{$w}";
+                        if ($d->lte($end)) {
+                            $labels[] = "Tuần $w/{$d->month}-{$d->year}";
+                            $values[] = (float)($data[$key] ?? 0);
+                        }
+                    }
+                }
+        }
+        return [$labels, $values];
+    }
+
+    private function getDateRange(Request $request)
     {
         $filterType = $request->input('filter_type');
         $start = $end = null;
