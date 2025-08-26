@@ -71,6 +71,13 @@
                                 {{-- Product Information Section --}}
                                 <div class="col-md-6">
                                     <div class="product-information">
+                                        @php
+                                            $variant = $product->variants->first(); // hoặc chọn variant theo logic khác
+
+                                            $favorites = Auth::check() ? Auth::user()->favorites->pluck('product_id')->toArray() : [];
+                                            $isFavorite = in_array($product->id, $favorites);
+                                        @endphp
+                                        
                                         {{-- Product Title --}}
                                         <h1 style="text-transform: uppercase;">{{ $product->name }}</h1>
 
@@ -209,9 +216,84 @@
                                                 @endif
 
                                                 {{-- Wishlist Button --}}
-                                                <button class="btn btn--large btn--outline btn--wishlist">
-                                                    <i class="icon-ic_heart"></i>
-                                                </button>
+                                                <div style="display:inline-block; cursor:pointer;">
+                                                    <svg
+                                                        id="favorite-icon-{{ $product->id }}"
+                                                        width="36" height="36"
+                                                        fill="{{ $isFavorite ? 'red' : 'none' }}"
+                                                        stroke="{{ $isFavorite ? 'white' : 'currentColor' }}"
+                                                        stroke-width="1"
+                                                        onclick="
+                                                            event.preventDefault();
+                                                            let userLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+                                                            const toast = document.getElementById('toast');
+                                                            if(!userLoggedIn){
+                                                                document.getElementById('toast-message').innerText = 'Vui lòng đăng nhập để thêm sản phẩm yêu thích.';
+                                                                toast.style.display = 'flex';
+                                                                toast.style.opacity = '1';
+                                                                setTimeout(()=> {
+                                                                    toast.style.opacity = '0';
+                                                                    setTimeout(()=>{ toast.style.display='none'; }, 400);
+                                                                }, 3000);
+                                                                return;
+                                                            }
+
+                                                            // Toggle màu icon
+                                                            let icon = this;
+                                                            if(icon.getAttribute('fill') === 'red'){
+                                                                icon.setAttribute('fill', 'none');
+                                                                icon.setAttribute('stroke', 'currentColor');
+                                                            } else {
+                                                                icon.setAttribute('fill', 'red');
+                                                                icon.setAttribute('stroke', 'white');
+                                                            }
+
+                                                            // Submit form ẩn
+                                                            document.getElementById('favorite-form-{{ $product->id }}').submit();
+                                                        "
+                                                    >
+                                                        <path d="M20.8 4.6c-1.5-1.4-3.9-1.4-5.4 0l-.9.9-.9-.9c-1.5-1.4-3.9-1.4-5.4 0-1.6 1.5-1.6 4 0 5.5l6.3 6.2 6.3-6.2c1.6-1.5 1.6-4 0-5.5z" />
+                                                    </svg>
+
+                                                    <form id="favorite-form-{{ $product->id }}" action="{{ route('account.favorites.toggle') }}" method="POST" class="d-none">
+                                                        @csrf
+                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    </form>
+                                                </div>
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function () {
+                                                        var heart = document.getElementById('favorite-icon-{{ $product->id }}');
+                                                        if (!heart) { console.log('Heart SVG not found'); return; }
+                                                        var cart = heart.closest('.product-cart');
+                                                        var btn = cart ? cart.querySelector('.btn.btn--large') : null;
+                                                        if (!btn) { console.log('Sample large button not found'); return; }
+                                                        var btnHeight = Math.round(parseFloat(getComputedStyle(btn).height));
+                                                        console.log('Matching heart to button height:', btnHeight);
+                                                        if (btnHeight && !isNaN(btnHeight)) {
+                                                            // Ensure the SVG scales properly
+                                                            if (!heart.getAttribute('viewBox')) {
+                                                                heart.setAttribute('viewBox', '0 0 24 24');
+                                                            }
+                                                            heart.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+                                                            // Size to match button height
+                                                            heart.setAttribute('width', String(btnHeight));
+                                                            heart.setAttribute('height', String(btnHeight));
+                                                            heart.setAttribute('stroke-width', '2');
+
+                                                            // Make wrapper a square box matching height
+                                                            var wrap = heart.parentElement;
+                                                            if (wrap) {
+                                                                wrap.style.display = 'inline-flex';
+                                                                wrap.style.alignItems = 'center';
+                                                                wrap.style.justifyContent = 'center';
+                                                                wrap.style.height = btnHeight + 'px';
+                                                                wrap.style.width = btnHeight + 'px';
+                                                                wrap.style.cursor = 'pointer';
+                                                            }
+                                                        }
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
 
@@ -955,16 +1037,40 @@
             background: #f6f7f8; 
             font-weight: 600; 
         }
+
+        /* Scoped price styles for product detail */
+        #product_detail .product-information .price-product {
+            margin: 8px 0 12px;
+        }
+        #product_detail .product-information .price-product ins span {
+            font-size: 25px;
+            line-height: 1.2;
+            font-weight: 700;
+            color: red;
+        }
+        #product_detail .product-information .price-product del span {
+            font-size: 15px;
+            color: #888;
+            margin-left: 8px;
+        }
+        @media (max-width: 576px) {
+            #product_detail .product-information .price-product ins span {
+                font-size: 24px;
+            }
+            #product_detail .product-information .price-product del span {
+                font-size: 14px;
+            }
+        }
     </style>
 
     {{-- ========================================
          CSS CHO CHỌN MÀU SẮC
     ======================================== --}}
     <style>
-        .list-color ul { gap: 8px !important; }
+        .list-color ul { gap: 12px !important; }
         .list-color li a span { 
-            width: 20px !important; 
-            height: 20px !important; 
+            width: 32px !important; 
+            height: 32px !important;
             border-radius: 50%; 
             box-shadow: 0 1px 2px rgba(0,0,0,.06); 
             transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease; 
@@ -979,8 +1085,8 @@
         }
         @media (max-width: 576px) {
             .list-color li a span { 
-                width: 18px !important; 
-                height: 18px !important; 
+                width: 28px !important; 
+                height: 28px !important;  
             }
         }
     </style>

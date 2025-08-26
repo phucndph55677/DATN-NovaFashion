@@ -39,7 +39,12 @@ class ClientProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::with(['variants.color', 'variants.size'])->findOrFail($id);
+        $product = Product::where('onpage', 1)
+        ->with([
+            'variants' => function ($q) {
+                $q->where('status', 1)->with(['color', 'size']);
+            }
+        ])->findOrFail($id);
 
         // Lấy reviews đã duyệt, đơn hàng thành công
         $reviews = Review::with('user')
