@@ -41,6 +41,8 @@ class OrderFactory extends Factory
             'discount' => $discount,
             'total_amount' => $total_amount,
             'note' => $this->faker->optional()->sentence(),
+
+            'return_rejected' => $this->faker->boolean(20),
             'return_reason' => $this->faker->sentence(6),    // ví dụ: "Sản phẩm bị lỗi"
             'return_bank' => $this->faker->randomElement(['Vietcombank', 'Techcombank', 'MB Bank']),
             'return_stk' => $this->faker->bankAccountNumber(),

@@ -25,6 +25,8 @@ return new class extends Migration
             $table->decimal('discount', 10, 2)->default(0); // Tiền giảm giá (nếu có) 
             $table->decimal('total_amount', 10, 2); // Tổng tiền cuối cùng phải thanh toán
             $table->text('note')->nullable();   // Ghi chú thêm (nếu có)
+            
+            $table->boolean('return_rejected')->default(false)->comment('Đơn hàng đã từng bị từ chối hoàn hàng');
             $table->text('return_reason')->nullable(); // lý do hoàn hàng
             $table->string('return_bank')->nullable();   // tên ngân hàng
             $table->string('return_stk')->nullable();    // số tài khoản
