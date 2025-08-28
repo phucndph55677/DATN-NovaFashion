@@ -38,13 +38,6 @@
                                         {{-- Trạng thái đã hủy --}}
                                         @elseif($order->order_status_id == 9)
                                             <span style="color: red; font-weight: bold;">Đơn hàng đã hủy</span>
-
-                                        {{-- Trạng thái Tthành công - cho phép Hoàn hàng --}}
-                                        @elseif($order->order_status_id == 6)
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#returnOrderModal-{{ $order->id }}"
-                                                style="border: none; background: none; color: blue; text-decoration: underline;">
-                                                Hoàn hàng
-                                            </a>
                                         @endif
                                     </div>
 
