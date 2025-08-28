@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 class ClientAccountController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Hàm xử lý tìm kiếm sản phẩm
      */
     public function search(Request $request)
     {
@@ -108,6 +108,9 @@ class ClientAccountController extends Controller
         ]);
     }
 
+    /**
+     * Hàm hiển thị thông tin khách hàng
+     */
     public function info()
     {
         if (!Auth::check()) {
@@ -120,6 +123,9 @@ class ClientAccountController extends Controller
         return view('client.account.info', compact('user'));
     }
 
+    /**
+     * Hàm xử hiện thị các đơn hàng
+     */
     public function index(Request $request)
     {
         if (!Auth::check()) {
@@ -143,23 +149,7 @@ class ClientAccountController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
-
-    /**
-     * Display the specified resource.
+     * Hàm hiển thị Theo dõi đơn hàng
      */
     public function track(string $id)
     {
@@ -193,7 +183,7 @@ class ClientAccountController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Hàm hiển thị Chi tiết từng đơn hàng
      */
     public function show(string $id)
     {
@@ -227,7 +217,7 @@ class ClientAccountController extends Controller
     }
 
     /**
-     * Hủy đơn hàng
+     * Hàm xử lý Hủy đơn hàng
      */
     public function cancel($id)
     {
@@ -235,7 +225,7 @@ class ClientAccountController extends Controller
 
         // Chỉ cho phép hủy khi trạng thái là 1 (Chưa xác nhận) hoặc 2 (Đã xác nhận) hoặc 3 là (Chuẩn bị hàng)
         if (!in_array($order->order_status_id, [1, 2, 3])) {
-            return redirect()->back()->with('error', 'Không thể hủy đơn hàng ở trạng thái hiện tại.');
+            return redirect()->back()->with('error', 'Đơn hàng ' . $order->order_code . ' đang được giao, không thể hủy đơn.');
         }
 
         DB::transaction(function () use ($order) {
@@ -264,10 +254,11 @@ class ClientAccountController extends Controller
             }
         });
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Đơn hàng ' . $order->order_code . ' đã được hủy.');
     }
+
     /**
-     * Gửi yêu cầu hoàn hàng
+     * Hàm xử lý Gửi yêu cầu hoàn hàng
      */
     public function return($id, Request $request)
     {
@@ -282,6 +273,11 @@ class ClientAccountController extends Controller
         // Chỉ cho phép hoàn khi đơn đã Thành công (6)
         if ($order->order_status_id != 6) {
             return redirect()->back()->with('error', 'Đơn hàng chưa hoàn tất, không thể yêu cầu hoàn hàng.');
+        }
+
+        // Chỉ được hoàn hàng 1 lần (Nếu đơn hàng bị từ chuối rồi thì kh hiện form nữa)
+        if ($order->return_rejected) {
+            return redirect()->back()->with('error', 'Đơn hàng đã bị từ chối yêu cầu hoàn hàng trước đó.');
         }
 
         // Validate dữ liệu
@@ -326,11 +322,15 @@ class ClientAccountController extends Controller
             'return_bank'     => $request->return_bank,
             'return_stk'      => $request->return_stk,
             'return_image' => $imageLinks ? implode(',', $imageLinks) : null,
+            'return_rejected' => true, // mặc định khi mới gửi yêu cầu
         ]);
 
-        return redirect()->back()->with('success', 'Yêu cầu hoàn hàng đã được gửi!');
+        return redirect()->back()->with('success', 'Yêu cầu hoàn hàng của đơn hàng ' . $order->order_code . ' đã được gửi!');
     }
 
+    /**
+     * Hàm hiển thị Sản phẩm yêu thích
+     */
     public function favorite(Request $request)
     {
         if (!Auth::check()) {
@@ -359,6 +359,9 @@ class ClientAccountController extends Controller
         return view('client.account.favorite', compact('favorites', 'sort'));
     }
 
+    /**
+     * Hàm xử lý nút Thêm/Bỏ sản phẩm yêu thích
+     */
     public function toggleFavorite(Request $request)
     {
         $userId = Auth::id();
@@ -448,14 +451,6 @@ class ClientAccountController extends Controller
         }
 
         return redirect()->back()->with('success', 'Đánh giá đã được gửi!');
-    }
-    
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -573,14 +568,5 @@ class ClientAccountController extends Controller
         ]);
 
         return redirect()->route('account.info')->with('success', 'Đổi mật khẩu thành công!');
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }
