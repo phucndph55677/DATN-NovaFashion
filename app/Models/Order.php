@@ -23,6 +23,8 @@ class Order extends Model
         'discount',
         'total_amount',
         'note',
+        
+        'return_rejected',
         'return_reason',
         'return_bank',
         'return_stk',
@@ -76,10 +78,11 @@ class Order extends Model
 
         return match (true) {
             in_array($status, ['Chờ xác nhận', 'Đã xác nhận']) => 'info',
-            $status === 'Chuẩn bị hàng' => 'secondary',
-            $status === 'Đang giao hàng' => 'warning',
+            $status === 'Chuẩn bị hàng' => 'light',
+            $status === 'Đang giao hàng' => 'secondary',
             $status === 'Đã giao hàng' => 'success',
             $status === 'Thành công' => 'primary',
+            $status === 'Chờ hoàn hàng' => 'warning',
             $status === 'Hoàn hàng' => 'dark',
             $status === 'Hủy đơn' => 'danger',
             default => 'light',
@@ -95,6 +98,7 @@ class Order extends Model
             $status === 'Chưa thanh toán' => 'danger',
             $status === 'Đã thanh toán' => 'success',
             $status === 'Hoàn tiền' => 'dark',
+            $status === 'Đã hoàn tiền' => 'primary',
             default => 'light',
         };
     }
