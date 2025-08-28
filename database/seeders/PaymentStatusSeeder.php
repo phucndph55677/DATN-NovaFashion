@@ -17,6 +17,7 @@ class PaymentStatusSeeder extends Seeder
             'Chưa thanh toán',
             'Đã thanh toán',
             'Hoàn tiền',
+            'Đã hoàn tiền',
         ];
 
         foreach ($statuses as $status) {
