@@ -14,7 +14,7 @@
                     <div class="create-workform">
                         <div class="d-flex flex-wrap align-items-center justify-content-between">
                             <!-- Search -->
-                            <div class="modal-product-search d-flex flex-wrap">
+                            {{-- <div class="modal-product-search d-flex flex-wrap">
                                 <form class="me-3 position-relative">
                                     <div class="form-group mb-0">
                                         <input type="text" class="form-control" id="exampleInputText"placeholder="Tìm kiếm đơn hàng...">
@@ -27,7 +27,7 @@
                                         </a>
                                     </div>
                                 </form>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -44,14 +44,27 @@
                                 <form method="GET" action="{{ route('admin.orders.index') }}" class="px-3 py-2">
                                     <div class="row gx-3 gy-2 align-items-end">
                                         
-                                        <!-- Trạng thái -->
+                                        <!-- Trạng Thái Thanh Toán-->
                                         <div class="col-lg-auto flex-grow-1">
-                                            <label class="form-label">Trạng Thái</label>
-                                            <select name="status" class="form-select form-select-sm rounded-pill shadow-sm">
+                                            <label class="form-label">TT Thanh Toán</label>
+                                            <select name="payment_status" class="form-select form-select-sm rounded-pill shadow-sm">
                                                 <option value="">-- Tất cả --</option>
-                                                @foreach ($order_statuses as $status)
-                                                    <option value="{{ $status->id }}" {{ request('status') == $status->id ? 'selected' : '' }}>
-                                                        {{ $status->name }}
+                                                @foreach ($payment_statuses as $payment_status)
+                                                    <option value="{{ $payment_status->id }}" {{ request('payment_status') == $payment_status->id ? 'selected' : '' }}>
+                                                        {{ $payment_status->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <!-- Trạng Thái Đơn Hàng    -->
+                                        <div class="col-lg-auto flex-grow-1">
+                                            <label class="form-label">TT Đơn Hàng</label>
+                                            <select name="order_status" class="form-select form-select-sm rounded-pill shadow-sm">
+                                                <option value="">-- Tất cả --</option>
+                                                @foreach ($order_statuses as $order_status)
+                                                    <option value="{{ $order_status->id }}" {{ request('order_status') == $order_status->id ? 'selected' : '' }}>
+                                                        {{ $order_status->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -71,14 +84,14 @@
                                         <!-- Từ ngày -->
                                         <div class="col-lg-auto flex-grow-1">
                                             <label class="form-label">Từ Ngày</label>
-                                            <input type="date" name="start_date" class="form-control form-control-sm rounded-pill shadow-sm"
+                                            <input type="date" name="start_date" class="form-select form-select-sm rounded-pill shadow-sm"
                                                 value="{{ request('start_date') }}">
                                         </div>
 
                                         <!-- Đến ngày -->
                                         <div class="col-lg-auto flex-grow-1">
                                             <label class="form-label">Đến Ngày</label>
-                                            <input type="date" name="end_date" class="form-control form-control-sm rounded-pill shadow-sm"
+                                            <input type="date" name="end_date" class="form-select form-select-sm rounded-pill shadow-sm"
                                                 value="{{ request('end_date') }}">
                                         </div>
 
@@ -99,7 +112,8 @@
                                                 <th><label class="text-muted m-0">Mã Đơn Hàng</label></th>
                                                 <th><label class="text-muted mb-0">Tên Khách Hàng</label></th>
                                                 <th><label class="text-muted mb-0">Tổng Tiền</label></th>
-                                                <th><label class="text-muted mb-0">Trạng Thái</label></th>
+                                                <th><label class="text-muted mb-0">TT Thanh Toán</label></th>
+                                                <th><label class="text-muted mb-0">TT Đơn Hàng</label></th>
                                                 <th><label class="text-muted mb-0">Ngày Đặt</label></th>
                                                 <th class="text-start"><span class="text-muted">Hành Động</span></th>
                                             </tr>
@@ -111,6 +125,11 @@
                                                     <td>{{ $order->order_code }}</td>
                                                     <td>{{ $order->name }}</td>
                                                     <td>{{ number_format($order->total_amount, 0, ',', '.') }} VND</td>
+                                                    <td>
+                                                        <span class="badge bg-{{ $order->payment_badge_color }}">
+                                                            {{ $order->paymentStatus?->name ?? 'Chưa xác định' }}
+                                                        </span>
+                                                    </td>
                                                     <td>
                                                         <span class="badge bg-{{ $order->order_badge_color }}">
                                                             {{ $order->orderStatus?->name ?? 'Chưa xác định' }}

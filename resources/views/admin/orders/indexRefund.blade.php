@@ -48,12 +48,12 @@
                         <div class="card card-block card-stretch">
                             <div class="card-body p-0">
                                 <div class="d-flex justify-content-between align-items-center p-3 pb-0">
-                                    <h5 class="fw-bold">Danh Sách Đơn Yêu Cầu Hoàn Hàng</h5>
+                                    <h5 class="fw-bold">Danh Sách Đơn Hoàn Tiền</h5>
                                 </div>
 
                                 <form method="GET" action="{{ route('admin.indexReturn') }}" class="px-3 py-2">
                                     <div class="row gx-3 gy-2 align-items-end">
-
+                                        
                                         <!-- Khoảng thời gian -->
                                         <div class="col-lg-auto flex-grow-1">
                                             <label class="form-label">Khoảng Thời Gian</label>
@@ -121,12 +121,12 @@
                                                     </td>
                                                     <td>{{ $order->created_at->format('d/m/Y') }}</td>
                                                     <td>
-                                                        <div class="d-flex justify-content-start align-items-center">   
+                                                        <div class="d-flex justify-content-start align-items-center">
 
                                                         <!-- View -->
                                                         <a class="" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Xem"
-                                                            href="{{ route('admin.showReturn', $order->id) }}">
+                                                            href="{{ route('admin.showRefund', $order->id) }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                 class="text-secondary me-4" width="20"
                                                                 fill="none" viewBox="0 0 24 24"
@@ -139,10 +139,10 @@
                                                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                             </svg>
                                                         </a>
-                                                        
+
                                                         <!-- Edit -->
                                                         <a href="" data-bs-toggle="modal"
-                                                            data-bs-target="#returnOrderModal{{ $order->id }}" title="Đồng ý / Từ chối">
+                                                            data-bs-target="#refundOrderModal{{ $order->id }}" title="Xác nhận hoàn tiền">
                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                 class="text-secondary me-4" width="20"
                                                                 fill="none" viewBox="0 0 24 24"
@@ -151,7 +151,7 @@
                                                                     stroke-width="2"
                                                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                             </svg>
-                                                        </a>                          
+                                                        </a>   
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -168,13 +168,13 @@
 
     <!-- Modals moved outside table structure -->
     @foreach ($orders as $order)
-        <div class="modal fade" id="returnOrderModal{{ $order->id }}" tabindex="-1" aria-labelledby="returnOrderLabel{{ $order->id }}" aria-hidden="true" data-bs-scrollbar="false">
+        <div class="modal fade" id="refundOrderModal{{ $order->id }}" tabindex="-1" aria-labelledby="refundOrderLabel{{ $order->id }}" aria-hidden="true" data-bs-scrollbar="false">
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <div class="modal-content">
 
                     <!-- Header -->
                     <div class="modal-header text-start">
-                        <h4 class="modal-title">Đơn Yêu Cầu Hoàn Hàng - {{ $order->order_code }}</h4>
+                        <h4 class="modal-title">Đơn Hoàn Tiền - {{ $order->order_code }}</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
 
@@ -246,16 +246,14 @@
                     </div>
                     <!-- Footer -->
                     <div class="modal-footer justify-content-center">
-                        <form action="{{ route('admin.handle.return', $order->id) }}" method="POST">
+                        <form action="{{ route('admin.handle.refund', $order->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <button type="submit" name="action" value="approve" class="btn btn-success">Đồng Ý</button>
-                            <button type="submit" name="action" value="reject" class="btn btn-danger">Từ Chối</button>
+                            <button type="submit" class="btn btn-success">Xác Nhận Hoàn Tiền</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     @endforeach
-
 @endsection
