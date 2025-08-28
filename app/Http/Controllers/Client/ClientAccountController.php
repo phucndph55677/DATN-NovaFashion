@@ -390,7 +390,9 @@ class ClientAccountController extends Controller
         return redirect()->back()->with('success', 'Đã thêm sản phẩm vào yêu thích.');
     }
 
-    // Reviews
+    /**
+     * Hàm hiển thị Danh sách đơn hàng cần đánh giá
+     */
     public function review(Request $request)
     {
         if (!Auth::check()) {
@@ -402,6 +404,7 @@ class ClientAccountController extends Controller
         $reviews = Order::with(['orderDetails.productVariant.product', 'orderStatus'])
             ->where('user_id', $userId)
             ->where('order_status_id', 6)
+            ->where('updated_at', '>=', now()->subDays(7)) // chỉ lấy đơn trong vòng 7 ngày
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -417,6 +420,9 @@ class ClientAccountController extends Controller
         return view('client.account.review', compact('reviews', 'reviewedProducts'));
     }
 
+    /**
+     * Hàm hiển thị xử lý Đánh giá đơn hàng
+     */
     public function store(Request $request)
     {
         $orderDetailIds = $request->input('order_detail_id', []);
