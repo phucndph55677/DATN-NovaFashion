@@ -96,33 +96,25 @@ class AdminDashboardController extends Controller
         $productLabels = $topProductsChart->pluck('name')->toArray();
         $productData   = $topProductsChart->pluck('total_quantity')->toArray();
 
-        // 8. Top sản phẩm bán chạy (chi tiết)
-        $topProducts = Product::select('products.*')
-            ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-            ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-            ->join('orders', 'order_details.order_id', '=', 'orders.id')
-            ->whereBetween('orders.created_at', [$start, $end])
-            ->where('orders.order_status_id', 6)
-            ->where('orders.payment_status_id', 2)
-            ->selectRaw('products.*, COUNT(DISTINCT order_details.order_id) as total_orders, SUM(order_details.quantity) as total_quantity')
-            ->groupBy('products.id')
-            ->with(['variants' => fn($q) => $q->select('product_id', 'price')])
-            ->orderByDesc('total_orders')
-            ->take($limit)
-            ->get();
-
         // 9. Sản phẩm bán chậm
-        $leastSellingProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_quantity'))
+        $leastSellingProducts = Product::select(
+            'products.id',
+            'products.name',
+            DB::raw('COALESCE(SUM(order_details.quantity), 0) as total_quantity')
+        )
             ->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->leftJoin('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-            ->leftJoin('orders', 'order_details.order_id', '=', 'orders.id')
-            ->whereBetween('orders.created_at', [$start, $end])
-            ->where('orders.order_status_id', 6)
-            ->where('orders.payment_status_id', 2)
-            ->groupBy('products.id')
+            ->leftJoin('orders', function ($join) use ($start, $end) {
+                $join->on('order_details.order_id', '=', 'orders.id')
+                    ->whereBetween('orders.created_at', [$start, $end])
+                    ->where('orders.order_status_id', 6)
+                    ->where('orders.payment_status_id', 2);
+            })
+            ->groupBy('products.id', 'products.name')
             ->orderBy('total_quantity', 'asc')
             ->take($limit)
             ->get();
+
 
         $leastProductLabels = $leastSellingProducts->pluck('name')->toArray();
         $leastProductData   = $leastSellingProducts->pluck('total_quantity')->toArray();
@@ -200,7 +192,6 @@ class AdminDashboardController extends Controller
             'userData',
             'productLabels',
             'productData',
-            'topProducts',
             'leastProductLabels',
             'leastProductData',
             'leastSellingProducts',

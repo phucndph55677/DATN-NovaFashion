@@ -5,40 +5,21 @@ namespace App\Http\Controllers\Admin\Accounts;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Ranking;
+use Illuminate\Validation\Rule;
 
 class ClientManageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Danh sách khách hàng (role_id = 3).
      */
     public function index(Request $request)
     {
         $clients = User::where('role_id', 3)->get();
-
         return view('admin.accounts.clientManage.index', compact('clients'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Chi tiết khách hàng.
      */
     public function show(string $id)
     {
@@ -49,48 +30,49 @@ class ClientManageController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Form sửa khách hàng.
      */
     public function edit(string $id)
     {
         $client = User::where('role_id', 3)->findOrFail($id);
-        $rankings = Ranking::all(); // Lấy toàn bộ danh sách ranking
+
         $statuses = [
             (object)['id' => 1, 'name' => 'Hoạt Động'],
             (object)['id' => 0, 'name' => 'Không Hoạt Động'],
         ];
 
-        return view('admin.accounts.clientManage.edit', compact('client', 'rankings', 'statuses'));
+        return view('admin.accounts.clientManage.edit', compact('client', 'statuses'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Cập nhật khách hàng (KHÔNG dùng ranking).
      */
     public function update(Request $request, string $id)
     {
         $client = User::where('role_id', 3)->findOrFail($id);
 
-        $data = $request->validate(
-            [
-                'ranking_id' => 'required',
-                'status' => 'required',
-            ],
-            [
-                'ranking_id.required' => 'Vui lòng chọn xếp hạng.',
-                'status.required' => 'Vui lòng chọn trạng thái.',
-            ]
-        );
+        $data = $request->validate([
+            'name'    => ['required','string','max:255'],
+            'email'   => ['required','email', Rule::unique('users','email')->ignore($client->id)],
+            'phone'   => ['nullable','string','max:20'],
+            'address' => ['nullable','string','max:255'],
+            'status'  => ['required','in:0,1'],
+        ], [
+            'name.required'   => 'Vui lòng nhập tên.',
+            'email.required'  => 'Vui lòng nhập email.',
+            'email.email'     => 'Email không hợp lệ.',
+            'email.unique'    => 'Email đã tồn tại.',
+            'status.required' => 'Vui lòng chọn trạng thái.',
+        ]);
 
-        $client->update($data);
+        $client->fill($data)->save();
 
-        return redirect()->route('admin.accounts.client-manage.index');
+        return redirect()
+            ->route('admin.accounts.client-manage.index')
+            ->with('success', 'Cập nhật khách hàng thành công.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    public function create() {}
+    public function store(Request $request) {}
+    public function destroy(string $id) {}
 }

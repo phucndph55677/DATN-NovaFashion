@@ -4,11 +4,15 @@
 
 @section('content')
     <div class="container-fluid">
-        @if(session('error'))
-            <script>
-                alert("{{ session('error') }}");
-            </script>
-        @endif
+        <!-- Thông báo chung -->
+        @foreach (['success', 'info', 'warning', 'danger'] as $msg)
+            @if(session($msg))
+                <div class="alert alert-{{ $msg }} alert-dismissible fade show" role="alert">
+                    {{ session($msg) }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        @endforeach
         
         <div class="row">
             <div class="col-lg-12">
@@ -35,37 +39,37 @@
                 <div class="card">
                     <ul class="list-group list-group-flush rounded">
                         <li class="list-group-item p-3">
-                            <h5 class="fw-bold">Trạng Thái Thanh Toán</h5>
+                            <h5 class="fw-bold" style="margin-bottom: 10px">Trạng Thái Thanh Toán</h5>
                             <form action="{{ route('admin.orders.updatePaymentStatus', $order->id) }}" method="POST" class="d-flex align-items-center">
                                 @csrf
                                 @method('PUT')
 
                                 <select name="payment_status_id" class="form-select form-select-sm me-2" style="min-width: 160px;">
-                                    @foreach($payment_statuses  as $payment_status)
+                                    @foreach($payment_statuses as $payment_status)
                                         @php
-                                            $isDisabled = false;
+                                            $isDisabled = true;
 
-                                            // Không cho chọn trạng thái trước đó
-                                            if ($payment_status->id < $order->payment_status_id) {
-                                                $isDisabled = true;
+                                            // Cho phép chọn trạng thái hiện tại
+                                            if ($order->payment_status_id == $payment_status->id) {
+                                                $isDisabled = false;
                                             }
 
-                                            // 2. Chỉ cho phép chọn trạng thái hiện tại hoặc kế tiếp
-                                            if ($payment_status->id > $order->payment_status_id + 1) {
-                                                $isDisabled = true;
+                                            // Cho phép chuyển từ "Hoàn tiền" sang "Đã hoàn tiền"
+                                            if ($order->payment_status_id == 3 && $payment_status->id == 4) {
+                                                $isDisabled = false;
                                             }
                                         @endphp
 
-                                        <option 
-                                            value="{{ $payment_status->id }}" 
+                                        <option value="{{ $payment_status->id }}"
                                             {{ $order->payment_status_id == $payment_status->id ? 'selected' : '' }}
-                                            {{ $isDisabled ? 'disabled' : '' }} >
+                                            {{ $isDisabled ? 'disabled' : '' }}>
                                             {{ $payment_status->name }}
                                         </option>
                                     @endforeach
                                 </select>
                                 
                                 <button type="submit" class="btn btn-outline-primary btn-sm" 
+                                    style="height: 31px; line-height: 1; padding: 0.25rem 0.75rem; min-width: 100px;"
                                     onclick="return confirm('Bạn có chắc chắn muốn cập nhật Trạng thái thanh toán không?')">Cập Nhật
                                 </button>
                             </form>
@@ -78,7 +82,7 @@
                 <div class="card">
                     <ul class="list-group list-group-flush rounded">
                         <li class="list-group-item p-3">
-                            <h5 class="fw-bold">Trạng Thái Đơn Hàng</h5>
+                            <h5 class="fw-bold" style="margin-bottom: 10px">Trạng Thái Đơn Hàng</h5>
                             <form action="{{ route('admin.orders.updateOrderStatus', $order->id) }}" method="POST" class="d-flex align-items-center">
                                 @csrf
                                 @method('PUT')
@@ -88,19 +92,27 @@
                                         @php
                                             $isDisabled = false;
 
-                                            // Xử lý riêng với "Hủy đơn", không cho HỦY nếu không phải "Chờ xác nhận", 'Đã xác nhận'
-                                            if ($order_status->name === 'Hủy đơn') {
-                                                if (
-                                                    $order->orderStatus?->name !== 'Chờ xác nhận' &&
-                                                    $order->orderStatus?->name !== 'Đã xác nhận'
-                                                ) {
+                                            // Nếu đơn đã Thành công (id = 6) thì disable tất cả trạng thái khác
+                                            if ($order->order_status_id == 6) {
+                                                if ($order_status->id != 6) {
                                                     $isDisabled = true;
                                                 }
                                             }
 
-                                            // Xử lý riêng với "Hoàn hàng", không cho "Hoàn hàng" nếu chưa "Thành công"
-                                            elseif ($order_status->name === 'Hoàn hàng') {
-                                                if ($order->orderStatus?->name !== 'Thành công') {
+                                            //  Nếu đơn đã Hoàn hàng (ví dụ id = 7) => disable luôn trạng thái Hoàn hàng
+                                            elseif ($order->order_status_id == 7) {
+                                                if ($order_status->id !== 7) {
+                                                    $isDisabled = true;
+                                                }
+                                            }
+
+                                            // Xử lý riêng với "Hủy đơn", không cho HỦY nếu không phải "Chờ xác nhận", 'Đã xác nhận', 'Chuẩn bị hàng'
+                                            elseif  ($order_status->name === 'Hủy đơn') {
+                                                if (
+                                                    $order->orderStatus?->name !== 'Chờ xác nhận' &&
+                                                    $order->orderStatus?->name !== 'Đã xác nhận' &&
+                                                    $order->orderStatus?->name !== 'Chuẩn bị hàng'
+                                                ) {
                                                     $isDisabled = true;
                                                 }
                                             }
@@ -112,7 +124,7 @@
                                                     $isDisabled = true;
                                                 }
 
-                                                // Chỉ cho trạng thái hiện tại hoặc kế tiếp (trừ 'Hủy đơn' và 'Hoàn hàng')
+                                                // Chỉ cho trạng thái hiện tại hoặc kế tiếp 
                                                 if ($order_status->id > $order->order_status_id + 1) {
                                                     $isDisabled = true;
                                                 }
@@ -130,6 +142,7 @@
                                 </select>
                                 
                                 <button type="submit" class="btn btn-outline-primary btn-sm"
+                                    style="height: 31px; line-height: 1; padding: 0.25rem 0.75rem; min-width: 100px;"
                                     onclick="return confirm('Bạn có chắc chắn muốn cập nhật Trạng thái đơn hàng không?')">Cập Nhật
                                 </button>
                             </form>
@@ -158,7 +171,7 @@
                                         </tr>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">PT Thanh Toán</td>
-                                            <td>{{ $order->payment->paymentMethod->name ?? 'Không xác định' }}</td>
+                                            <td>{{ $order->payment->paymentMethod->name ?? 'Chưa xác định' }}</td>
                                         </tr>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">TT Thanh Toán</td>
@@ -182,27 +195,56 @@
                         </li>
                         
                         <li class="list-group-item p-3">
-                            <h5 class="fw-bold pb-2">Thông Tin Khách Hàng</h5>
+                            <h5 class="fw-bold pb-2">Thông Tin Người Nhận</h5>
                             <div class="table-responsive">
                                 <table class="table table-borderless mb-0">
                                     <tbody>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Tên</td>
-                                            <td>{{ $order->name }}</td>
+                                            <td>{{ !empty($order->name) ? $order->name : 'Chưa có tên' }}</td>
                                         </tr>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Số Điện Thoại</td>
-                                            <td>{{ $order->phone }}</td>
+                                            <td>{{ !empty($order->phone) ? $order->phone : 'Chưa có tên' }}</td>
                                         </tr>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Địa Chỉ</td>
                                             {{-- <td>{{ $order->address }}</td> --}}
-                                            <td>{!! nl2br(e($order->address)) !!}</td>
+                                            <td>{!! nl2br(e($order->address) ? $order->address : 'Chưa có địa chỉ') !!}</td>
                                         </tr>
                                         <tr class="white-space-no-wrap">
                                             <td class="text-muted pl-0">Ghi chú</td>
                                             {{-- <td>{{ $order->note }}</td> --}}
-                                            <td>{!! nl2br(e($order->note)) !!}</td>
+                                            <td>{!! nl2br(e($order->note) ? $order->note : 'Chưa có địa chỉ') !!}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+
+                        <li class="list-group-item p-3">
+                            <h5 class="fw-bold pb-2">Thông Tin Người Đặt</h5>
+                            <div class="table-responsive">
+                                <table class="table table-borderless mb-0">
+                                    <tbody>
+                                        <tr class="white-space-no-wrap">
+                                            <td class="text-muted pl-0">Tên</td>
+                                            <td>{{ !empty($order->user->name) ? $order->user->name : 'Chưa có tên' }}</td>
+                                        </tr>
+                                        <tr class="white-space-no-wrap">
+                                            <td class="text-muted pl-0">Số Điện Thoại</td>
+                                            <td>{{ !empty($order->user->phone) ? $order->user->phone : 'Chưa có số điện thoại' }}</td>
+                                        </tr>
+                                        <tr class="white-space-no-wrap">
+                                            <td class="text-muted pl-0">Địa Chỉ</td>
+                                            {{-- <td>{{ $order->address }}</td> --}}
+                                            <td>{!! nl2br(e($order->user->address) ? $order->user->address : 'Chưa có địa chỉ') !!}</td>
+
+                                        </tr>
+                                        <tr class="white-space-no-wrap">
+                                            <td class="text-muted pl-0">Email</td>
+                                            {{-- <td>{{ $order->note }}</td> --}}
+                                            <td>{!! nl2br(e($order->user->email) ? $order->user->email : 'Chưa có email') !!}</td>
                                         </tr>
                                     </tbody>
                                 </table>
