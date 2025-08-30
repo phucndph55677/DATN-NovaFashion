@@ -71,6 +71,11 @@ class Order extends Model
         return $this->hasMany(OrderVoucher::class);
     }
 
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
     // (Tuỳ chọn) Hiển thị màu trạng thái đơn hàng
     public function getOrderBadgeColorAttribute()
     {
