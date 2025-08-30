@@ -13,14 +13,7 @@ class Invoice extends Model
     protected $fillable = [
         'order_id',
         'invoice_code',
-        'name',
-        'address',
-        'phone',
-        'email',
-        'status',
-        'total',
         'issue_date',
-        'note',
     ];
 
     public function order()
