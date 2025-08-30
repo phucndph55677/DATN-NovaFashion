@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatus;
+use App\Models\Invoice;
 use App\Models\PaymentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -307,6 +308,20 @@ class AdminOrderController extends Controller
         // Nếu cập nhật đơn hàng sang trạng thái "Thành công"
         if ($data['order_status_id'] == 6) { // 6 = Thành công
             $order->payment_status_id = 2; // thì 2 = Đã thanh toán
+
+            // Nếu đơn hàng chưa có hóa đơn thì tạo mới
+            if (!$order->invoice) {
+                do {
+                    // Kết hợp tiền tố + thời gian + số ngẫu nhiên
+                    $randomCodeInvoice = 'INV' . now()->format('YmdHis') . random_int(100, 999);
+                } while (Invoice::where('invoice_code', $randomCodeInvoice)->exists());
+
+                Invoice::create([
+                    'order_id'     => $order->id,
+                    'invoice_code' => $randomCodeInvoice,
+                    'issue_date'   => now(),
+                ]);
+            }
         }
 
         $order->save();
