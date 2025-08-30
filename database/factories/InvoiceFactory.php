@@ -27,14 +27,7 @@ class InvoiceFactory extends Factory
         return [
             'order_id' => $order->id,
             'invoice_code' => 'INV-' . strtoupper(Str::random(8)), // Ví dụ: INV-8CHZ9KXW
-            'name' => $this->faker->name,
-            'address' => $this->faker->address,
-            'phone' => fake()->unique()->numerify('+84 9## ### ###'),
-            'email' => $this->faker->unique()->safeEmail,
-            'status' => $this->faker->numberBetween(0, 2),
-            'total' => $order->total_amount ?? $this->faker->randomFloat(2, 100, 5000),
             'issue_date' => $this->faker->date(),
-            'note' => $this->faker->optional()->sentence(),
         ];
     }
 }
