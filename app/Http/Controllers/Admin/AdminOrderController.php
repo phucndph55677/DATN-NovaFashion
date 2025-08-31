@@ -319,7 +319,7 @@ class AdminOrderController extends Controller
                 Invoice::create([
                     'order_id'     => $order->id,
                     'invoice_code' => $randomCodeInvoice,
-                    'issue_date'   => now(),
+                    'issue_date'   => null, // để trống
                 ]);
             }
         }
