@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // Khóa chính id
             $table->foreignId('order_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng orders
             $table->string('invoice_code')->unique(); // Mã hóa đơn, duy nhất
-            $table->date('issue_date');                 // Ngày xuất hóa đơn
+            $table->datetime('issue_date')->nullable(); // Ngày, giờ xuất hóa đơn
             $table->timestamps(); // Tạo 2 cột created_at và updated_at
         });
     }
