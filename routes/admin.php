@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminVoucherController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\Admin\Accounts\AdminManageController;
 use App\Http\Controllers\Admin\Accounts\ClientManageController;
 
@@ -69,6 +70,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('order-refund', [AdminOrderController::class, 'indexRefund'])->name('indexRefund');
         Route::get('show-refund/{id}', [AdminOrderController::class, 'showRefund'])->name('showRefund');
         Route::put('orders/{order}/refund', [AdminOrderController::class, 'handleRefund'])->name('handle.refund');
+
+        // Invouce
+        Route::get('invoice', [AdminInvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('invoice/{id}', [AdminInvoiceController::class, 'show'])->name('invoices.show');
+        Route::get('/invoice/print/{id}', [AdminInvoiceController::class, 'printInvoice'])->name('invoices.print');
 
         // Vouchers
         Route::resource('vouchers', AdminVoucherController::class);
