@@ -16,11 +16,14 @@ class ChatFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = Chat::class;
+
     public function definition(): array
     {
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'message' => $this->faker->sentence(10, true),
+            'admin_id' => User::factory(), // Admin (có thể lọc role trong seeder)
+            'last_message_at' => now(),
         ];
     }
 }
