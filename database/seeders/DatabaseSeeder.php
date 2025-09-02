@@ -50,6 +50,7 @@ class DatabaseSeeder extends Seeder
             // LocationSeeder::class,
             // BannerSeeder::class,
             // ChatBotSessionSeeder::class,
+            // ChatBotMessageSeeder::class,
         ]);
     }
 }
