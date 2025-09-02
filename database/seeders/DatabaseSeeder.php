@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             // RoleSeeder::class,
+            // AdminUserSeeder::class,
+            // ClientUserSeeder::class,
             // UserSeeder::class,
             // CategorySeeder::class,
             // ProductSeeder::class,
@@ -47,8 +49,7 @@ class DatabaseSeeder extends Seeder
             // NotificationSeeder::class,
             // LocationSeeder::class,
             // BannerSeeder::class,
-            // AdminUserSeeder::class,
-            // ClientUserSeeder::class,
+            // ChatBotSessionSeeder::class,
         ]);
     }
 }
