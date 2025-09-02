@@ -50,11 +50,23 @@ class ClientCategoryController extends Controller
                 });
             })
             ->when($filters['price_range'] ?? null, function ($query) use ($filters) {
-                list($min, $max) = explode('-', $filters['price_range']);
-                $query->whereHas('variants', function($q) use ($min, $max) {
-                    $q->where('price', '>=', (int)$min);
+                [$min, $max] = explode('-', $filters['price_range']);
+
+                $query->whereHas('variants', function ($q) use ($min, $max) {
+                    $q->whereRaw("
+                        CASE 
+                            WHEN sale IS NOT NULL AND sale > 0 
+                            THEN sale 
+                            ELSE price 
+                        END >= ?", [(int)$min]);
+
                     if (!empty($max)) {
-                        $q->where('price', '<=', (int)$max);
+                        $q->whereRaw("
+                            CASE 
+                                WHEN sale IS NOT NULL AND sale > 0 
+                                THEN sale 
+                                ELSE price 
+                            END <= ?", [(int)$max]);
                     }
                 });
             })

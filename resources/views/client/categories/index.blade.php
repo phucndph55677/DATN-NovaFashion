@@ -279,12 +279,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Xử lý nút bỏ lọc (đã có ở trên) - giữ lại 1 lần duy nhất
             const resetBtnInit = document.querySelector('button[type="reset"]');
-            if (resetBtnInit) {
-                resetBtnInit.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.location.href = "{{ route('categories.index', [$slug, $subslug, $childslug]) }}";
-                });
-            }
+                if (resetBtnInit) {
+                    resetBtnInit.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        @if(request()->is('account/search*'))
+                            // Nếu đang ở trang tìm kiếm -> giữ lại từ khóa q, bỏ hết filter
+                            window.location.href = "/account/search?q={{ request('q') }}";
+                        @else
+                            // Nếu đang ở category -> quay về category gốc
+                            window.location.href = "{{ route('categories.index', [$slug ?? null, $subslug ?? null, $childslug ?? null]) }}";
+                        @endif
+                    });
+                }
 
             // Click màu: đổi ảnh + giá + trạng thái checked
             document.querySelectorAll('.color-picker').forEach(function (el) {
