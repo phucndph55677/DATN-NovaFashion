@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminProductVariantController;
 use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminChatController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminVoucherController;
 use App\Http\Controllers\Admin\AdminOrderController;
@@ -55,6 +56,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Banners
         Route::resource('banners', AdminBannerController::class);
+
+        // Chat
+        Route::get('chat', [AdminChatController::class, 'index'])->name('chats.index');
+        Route::post('chat/send', [AdminChatController::class, 'store'])->name('chats.store');
+        Route::get('chat/{chatId}/messages', [AdminChatController::class, 'getMessages'])->name('chats.messages');
 
         // Order
         Route::resource('orders', AdminOrderController::class);
