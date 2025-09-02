@@ -29,7 +29,7 @@
 <script src="https://templates.iqonic.design/datum-dist/laravel/public/js/slider.js"></script>
 
 <!-- Emoji picker -->
-<script src="https://templates.iqonic.design/datum-dist/laravel/public/vendor/emoji-picker-element/index.js" type="module"></script>
+{{-- <script src="https://templates.iqonic.design/datum-dist/laravel/public/vendor/emoji-picker-element/index.js" type="module"></script> --}}
 
 <script src="https://templates.iqonic.design/datum-dist/laravel/public/vendor/vanillajs-datepicker/dist/js/datepicker-full.js"></script>
 <script src="https://templates.iqonic.design/datum-dist/laravel/public/vendor/moment.min.js"></script>

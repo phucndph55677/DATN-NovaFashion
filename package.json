@@ -5,6 +5,9 @@
         "build": "vite build",
         "dev": "vite"
     },
+    "dependencies": {
+        "pusher-js": "^8.2.0"
+    },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
         "axios": "^1.8.2",
