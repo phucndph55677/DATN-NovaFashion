@@ -671,6 +671,59 @@
 @endsection
 
 @section('scripts')
+    <!-- Chatbot assets -->
+    <link rel="stylesheet" href="{{ asset('css/main-chatbot.css') }}">
+    <script src="{{ asset('js/ui-chatbot.js') }}" defer></script>
+    <script src="{{ asset('js/main-chatbot.js') }}" defer></script>
+
+    <!-- Chatbot markup -->
+    <div id="nf-chatbot" class="nf-chatbot" aria-live="polite" aria-label="Hỗ trợ NovaFashion">
+        <div class="nf-chatbot__header">
+            <div class="nf-chatbot__left">
+                <button class="nf-chatbot__back" type="button" aria-label="Quay lại danh sách">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="nf-chatbot__brand">
+                    <span class="nf-chatbot__dot"></span>
+                    <span class="nf-chatbot__title">Nova AI</span>
+                </div>
+            </div>
+            <button class="nf-chatbot__close" type="button" aria-label="Đóng">×</button>
+        </div>
+        <div class="nf-chatbot__users" aria-label="Danh sách người dùng">
+            <div class="nf-chatbot__users-list">
+                <button class="nf-chatbot__user" data-user="Nova AI">
+                    <div class="nf-user__avatar">NF</div>
+                    <div class="nf-user__meta"><div class="nf-user__name">Nova AI</div><div class="nf-user__desc">Trợ lý tư vấn sản phẩm</div></div>
+                </button>
+                <!-- Tạm thời ẩn Admin chat để tập trung vào AI
+                <button class="nf-chatbot__user" data-user="Admin">
+                    <div class="nf-user__avatar">A</div>
+                    <div class="nf-user__meta"><div class="nf-user__name">Admin</div><div class="nf-user__desc">CSKH NovaFashion</div></div>
+                </button>
+                -->
+            </div>
+        </div>
+        <div class="nf-chatbot__body"></div>
+        <div class="nf-chatbot__footer">
+            <div class="nf-input-wrap" role="group" aria-label="Soạn tin nhắn">
+                <input type="text" class="nf-chatbot__input" placeholder="Nhập tin nhắn...">
+                <div class="nf-input-actions">
+                    <button class="nf-btn nf-send nf-chatbot__send" type="button" aria-label="Gửi" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="currentColor"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="nf-chatbot-toggle" class="nf-chatbot-toggle" aria-label="Mở chat Nova AI">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+            stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" 
+                d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+        </svg>
+    </button>
+
     {{-- JS xử lý Banner, Slider --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {

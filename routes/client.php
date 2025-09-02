@@ -9,6 +9,7 @@ use App\Http\Controllers\Client\ClientCartController;
 use App\Http\Controllers\Client\ClientCheckoutController;
 use App\Http\Controllers\Client\ClientPaymentController;
 use App\Http\Controllers\Client\ClientAccountController;
+use App\Http\Controllers\Client\ClientChatBotController;
 
 
 // ROUTE CLIENT
@@ -50,6 +51,10 @@ Route::post('/carts/{id}', [ClientCartController::class, 'destroy'])->name('cart
 
 // Mini Cart
 Route::get('/mini-cart', [ClientCartController::class, 'miniCart'])->name('miniCart');
+
+// ChatBot API
+Route::get('/chatbot/messages', [ClientChatBotController::class, 'index'])->name('chatbot.index');
+Route::post('/chatbot/messages', [ClientChatBotController::class, 'store'])->name('chatbot.message');
 
 // Checkouts
 Route::get('/checkouts', [ClientCheckoutController::class, 'index'])->name('checkouts.index');
