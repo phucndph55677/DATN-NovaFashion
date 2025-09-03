@@ -16,7 +16,7 @@ class PaymentMethodSeeder extends Seeder
         $methods = [
             ['name' => 'Thanh toán khi giao hàng', 'code' => 'cod', 'type' => 'offline'],
             ['name' => 'Ví điện tử Momo',          'code' => 'momo', 'type' => 'online'],
-            ['name' => 'Ngân hàng VNPAY',          'code' => 'vnpay', 'type' => 'online'],
+            // ['name' => 'Ngân hàng VNPAY',          'code' => 'vnpay', 'type' => 'online'],
         ];
 
         foreach ($methods as $method) {
