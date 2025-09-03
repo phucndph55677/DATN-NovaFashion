@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // Khóa chính id
             $table->foreignId('order_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng orders
             $table->foreignId('payment_method_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng payment_methods
-            $table->decimal('payment_amount', 10, 2); // Số tiền đã thanh toán
+            $table->decimal('payment_amount', 20, 2); // Số tiền đã thanh toán
             $table->string('payment_code')->unique(); // Mã giao dịch do hệ thống hoặc cổng thanh toán cung cấp
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending'); // Trạng thái thanh toán (ví dụ: pending, completed, failed)
             $table->timestamps(); // Tạo 2 cột created_at và updated_at

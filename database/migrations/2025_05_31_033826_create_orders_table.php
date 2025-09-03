@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('name');    // Tên người nhận
             $table->text('address');   // Địa chỉ giao hàng
             $table->string('phone');   // Số điện thoại liên hệ
-            $table->decimal('subtotal', 10, 2); // Tổng tiền chưa giảm giá
-            $table->decimal('discount', 10, 2)->default(0); // Tiền giảm giá (nếu có) 
-            $table->decimal('total_amount', 10, 2); // Tổng tiền cuối cùng phải thanh toán
+            $table->decimal('subtotal', 20, 2); // Tổng tiền chưa giảm giá
+            $table->decimal('discount', 20, 2)->default(0); // Tiền giảm giá (nếu có) 
+            $table->decimal('total_amount', 20, 2); // Tổng tiền cuối cùng phải thanh toán
             $table->text('note')->nullable();   // Ghi chú thêm (nếu có)
             
             $table->boolean('return_rejected')->default(false)->comment('Đơn hàng đã từng bị từ chối hoàn hàng');
