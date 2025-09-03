@@ -14,42 +14,48 @@ class AdminDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Bộ lọc ngày + limit
-        $limit = $request->input('limit', 5);
-        [$start, $end] = $this->getDateRange($request);
+        // 1. Lấy bộ lọc ngày và giới hạn số lượng item hiển thị
+        $limit = $request->input('limit', 5); // Mặc định lấy top 5
+        [$start, $end] = $this->getDateRange($request); // Lấy khoảng thời gian theo filter
 
+        // Chuyển đổi sang định dạng Y-m-d để sử dụng trong view hoặc tính toán khác
         $startDate = $start->format('Y-m-d');
         $endDate   = $end->format('Y-m-d');
 
         // 2. Tổng quan
+
+        // Tổng số sản phẩm đã bán trong khoảng thời gian
         $totalProducts = Order::join('order_details', 'orders.id', '=', 'order_details.order_id')
             ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
             ->whereBetween('orders.created_at', [$start, $end])
-            ->where('orders.order_status_id', 6)
-            ->where('orders.payment_status_id', 2)
+            ->where('orders.order_status_id', 6) // Đơn đã hoàn thành
+            ->where('orders.payment_status_id', 2) // Đã thanh toán
             ->sum('order_details.quantity');
 
+        // Tổng số đơn hàng
         $totalOrders = Order::whereBetween('created_at', [$start, $end])
             ->where('order_status_id', 6)
             ->where('payment_status_id', 2)
             ->count();
 
+        // Tổng doanh thu thực tế (trừ chi phí vận chuyển và discount)
         $totalRevenueMoney = Order::whereBetween('created_at', [$start, $end])
             ->where('order_status_id', 6)
             ->where('payment_status_id', 2)
             ->selectRaw('SUM(total_amount - 30000 - discount) as total_revenue')
             ->value('total_revenue');
 
+        // Tổng doanh thu gộp (không trừ chi phí)
         $totalRevenue = Order::whereBetween('created_at', [$start, $end])
             ->where('order_status_id', 6)
             ->where('payment_status_id', 2)
             ->sum('total_amount');
 
-        // 3. Xác định groupType cho biểu đồ
+        // 3. Xác định groupType cho biểu đồ dựa trên khoảng thời gian
         $diffDays = $start->diffInDays($end);
         $groupType = $diffDays <= 31 ? 'day' : ($diffDays <= 180 ? 'week4' : ($diffDays <= 365 ? 'month' : 'year'));
 
-        // 4. Doanh thu theo thời gian
+        // 4. Biểu đồ doanh thu theo thời gian
         [$labels, $data] = $this->buildChartData(
             Order::whereBetween('created_at', [$start, $end])
                 ->where('order_status_id', 6)
@@ -60,7 +66,7 @@ class AdminDashboardController extends Controller
             'SUM(total_amount)'
         );
 
-        // 5. Lợi nhuận theo thời gian
+        // 5. Biểu đồ lợi nhuận theo thời gian
         [$profitLabels, $profitValues] = $this->buildChartData(
             DB::table('orders')->where('order_status_id', 6)
                 ->where('payment_status_id', 2)
@@ -71,7 +77,7 @@ class AdminDashboardController extends Controller
             'SUM(total_amount - 30000 - discount)'
         );
 
-        // 6. Người dùng mới theo thời gian
+        // 6. Biểu đồ người dùng mới theo thời gian
         [$userLabels, $userData] = $this->buildChartData(
             User::whereBetween('created_at', [$start, $end]),
             $start,
@@ -80,7 +86,7 @@ class AdminDashboardController extends Controller
             'COUNT(*)'
         );
 
-        // 7. Top sản phẩm bán chạy (chart)
+        // 7. Top sản phẩm bán chạy (dùng cho chart)
         $topProductsChart = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_quantity'))
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
@@ -93,6 +99,7 @@ class AdminDashboardController extends Controller
             ->take($limit)
             ->get();
 
+        // Lấy nhãn và dữ liệu để hiển thị biểu đồ
         $productLabels = $topProductsChart->pluck('name')->toArray();
         $productData   = $topProductsChart->pluck('total_quantity')->toArray();
 
@@ -100,29 +107,27 @@ class AdminDashboardController extends Controller
         $leastSellingProducts = Product::select(
             'products.id',
             'products.name',
-            DB::raw('COALESCE(SUM(order_details.quantity), 0) as total_quantity')
+            DB::raw('SUM(order_details.quantity) as total_quantity')
         )
-            ->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
-            ->leftJoin('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-            ->leftJoin('orders', function ($join) use ($start, $end) {
+            ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+            ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
+            ->join('orders', function ($join) use ($start, $end) {
                 $join->on('order_details.order_id', '=', 'orders.id')
                     ->whereBetween('orders.created_at', [$start, $end])
-                    ->where('orders.order_status_id', 6)
-                    ->where('orders.payment_status_id', 2);
+                    ->where('orders.order_status_id', 6)  // đơn hoàn thành
+                    ->where('orders.payment_status_id', 2); // đã thanh toán
             })
             ->groupBy('products.id', 'products.name')
             ->orderBy('total_quantity', 'asc')
             ->take($limit)
             ->get();
 
-
         $leastProductLabels = $leastSellingProducts->pluck('name')->toArray();
         $leastProductData   = $leastSellingProducts->pluck('total_quantity')->toArray();
 
-        // 10. Trạng thái đơn hàng
+        // 10. Thống kê trạng thái đơn hàng
         $orderStatusStats = DB::table('orders')
             ->join('order_statuses', 'orders.order_status_id', '=', 'order_statuses.id')
-            ->where('payment_status_id', 2)
             ->whereBetween('orders.created_at', [$start, $end])
             ->select('order_statuses.name as status_name', DB::raw('COUNT(*) as count'))
             ->groupBy('order_statuses.name')->get();
@@ -130,17 +135,17 @@ class AdminDashboardController extends Controller
         $orderStatusLabels = $orderStatusStats->pluck('status_name');
         $orderStatusData   = $orderStatusStats->pluck('count');
 
-        // 11. Đơn hàng gần đây
+        // 11. Lấy 5 đơn hàng gần đây
         $recentOrders = Order::with(['user', 'orderDetails.productVariant.product'])
             ->whereBetween('created_at', [$start, $end])
             ->latest()->take(5)->get();
 
-        // 12. Người dùng mới
+        // 12. Người dùng mới (role_id = 2 là khách hàng)
         $newCustomers = User::where('role_id', 2)
             ->whereBetween('created_at', [$start, $end])
             ->latest()->take(5)->get();
 
-        // 13. Top người dùng
+        // 13. Top người dùng theo số lượng đơn và tổng tiền
         $topUsers = User::select(
             'users.id',
             'users.name',
@@ -155,30 +160,33 @@ class AdminDashboardController extends Controller
             ->groupBy('users.id', 'users.name', 'users.email')
             ->orderByDesc('total_orders')->take(5)->get();
 
-        // 14. Xử lý AJAX (chart update)
+        // 14. Xử lý AJAX (cập nhật chart khi filter)
         if ($request->ajax()) {
             if ($request->input('type') === 'least') {
+                // Trả dữ liệu sản phẩm bán chậm
                 return response()->json([
                     'labels' => $leastProductLabels,
                     'data'   => collect($leastProductData)->map(fn($q) => (int)$q),
                 ]);
             }
+            // Trả dữ liệu sản phẩm bán chạy
             return response()->json([
                 'labels' => $productLabels,
                 'data'   => collect($productData)->map(fn($q) => (int)$q),
             ]);
         }
 
-        // 15. Trả dữ liệu về view
+        // 15. Chuẩn bị dữ liệu tổng quan để hiển thị trên dashboard
         $overview = [
-            ['label' => 'Tổng sản phẩm', 'value' => $totalProducts],
-            ['label' => 'Tổng đơn hàng', 'value' => $totalOrders],
-            ['label' => 'Tổng doanh thu thực tế', 'value' => number_format($totalRevenueMoney, 0, ',', '.') . ' VND'],
+            ['label' => 'Tổng sản phẩm đã bán', 'value' => $totalProducts],
+            ['label' => 'Tổng đơn hàng hoàn thành', 'value' => $totalOrders],
+            ['label' => 'Tổng doanh thu thực nhận', 'value' => number_format($totalRevenueMoney, 0, ',', '.') . ' VND'],
             ['label' => 'Tổng doanh thu', 'value' => number_format($totalRevenue, 0, ',', '.') . ' VND'],
         ];
         $startDateFormatted = Carbon::parse($startDate)->format('m/d/Y');
         $endDateFormatted   = Carbon::parse($endDate)->format('m/d/Y');
 
+        // Trả dữ liệu về view
         return view('admin.dashboards.index', compact(
             'totalProducts',
             'totalOrders',
@@ -207,7 +215,7 @@ class AdminDashboardController extends Controller
         ));
     }
 
-
+    // Hàm buildChartData: sinh dữ liệu cho biểu đồ theo ngày, tuần, tháng, năm
     private function buildChartData($query, $start, $end, $type, $sumExpr)
     {
         $labels = $values = [];
@@ -260,6 +268,7 @@ class AdminDashboardController extends Controller
         return [$labels, $values];
     }
 
+    // Hàm getDateRange: lấy khoảng ngày dựa trên filter (day, month, quarter, year)
     private function getDateRange(Request $request)
     {
         $filterType = $request->input('filter_type');
@@ -290,6 +299,7 @@ class AdminDashboardController extends Controller
                 }
                 break;
         }
+        // Nếu không có filter nào hợp lệ, mặc định lấy tháng hiện tại
         return [$start ?? now()->startOfMonth(), $end ?? now()->endOfMonth()];
     }
 }

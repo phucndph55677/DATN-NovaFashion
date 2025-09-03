@@ -11,7 +11,7 @@
                 </div>
                 <p class="mt-2 fw-bold text-primary">Đang tải dữ liệu, vui lòng chờ...</p>
             </div>
-            <!-- Bộ lọc -->
+            <!-- Bộ lọc dữ liệu -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h4 class="fw-bold">Bảng điều khiển</h4>
@@ -65,6 +65,7 @@
                 </form>
             </div>
 
+            <!-- Modal hiển thị lỗi validate -->
             <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-success">
@@ -104,29 +105,29 @@
                             <label for="chartSelector" class="form-label fw-bold">Chọn loại biểu đồ</label>
                             <select id="chartSelector" class="form-select w-auto d-inline-block">
                                 <option value="revenue">📈 Tổng Doanh thu</option>
-                                <option value="profit">📈 Doanh thu thực tế</option>
+                                <option value="profit">📈 Doanh thu thực nhận</option>
                                 <option value="users">👥 Người dùng</option>
                                 <option value="products">🥇 Top sản phẩm bán chạy</option>
-                                <option value="leastProducts">📉 Top sản phẩm bán ế</option>
+                                <option value="leastProducts">📉 Top sản phẩm bán chậm</option>
                                 <option value="orderStatuses">📦 Trạng thái đơn hàng</option>
                             </select>
 
-                            <!-- 👇 Select số lượng sản phẩm -->
+                            <!-- Select số lượng sản phẩm -->
                             <select id="topProductLimit" class="form-select w-auto d-inline-block d-none">
-                                {{-- <option value="" disabled selected>-- Chọn top sản phẩm --</option> --}}
                                 <option value="5" selected>Top 5</option>
                                 <option value="10">Top 10</option>
                                 <option value="15">Top 15</option>
                                 <option value="20">Top 20</option>
+                                <option value="50">Top 50</option>
                             </select>
 
-                            <!-- 👇 Select số lượng sản phẩm bán ế -->
+                            <!-- Select số lượng sản phẩm bán chậm -->
                             <select id="leastProductLimit" class="form-select w-auto d-inline-block d-none">
-                                {{-- <option value="" disabled selected>-- Chọn top sản phẩm --</option> --}}
                                 <option value="5" selected>Top 5</option>
                                 <option value="10">Top 10</option>
                                 <option value="15">Top 15</option>
                                 <option value="20">Top 20</option>
+                                <option value="50">Top 50</option>
                             </select>
                         </div>
                     </div>
@@ -134,6 +135,7 @@
                     <div id="noChartDataMessage" class="alert alert-warning text-center d-none" role="alert">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>Không có dữ liệu để hiển thị cho biểu đồ này.
                     </div>
+                    {{-- Canvas chart --}}
                     <div style="width: 100%; height: 70vh;"> <!-- hoặc height: 100%; tùy bạn -->
                         <canvas id="chartCanvas" style="width: 100% !important; height: 100% !important;"></canvas>
                     </div>
@@ -282,310 +284,342 @@
     @endsection
 
     @section('scripts')
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        // ================= CHART CONFIG & DATA =================
-        const chartData = {
-            revenue: {
-                labels: @json($labels),
-                data: @json($data),
-                label: "Doanh thu (VND)",
-                type: "line",
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderColor: "rgba(75, 192, 192, 1)",
-                fill: true
-            },
-            products: {
-                labels: @json($productLabels),
-                data: @json($productData),
-                label: "Số sản phẩm bán được",
-                type: "bar",
-                backgroundColor: "rgba(54, 162, 235, 0.7)",
-                borderColor: "rgba(54, 162, 235, 1)",
-                fill: false
-            },
-            profit: {
-                labels: @json($profitLabels ?? $labels),
-                data: @json($profitValues),
-                label: "Doanh thu thực tế (VND)",
-                type: "line",
-                backgroundColor: "rgba(34, 197, 94, 0.2)",
-                borderColor: "rgba(34, 197, 94, 1)",
-                fill: true
-            },
-            users: {
-                labels: @json($userLabels),
-                data: @json($userData),
-                label: "Người dùng mới",
-                type: "line",
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                fill: true
-            },
-            orderStatuses: {
-                labels: @json($orderStatusLabels),
-                data: @json($orderStatusData),
-                label: "Tỷ lệ đơn hàng",
-                type: "pie",
-                backgroundColor: [
-                    "rgba(255, 99, 132, 0.7)",
-                    "rgba(54, 162, 235, 0.7)",
-                    "rgba(255, 206, 86, 0.7)",
-                    "rgba(75, 192, 192, 0.7)",
-                    "rgba(153, 102, 255, 0.7)",
-                    "rgba(255, 159, 64, 0.7)",
-                    "rgba(199, 199, 199, 0.7)",
-                    "rgba(255, 105, 180, 0.7)",
-                    "rgba(60, 179, 113, 0.7)",
-                    "rgba(123, 104, 238, 0.7)"
-                ],
-                borderColor: "rgba(255, 255, 255, 1)",
-                fill: false
-            },
-            leastProducts: {
-                labels: @json($leastProductLabels),
-                data: @json($leastProductData),
-                label: "Số sản phẩm bán được",
-                type: "bar",
-                backgroundColor: "rgba(255, 99, 132, 0.7)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                fill: false
-            }
-        };
-
-        const ctx = document.getElementById('chartCanvas').getContext('2d');
-        let currentChart;
-        let currentType = null;
-
-        const tooltipFormatters = {
-            products: (label, value) => `${label}: ${value} sản phẩm`,
-            leastProducts: (label, value) => `${label}: ${value} sản phẩm`,
-            orderStatuses: (label, value, dataset) => {
-                const total = dataset.reduce((a, b) => a + b, 0) || 0;
-                const percent = total ? ((value / total) * 100).toFixed(1) : 0;
-                return `${label}: ${value} đơn (${percent}%)`;
-            },
-            revenue: (label, value) =>
-                `${label}: ${Number(value).toLocaleString("vi-VN", { maximumFractionDigits: 0 })} VND`,
-            profit: (label, value) =>
-                `${label}: ${Number(value).toLocaleString("vi-VN", { maximumFractionDigits: 0 })} VND`,
-        };
-
-        function formatTooltip(type, context) {
-            const value = context.parsed.y ?? context.parsed;
-            const label = context.label;
-            const dataset = context.dataset.data;
-            return tooltipFormatters[type]?.(label, value, dataset) ?? context.formattedValue;
-        }
-
-        function formatYAxis(type, value) {
-            if (type === 'revenue' || type === 'profit') {
-                return value.toLocaleString('vi-VN') + ' VND';
-            }
-            return Number.isInteger(value) ? value : null;
-        }
-
-        const baseOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: 20
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    align: 'center',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        boxWidth: 15
-                    }
+        <script>
+            // ================= CHART CONFIG & DATA =================
+            const chartData = {
+                revenue: {
+                    labels: @json($labels),
+                    data: @json($data),
+                    label: "Doanh thu (VND)",
+                    type: "line",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    fill: true
                 },
-                tooltip: {
-                    callbacks: {
-                        label: (ctx) => formatTooltip(currentType, ctx)
-                    }
+                products: {
+                    labels: @json($productLabels),
+                    data: @json($productData),
+                    label: "Số sản phẩm bán được",
+                    type: "bar",
+                    backgroundColor: "rgba(54, 162, 235, 0.7)",
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    fill: false
+                },
+                profit: {
+                    labels: @json($profitLabels ?? $labels),
+                    data: @json($profitValues),
+                    label: "Doanh thu thực nhận (VND)",
+                    type: "line",
+                    backgroundColor: "rgba(34, 197, 94, 0.2)",
+                    borderColor: "rgba(34, 197, 94, 1)",
+                    fill: true
+                },
+                users: {
+                    labels: @json($userLabels),
+                    data: @json($userData),
+                    label: "Người dùng mới",
+                    type: "line",
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    fill: true
+                },
+                orderStatuses: {
+                    labels: @json($orderStatusLabels),
+                    data: @json($orderStatusData),
+                    label: "Tỷ lệ đơn hàng",
+                    type: "pie",
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.7)",
+                        "rgba(54, 162, 235, 0.7)",
+                        "rgba(255, 206, 86, 0.7)",
+                        "rgba(75, 192, 192, 0.7)",
+                        "rgba(153, 102, 255, 0.7)",
+                        "rgba(255, 159, 64, 0.7)",
+                        "rgba(199, 199, 199, 0.7)",
+                        "rgba(255, 105, 180, 0.7)",
+                        "rgba(60, 179, 113, 0.7)",
+                        "rgba(123, 104, 238, 0.7)"
+                    ],
+                    borderColor: "rgba(255, 255, 255, 1)",
+                    fill: false
+                },
+                leastProducts: {
+                    labels: @json($leastProductLabels),
+                    data: @json($leastProductData),
+                    label: "Số sản phẩm bán được",
+                    type: "bar",
+                    backgroundColor: "rgba(255, 99, 132, 0.7)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    fill: false
                 }
-            }
-        };
+            };
 
-        // ================= HÀM CHART =================
-        function toggleChartVisibility(hasData) {
-            const chartCanvas = document.getElementById('chartCanvas');
-            const noDataMessage = document.getElementById('noChartDataMessage');
-            chartCanvas.style.display = hasData ? 'block' : 'none';
-            noDataMessage.classList.toggle('d-none', hasData);
-        }
+            const ctx = document.getElementById('chartCanvas').getContext('2d'); // Lấy context của canvas để vẽ Chart.js
+            let currentChart; // Biến lưu chart hiện tại (để hủy khi vẽ chart mới)
+            let currentType = null; // Biến lưu loại chart đang hiển thị
 
-        function renderChart(type) {
-            if (currentChart) currentChart.destroy();
-            currentType = type;
-
-            const hasData = chartData[type].data?.some(v => v > 0);
-            toggleChartVisibility(hasData);
-            if (!hasData) return;
-
-            const chartConfig = {
-                type: chartData[type].type,
-                data: {
-                    labels: chartData[type].labels,
-                    datasets: [{
-                        ...chartData[type],
-                        tension: chartData[type].type === 'line' ? 0.3 : 0
-                    }]
+            // Tạo formatter cho tooltip dựa theo loại chart
+            const tooltipFormatters = {
+                products: (label, value) => `${label}: ${value} sản phẩm`,
+                leastProducts: (label, value) => `${label}: ${value} sản phẩm`,
+                orderStatuses: (label, value, dataset) => { // chart pie trạng thái đơn hàng
+                    const total = dataset.reduce((a, b) => a + b, 0) || 0; // tổng số đơn
+                    const percent = total ? ((value / total) * 100).toFixed(1) : 0; // phần trăm
+                    return `${label}: ${value} đơn (${percent}%)`;
                 },
-                options: {
-                    ...baseOptions,
-                    plugins: {
-                        ...baseOptions.plugins,
-                        legend: {
-                            ...baseOptions.plugins.legend,
-                            position: chartData[type].type === 'pie' ? 'bottom' : 'top'
+                revenue: (label, value) =>
+                    `${label}: ${Number(value).toLocaleString("vi-VN", { maximumFractionDigits: 0 })} VND`,
+                profit: (label, value) =>
+                    `${label}: ${Number(value).toLocaleString("vi-VN", { maximumFractionDigits: 0 })} VND`,
+            };
+
+            // Hàm định dạng tooltip dựa theo loại chart
+            function formatTooltip(type, context) {
+                const value = context.parsed.y ?? context.parsed; // lấy giá trị y
+                const label = context.label; // nhãn trục x
+                const dataset = context.dataset.data; // dữ liệu dataset
+                return tooltipFormatters[type]?.(label, value, dataset) ?? context.formattedValue; // trả tooltip
+            }
+
+            // Hàm định dạng trục y (nếu là tiền thì thêm VND, nếu là số thì nguyên)
+            function formatYAxis(type, value) {
+                if (type === 'revenue' || type === 'profit') {
+                    return value.toLocaleString('vi-VN') + ' VND';
+                }
+                return Number.isInteger(value) ? value : null;
+            }
+
+            // Cấu hình cơ bản chung cho tất cả chart
+            const baseOptions = {
+                responsive: true, // responsive theo kích thước
+                maintainAspectRatio: false, // không giữ tỉ lệ cố định
+                layout: {
+                    padding: 20
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        align: 'center',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            boxWidth: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => formatTooltip(currentType, ctx) // gọi hàm tooltip
                         }
                     }
                 }
             };
 
-            if (chartData[type].type !== 'pie') {
-                chartConfig.options.scales = {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0,
-                            callback: (value) => formatYAxis(type, value)
-                        }
+            // ================= HÀM HIỂN THỊ/ẨN CHART =================
+            function toggleChartVisibility(hasData) {
+                const chartCanvas = document.getElementById('chartCanvas');
+                const noDataMessage = document.getElementById('noChartDataMessage');
+                chartCanvas.style.display = hasData ? 'block' : 'none'; // hiển thị canvas nếu có dữ liệu
+                noDataMessage.classList.toggle('d-none', hasData); // hiển thị thông báo nếu không có dữ liệu
+            }
+
+            // ================= HÀM RENDER CHART =================
+            function renderChart(type) {
+                if (currentChart) currentChart.destroy(); // xóa chart cũ nếu tồn tại
+                currentType = type; // cập nhật loại chart hiện tại
+
+                const hasData = chartData[type].data?.some(v => v > 0); // kiểm tra có dữ liệu > 0 không
+                toggleChartVisibility(hasData); // nếu không có dữ liệu thì dừng
+                if (!hasData) return;
+
+                // Cấu hình chart
+                const chartConfig = {
+                    type: chartData[type].type,
+                    data: {
+                        labels: chartData[type].labels,
+                        datasets: [{
+                            ...chartData[type],
+                            tension: chartData[type].type === 'line' ? 0.3 : 0
+                        }]
                     },
-                    x: {
-                        ticks: {
-                            autoSkip: false,
-                            maxRotation: 45,
-                            minRotation: 0
+                    options: {
+                        ...baseOptions,
+                        plugins: {
+                            ...baseOptions.plugins,
+                            legend: {
+                                ...baseOptions.plugins.legend,
+                                position: chartData[type].type === 'pie' ? 'bottom' : 'top'
+                            }
                         }
                     }
                 };
-            }
-            currentChart = new Chart(ctx, chartConfig);
-        }
 
-        // ================= VALIDATE FORM =================
-        function validateFilter(filterType, values) {
-            if (!filterType) return "❌ Vui lòng chọn kiểu lọc.";
-            const { month, year, quarter, yearQuarter, start, end } = values;
-            switch (filterType) {
-                case "month":
-                    return !month && "❌ Vui lòng chọn tháng.";
-                case "year":
-                    return !year && "❌ Vui lòng chọn năm.";
-                case "quarter":
-                    return (!quarter || !yearQuarter) && "❌ Vui lòng chọn quý và năm cho lọc theo quý.";
-                case "day":
-                    if (!start || !end) return "❌ Vui lòng chọn ngày bắt đầu và kết thúc.";
-                    if (start > end) return "❌ Ngày bắt đầu không được lớn hơn ngày kết thúc.";
-                    return null;
-                default:
-                    return null;
-            }
-        }
-
-        function showError(message) {
-            document.getElementById('errorModalText').innerText = message;
-            let modal = new bootstrap.Modal(document.getElementById('errorModal'));
-            modal.show();
-        }
-
-        // ================= DOM READY =================
-        document.addEventListener("DOMContentLoaded", function() {
-            const chartSelector = document.getElementById("chartSelector");
-            const topProductLimit = document.getElementById("topProductLimit");
-            const leastProductLimit = document.getElementById("leastProductLimit");
-            const filterType = document.getElementById("filter_type");
-
-            const limitSelectors = {
-                products: topProductLimit,
-                leastProducts: leastProductLimit
-            };
-
-            chartSelector.addEventListener("change", function() {
-                Object.values(limitSelectors).forEach(el => el.classList.add("d-none"));
-                if (limitSelectors[this.value]) {
-                    limitSelectors[this.value].classList.remove("d-none");
+                // Nếu không phải pie chart, thêm cấu hình trục x, y
+                if (chartData[type].type !== 'pie') {
+                    chartConfig.options.scales = {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                callback: (value) => formatYAxis(type, value)
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        }
+                    };
                 }
-            });
+                currentChart = new Chart(ctx, chartConfig); // Khởi tạo chart
+            }
 
-            async function fetchProducts(limit, type = "products") {
-                let url = `{{ route('admin.dashboards.index') }}?filter_type={{ request('filter_type') }}&limit=${limit}${type==="leastProducts" ? "&type=least" : ""}`;
-                try {
-                    const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }});
-                    const data = await res.json();
-                    chartData[type].labels = data.labels;
-                    chartData[type].data = data.data;
-                    renderChart(type);
-                } catch (err) {
-                    console.error("Lỗi khi fetch dữ liệu:", err);
+            // ================= VALIDATE FORM =================
+            function validateFilter(filterType, values) {
+                if (!filterType) return "❌ Vui lòng chọn kiểu lọc.";
+                const {
+                    month,
+                    year,
+                    quarter,
+                    yearQuarter,
+                    start,
+                    end
+                } = values;
+                switch (filterType) {
+                    case "month":
+                        return !month && "❌ Vui lòng chọn tháng.";
+                    case "year":
+                        return !year && "❌ Vui lòng chọn năm.";
+                    case "quarter":
+                        return (!quarter || !yearQuarter) && "❌ Vui lòng chọn quý và năm cho lọc theo quý.";
+                    case "day":
+                        if (!start || !end) return "❌ Vui lòng chọn ngày bắt đầu và kết thúc.";
+                        if (start > end) return "❌ Ngày bắt đầu không được lớn hơn ngày kết thúc.";
+                        return null;
+                    default:
+                        return null;
                 }
             }
 
-            [topProductLimit, leastProductLimit].forEach(selectEl => {
-                selectEl.addEventListener("change", e => {
-                    const type = e.target.id === "topProductLimit" ? "products" : "leastProducts";
-                    fetchProducts(e.target.value, type);
+            // ================= HÀM HIỂN THỊ LỖI =================
+            function showError(message) {
+                document.getElementById('errorModalText').innerText = message; // chèn message vào modal
+                let modal = new bootstrap.Modal(document.getElementById('errorModal'));
+                modal.show(); // hiển thị modal lỗi
+            }
+
+            // ================= DOM READY =================
+            document.addEventListener("DOMContentLoaded", function() {
+                const chartSelector = document.getElementById("chartSelector");
+                const topProductLimit = document.getElementById("topProductLimit");
+                const leastProductLimit = document.getElementById("leastProductLimit");
+                const filterType = document.getElementById("filter_type");
+
+                // map loại chart với limit selector tương ứng
+                const limitSelectors = {
+                    products: topProductLimit,
+                    leastProducts: leastProductLimit
+                };
+
+                // Thay đổi select chart: show/hide limit selectors
+                chartSelector.addEventListener("change", function() {
+                    Object.values(limitSelectors).forEach(el => el.classList.add("d-none"));
+                    if (limitSelectors[this.value]) {
+                        limitSelectors[this.value].classList.remove("d-none");
+                    }
+                });
+
+                // ================= FETCH DỮ LIỆU SẢN PHẨM =================
+                async function fetchProducts(limit, type = "products") {
+                    let url =
+                        `{{ route('admin.dashboards.index') }}?filter_type={{ request('filter_type') }}&limit=${limit}${type==="leastProducts" ? "&type=least" : ""}`;
+                    try {
+                        const res = await fetch(url, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        const data = await res.json();
+                        chartData[type].labels = data.labels;
+                        chartData[type].data = data.data;
+                        renderChart(type);
+                    } catch (err) {
+                        console.error("Lỗi khi fetch dữ liệu:", err);
+                    }
+                }
+
+                // Thay đổi limit select => fetch lại dữ liệu
+                [topProductLimit, leastProductLimit].forEach(selectEl => {
+                    selectEl.addEventListener("change", e => {
+                        const type = e.target.id === "topProductLimit" ? "products" : "leastProducts";
+                        fetchProducts(e.target.value, type);
+                    });
+                });
+
+                // toggle filter inputs
+                const inputs = {
+                    month: document.querySelector("input[name='month']"),
+                    year: document.querySelector("input[name='year']"),
+                    quarter: document.querySelector("select[name='quarter']"),
+                    year_quarter: document.querySelector("input[name='year_quarter']"),
+                    start_date: document.querySelector("input[name='start_date']"),
+                    end_date: document.querySelector("input[name='end_date']")
+                };
+
+                // Nhóm input theo loại lọc
+                const inputGroups = {
+                    month: ["month"],
+                    year: ["year"],
+                    quarter: ["quarter", "year_quarter"],
+                    day: ["start_date", "end_date"],
+                };
+
+                function toggleInputs(type) {
+                    const active = inputGroups[type] || [];
+                    Object.entries(inputs).forEach(([key, el]) => {
+                        el.classList.toggle("d-none", !active.includes(key));
+                    });
+                }
+
+                toggleInputs(filterType.value);
+                filterType.addEventListener("change", function() {
+                    toggleInputs(this.value);
+                });
+
+                // Render chart mặc định
+                renderChart(chartSelector.value);
+                chartSelector.addEventListener('change', function() {
+                    renderChart(this.value);
+                });
+
+                // validate form khi submit
+                document.getElementById('filterForm').addEventListener('submit', function(e) {
+                    const filterType = document.getElementById("filter_type").value;
+                    const month = document.querySelector('input[name="month"]').value;
+                    const year = document.querySelector('input[name="year"]').value;
+                    const quarter = document.querySelector('select[name="quarter"]').value;
+                    const yearQuarter = document.querySelector('input[name="year_quarter"]').value;
+                    const start = document.querySelector('input[name="start_date"]').value;
+                    const end = document.querySelector('input[name="end_date"]').value;
+
+                    const errorMsg = validateFilter(filterType, {
+                        month,
+                        year,
+                        quarter,
+                        yearQuarter,
+                        start,
+                        end
+                    });
+                    if (errorMsg) {
+                        e.preventDefault();
+                        showError(errorMsg);
+                        return;
+                    }
                 });
             });
-
-            // toggle filter inputs
-            const inputs = {
-                month: document.querySelector("input[name='month']"),
-                year: document.querySelector("input[name='year']"),
-                quarter: document.querySelector("select[name='quarter']"),
-                year_quarter: document.querySelector("input[name='year_quarter']"),
-                start_date: document.querySelector("input[name='start_date']"),
-                end_date: document.querySelector("input[name='end_date']")
-            };
-
-            const inputGroups = {
-                month: ["month"],
-                year: ["year"],
-                quarter: ["quarter", "year_quarter"],
-                day: ["start_date", "end_date"],
-            };
-
-            function toggleInputs(type) {
-                const active = inputGroups[type] || [];
-                Object.entries(inputs).forEach(([key, el]) => {
-                    el.classList.toggle("d-none", !active.includes(key));
-                });
-            }
-
-            toggleInputs(filterType.value);
-            filterType.addEventListener("change", function() {
-                toggleInputs(this.value);
-            });
-
-            renderChart(chartSelector.value);
-            chartSelector.addEventListener('change', function() {
-                renderChart(this.value);
-            });
-
-            // validate form
-            document.getElementById('filterForm').addEventListener('submit', function(e) {
-                const filterType = document.getElementById("filter_type").value;
-                const month = document.querySelector('input[name="month"]').value;
-                const year = document.querySelector('input[name="year"]').value;
-                const quarter = document.querySelector('select[name="quarter"]').value;
-                const yearQuarter = document.querySelector('input[name="year_quarter"]').value;
-                const start = document.querySelector('input[name="start_date"]').value;
-                const end = document.querySelector('input[name="end_date"]').value;
-
-                const errorMsg = validateFilter(filterType, { month, year, quarter, yearQuarter, start, end });
-                if (errorMsg) {
-                    e.preventDefault();
-                    showError(errorMsg);
-                    return;
-                }
-            });
-        });
-    </script>
-@endsection
-
+        </script>
+    @endsection
