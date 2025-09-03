@@ -16,8 +16,8 @@
 
                     <h2>Cảm ơn đã mua hàng</h2>
                     <p>Chào {{ $order->name ?? 'Quý khách' }}, đơn hàng của bạn với mã <a id="view-detail-order" href="{{ route('account.orders.show', $order->id) }}" style="text-decoration: underline; color: green">{{ $order->order_code }}</a> đã được đặt thành công.<br>
-                        Hệ thống sẽ tự động gửi Email và SMS xác nhận đơn hàng đến số điện thoại và hòm thư mà bạn đã cung cấp.<br>
-                        Cảm ơn {{ $order->name ?? 'Quý khách' }} đã tin dùng sản phẩm của IVY moda!<br>
+                        <!-- Hệ thống sẽ tự động gửi Email và SMS xác nhận đơn hàng đến số điện thoại và hòm thư mà bạn đã cung cấp.<br> -->
+                        Cảm ơn {{ $order->name ?? 'Quý khách' }} đã tin dùng sản phẩm của NovaFashion!<br>
                     </p>
 
                     <div class="thank-you__button">

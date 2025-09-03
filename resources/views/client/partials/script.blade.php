@@ -6,7 +6,7 @@
     <script src="https://pubcdn.ivymoda.com/ivy2/js/jquery.lazyload.min.js" type="text/javascript"></script>
     <script src="https://pubcdn.ivymoda.com/ivy2/js/video.min.js"></script>
     <!-- function -->
-    <script src="https://pubcdn.ivymoda.com/ivy2/js/new-kscript.js?v=22" type="text/javascript"></script>
+    <!-- <script src="https://pubcdn.ivymoda.com/ivy2/js/new-kscript.js?v=22" type="text/javascript"></script> -->
     <script src="https://pubcdn.ivymoda.com/ivy2/js/main.js?v=13" type="text/javascript"></script>
     <script src="https://pubcdn.ivymoda.com/ivy2/js/custom_main.js?v=8" type="text/javascript"></script>
     <script src="https://pubcdn.ivymoda.com/ivy2/js/toastr.min.js" type="text/javascript"></script>
