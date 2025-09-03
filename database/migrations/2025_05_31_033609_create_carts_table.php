@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id(); // Khóa chính id
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Khóa ngoại liên kết tới bảng users
             $table->unsignedInteger('quantity')->default(0); // Tổng số sản phẩm
-            $table->decimal('price', 10, 2)->default(0);     // Giá sản phẩm
-            $table->decimal('total_amount', 10, 2)->default(0); // Tổng phải trả
+            $table->decimal('price', 20, 2)->default(0);     // Giá sản phẩm
+            $table->decimal('total_amount', 20, 2)->default(0); // Tổng phải trả
             $table->timestamps();
         });
     }
