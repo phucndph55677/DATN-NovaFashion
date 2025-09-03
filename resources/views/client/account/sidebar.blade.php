@@ -36,6 +36,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('chats.index') }}" style="{{ request()->routeIs('chats.index') ? 'color:black;' : '' }}">
+                        <span class="bi bi-chat-dots"></span>Chat với người bán
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('account.orders.index') }}" style="{{ request()->routeIs('account.orders.index') ? 'color:black;' : '' }}">
                         <span class="icon-ic_reload"></span>Quản lý đơn hàng
                     </a>

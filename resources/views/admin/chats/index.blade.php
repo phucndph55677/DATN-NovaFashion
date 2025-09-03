@@ -171,8 +171,8 @@
                                 <div class="chat-profile mx-auto">
                                     <div class="avatar avatar-70 avatar-borderd avatar-rounded mx-auto" data-toggel-extra="right-sidenav" data-target="#first-sidenav-1">
                                         <img class="img-fluid" 
-                                            src="{{ $chat->user->image 
-                                                    ? asset('storage/' . $chat->user->image) 
+                                            src="{{ $chatDetails->user->image 
+                                                    ? asset('storage/' . $chatDetails->user->image) 
                                                     : 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010' }}"
                                             alt="users"
                                             onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010'">
@@ -210,8 +210,8 @@
                                     </button>
                                     <div class="avatar-50 avatar-borderd avatar-rounded" data-toggel-extra="right-sidenav" data-target="#first-sidenav-1">
                                         <img class="img-fluid" 
-                                            src="{{ $chat->user->image 
-                                                    ? asset('storage/' . $chat->user->image) 
+                                            src="{{ $chatDetails->user->image 
+                                                    ? asset('storage/' . $chatDetails->user->image) 
                                                     : 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010' }}"
                                             alt="users"
                                             onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010'">
