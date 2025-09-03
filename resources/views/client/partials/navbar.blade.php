@@ -107,6 +107,7 @@
                             </div>
                             <ul>
                                 <li><a href="{{ route('account.info') }}"><i class="icon-ic_avatar-1"></i>Thông tin tài khoản</a></li>
+                                <li><a href="{{ route('chats.index') }}"><i class="bi bi-chat-dots"></i>Chat với người bán</a></li>
                                 <li><a href="{{ route('account.orders.index') }}"><i class="icon-ic_reload"></i>Quản lý đơn hàng</a></li>
                                 <li><a href="{{ route('account.reviews.index') }}"><i class="icon-ic_glasses"></i>Đánh giá sản phẩm</a></li>
                                 <li><a href="{{ route('account.favorites.index') }}"><i class="icon-ic_heart"></i>Sản phẩm yêu thích</a></li>
