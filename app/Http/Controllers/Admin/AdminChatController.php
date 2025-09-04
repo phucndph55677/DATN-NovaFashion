@@ -81,7 +81,6 @@ class AdminChatController extends Controller
                 'sender_id' => Auth::guard('admin')->id(), // Sử dụng guard admin
                 'receiver_id' => $chat->user_id, // Gửi cho user
                 'message' => $request->message,
-                'is_read' => false,
             ]);
 
             // Cập nhật thời gian tin nhắn cuối

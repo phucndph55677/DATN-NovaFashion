@@ -84,7 +84,7 @@
                                             <button class="btn btn-link p-0 text-decoration-underline fw-bold" 
                                                 style="font-size: 14px;" data-bs-toggle="modal"
                                                 data-bs-target="#voucherModal{{ $voucher->id }}">Điều kiện</button>
-                                            <a href="#" class="btn btn-dark btn-sm">Dùng mã</a>
+                                            {{-- <a href="#" class="btn btn-dark btn-sm">Dùng mã</a> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -255,9 +255,6 @@
                                                         @endif
                                                     </div>
                                                 </div>
-                                                <div class="add-to-cart">
-                                                    <a href="#"><i class="icon-ic_shopping-bag"></i></a>
-                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -385,9 +382,6 @@
                                                         @endif
                                                     </div>
                                                 </div>
-                                                <div class="add-to-cart">
-                                                    <a href="#"><i class="icon-ic_shopping-bag"></i></a>
-                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -493,9 +487,6 @@
                                                             <ins><span>Liên hệ</span></ins> {{-- Trường hợp không có biến thể --}}
                                                         @endif
                                                     </div>
-                                                </div>
-                                                <div class="add-to-cart">
-                                                    <a href="#"><i class="icon-ic_shopping-bag"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -631,9 +622,6 @@
                                                             <ins><span>Liên hệ</span></ins> {{-- Trường hợp không có biến thể --}}
                                                         @endif
                                                     </div>
-                                                </div>
-                                                <div class="add-to-cart">
-                                                    <a href="#"><i class="icon-ic_shopping-bag"></i></a>
                                                 </div>
                                             </div>
                                         </div>

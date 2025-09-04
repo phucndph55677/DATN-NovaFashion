@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Accounts;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Review;
 use Illuminate\Validation\Rule;
 
 class ClientManageController extends Controller
@@ -24,7 +25,11 @@ class ClientManageController extends Controller
     public function show(string $id)
     {
         $client = User::findOrFail($id);
-        $reviews = $client->reviews()->with('user')->get();
+        
+        // Lấy reviews thông qua orders của user
+        $reviews = Review::whereHas('order', function($query) use ($id) {
+            $query->where('user_id', $id);
+        })->with('product')->get();
 
         return view('admin.accounts.clientManage.show', compact('client', 'reviews'));
     }
