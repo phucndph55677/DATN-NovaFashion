@@ -379,7 +379,7 @@
                                                         </a>
                                                     </div>
                                                     <div class="info-product">
-                                                        <div class="list-color">
+                                                        <div class="list-color list-color-related">
                                                             <ul>
                                                                 @foreach ($relatedProduct->variants->unique('color_id') as $colorVariant)
                                                                     <li class="{{ $loop->first ? 'checked' : '' }}" data-color-id="{{ $colorVariant->color_id }}">
@@ -1067,6 +1067,7 @@
          CSS CHO CHỌN MÀU SẮC
     ======================================== --}}
     <style>
+        /* CSS cho phần chọn màu chính (kích thước lớn) */
         .list-color ul { gap: 12px !important; }
         .list-color li a span { 
             width: 32px !important; 
@@ -1087,6 +1088,30 @@
             .list-color li a span { 
                 width: 28px !important; 
                 height: 28px !important;  
+            }
+        }
+
+        /* CSS cho phần sản phẩm liên quan (kích thước nhỏ) */
+        .list-color-related ul { gap: 8px !important; }
+        .list-color-related li a span { 
+            width: 20px !important; 
+            height: 20px !important;
+            border-radius: 50%; 
+            box-shadow: 0 1px 2px rgba(0,0,0,.06); 
+            transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease; 
+        }
+        .list-color-related li a:hover span { 
+            transform: translateY(-1px); 
+            box-shadow: 0 3px 10px rgba(0,0,0,.12); 
+        }
+        .list-color-related li.checked a span { 
+            outline: 2px solid #222; 
+            outline-offset: 2px; 
+        }
+        @media (max-width: 576px) {
+            .list-color-related li a span { 
+                width: 18px !important; 
+                height: 18px !important;  
             }
         }
     </style>
