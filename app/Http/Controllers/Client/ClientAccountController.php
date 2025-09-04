@@ -28,83 +28,105 @@ class ClientAccountController extends Controller
     public function search(Request $request)
     {
         $q = trim((string) $request->input('q', ''));
-        $isSingleChar = mb_strlen($q) === 1;
 
-        $matchedCategoryIds = [];
-        $exactMatchedCategory = null;
+        // Lấy filters từ request
+        $filters = [
+            'sizes'       => array_filter((array) $request->input('att_size', [])),
+            'colors'      => array_filter((array) $request->input('att_color', [])),
+            'price_range' => $request->input('price_range'),
+            'price_from'  => $request->input('product_price_from'),
+            'price_to'    => $request->input('product_price_to'),
+            'sort'        => $request->input('sort'),
+        ];
 
-        // 🔎 Tìm danh mục nếu từ khóa >= 2 ký tự
-        if ($q !== '' && !$isSingleChar) {
-            $matchedCategories = Category::select('id', 'name', 'slug')
-                ->where('name', 'like', "%{$q}%")
-                ->get();
-
-            foreach ($matchedCategories as $cat) {
-                // thêm id chính nó
-                $matchedCategoryIds[] = $cat->id;
-
-                // thêm con cháu (nếu có method)
-                if (method_exists($cat, 'getAllDescendantIds')) {
-                    $matchedCategoryIds = array_merge(
-                        $matchedCategoryIds,
-                        (array) $cat->getAllDescendantIds()
-                    );
-                }
-
-                // check exact match theo slug (ổn định hơn name)
-                if (mb_strtolower($cat->slug) === mb_strtolower(Str::slug($q))) {
-                    $exactMatchedCategory = $cat;
-                }
-            }
-
-            $matchedCategoryIds = array_unique($matchedCategoryIds);
-        }
-
-        // 🔎 Query sản phẩm
         $products = Product::with('variants.size', 'variants.color')
-            ->when($q !== '' || (!empty($matchedCategoryIds) && !$isSingleChar), function ($query) use ($q, $matchedCategoryIds, $isSingleChar) {
-                $query->where(function ($sub) use ($q, $matchedCategoryIds, $isSingleChar) {
-                    if ($q !== '') {
-                        $sub->where('name', 'like', "%{$q}%")
-                            ->orWhere('description', 'like', "%{$q}%");
-                    }
-                    if (!$isSingleChar && !empty($matchedCategoryIds)) {
-                        $sub->orWhereIn('category_id', $matchedCategoryIds);
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where('name', 'like', "%{$q}%");
+            })
+            ->when(!empty($filters['sizes']), function ($query) use ($filters) {
+                $query->whereHas('variants.size', function ($q) use ($filters) {
+                    $q->whereIn('size_code', $filters['sizes']);
+                });
+            })
+            ->when(!empty($filters['colors']), function ($query) use ($filters) {
+                $query->whereHas('variants', function ($q) use ($filters) {
+                    $q->whereIn('color_id', $filters['colors']);
+                });
+            })
+            ->when($filters['price_range'] ?? null, function ($query) use ($filters) {
+                [$min, $max] = explode('-', $filters['price_range']);
+                $query->whereHas('variants', function ($q) use ($min, $max) {
+                    $q->whereRaw("
+                        CASE 
+                            WHEN sale IS NOT NULL AND sale > 0 
+                            THEN sale 
+                            ELSE price 
+                        END >= ?", [(int)$min]);
+
+                    if (!empty($max)) {
+                        $q->whereRaw("
+                            CASE 
+                                WHEN sale IS NOT NULL AND sale > 0 
+                                THEN sale 
+                                ELSE price 
+                            END <= ?", [(int)$max]);
                     }
                 });
             })
-            ->where('onpage', 1) // 👉 gợi ý: chỉ lấy sản phẩm active
-            ->orderByDesc('id')
+            ->when($filters['price_from'] || $filters['price_to'], function ($query) use ($filters) {
+                $query->whereHas('variants', function ($q) use ($filters) {
+                    if (!empty($filters['price_from'])) {
+                        $q->whereRaw("
+                            CASE 
+                                WHEN sale IS NOT NULL AND sale > 0 
+                                THEN sale 
+                                ELSE price 
+                            END >= ?", [(int)$filters['price_from']]);
+                    }
+                    if (!empty($filters['price_to'])) {
+                        $q->whereRaw("
+                            CASE 
+                                WHEN sale IS NOT NULL AND sale > 0 
+                                THEN sale 
+                                ELSE price 
+                            END <= ?", [(int)$filters['price_to']]);
+                    }
+                });
+            })
+            ->when($filters['sort'], function ($query) use ($filters) {
+                switch ($filters['sort']) {
+                    case 'price_asc':
+                        $query->orderByRaw("COALESCE(NULLIF(sale,0), price) ASC");
+                        break;
+                    case 'price_desc':
+                        $query->orderByRaw("COALESCE(NULLIF(sale,0), price) DESC");
+                        break;
+                    default:
+                        $query->orderByDesc('id');
+                }
+            }, function ($query) {
+                $query->orderByDesc('id');
+            })
             ->paginate(20)
-            ->withQueryString();
+            ->appends($request->query());
 
-        // 🔎 Chuẩn bị category object cho view
-        if ($exactMatchedCategory && !$isSingleChar) {
-            $category = (object)[
-                'name' => $exactMatchedCategory->name,
-                'slug' => $exactMatchedCategory->slug,
-            ];
-            $slug = $exactMatchedCategory->slug;
-        } else {
-            $category = (object)[
-                'name' => $q ? ('Kết quả tìm kiếm theo "' . $q . '"') : 'Kết quả tìm kiếm',
-                'slug' => 'search',
-            ];
-            $slug = 'search';
-        }
+        // category giả để view không lỗi
+        $category = (object)[
+            'name' => $q ? ('Kết quả tìm kiếm theo "' . $q . '"') : 'Kết quả tìm kiếm',
+            'slug' => 'search',
+        ];
 
-        // 🔎 Biến phụ cho view
         return view('client.categories.index', [
             'q'          => $q,
             'products'   => $products,
-            'slug'       => $slug,
+            'slug'       => 'search',
             'subslug'    => null,
             'childslug'  => null,
             'category'   => $category,
-            'breadcrumbs'=> [],                         // breadcrumb để build path Trang chủ > ... 
-            'sizes'      => Size::all(),                // dùng cho filter size
-            'colors'     => Color::all(),               // dùng cho filter màu
-            'banners_bottom_category' => collect(),     // fallback để view không lỗi
+            'breadcrumbs'=> [],
+            'sizes'      => Size::all(),
+            'colors'     => Color::all(),
+            'banners_bottom_category' => collect(),
         ]);
     }
 

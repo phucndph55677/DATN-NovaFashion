@@ -74,11 +74,11 @@ class AdminInvoiceController extends Controller
         }
 
         // Chuyển số tiền sang chữ
-        // $formatter = new NumberFormatter('vi', NumberFormatter::SPELLOUT);
-        // $totalInWords = $formatter->format($order->total_amount);
+        $formatter = new NumberFormatter('vi', NumberFormatter::SPELLOUT);
+        $totalInWords = $formatter->format($order->total_amount);
 
         // Truyền dữ liệu sang view
-        $pdf = Pdf::loadView('admin.invoices.print', compact('invoice', 'order'));
+        $pdf = Pdf::loadView('admin.invoices.print', compact('invoice', 'order', 'totalInWords'));
 
         // Nếu muốn tải file
         // return $pdf->download('invoice-'.$order->order_code.'.pdf');
